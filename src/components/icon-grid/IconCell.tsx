@@ -5,6 +5,7 @@ import { copyIcon } from "@/lib/copy";
 import { getIconAriaLabel } from "@/lib/a11y";
 import { CopyTooltip } from "@/components/ui/copy-tooltip";
 import { cn } from "@/lib/utils";
+import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 
 interface IconCellProps {
   icon: IconItem;
@@ -25,6 +26,22 @@ export function IconCell({
 }: IconCellProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
+  const { customization } = useIconCustomization();
+
+  // Convert hex color to RGB for background opacity
+  const hexToRgb = (hex: string) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : { r: 102, g: 79, b: 194 }; // fallback to default purple
+  };
+
+  const selectedColor = customization.color;
+  const rgb = hexToRgb(selectedColor);
+  const backgroundStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)`;
+  const borderStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`;
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -93,9 +110,7 @@ export function IconCell({
         className={cn(
           "group relative aspect-square flex items-center justify-center transition-all duration-200",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-          "hover:bg-primary/10 hover:border hover:border-primary/20",
           "p-3",
-          isSelected && "bg-primary/10 border border-primary/20",
           // Corner highlights on hover - all four corners
           "before:absolute before:inset-0 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-200",
           "before:[background-image:linear-gradient(to_right,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_left,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_right,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_left,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_bottom,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_bottom,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_top,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_top,rgba(0,0,0,0.4)_0_12px,transparent_12px)]",
@@ -105,7 +120,11 @@ export function IconCell({
         )}
         style={{
           willChange: 'transform, opacity',
-          contain: 'content'
+          contain: 'content',
+          backgroundColor: (isHovered || isSelected) ? backgroundStyle : 'transparent',
+          borderColor: (isHovered || isSelected) ? borderStyle : 'transparent',
+          borderWidth: (isHovered || isSelected) ? '1px' : '0px',
+          borderStyle: 'solid'
         }}
       >
         {renderIcon()}
