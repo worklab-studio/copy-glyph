@@ -3,6 +3,7 @@ import { Check, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { toast } from "@/hooks/use-toast";
+import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 
 interface IconCardProps {
   icon: any;
@@ -13,11 +14,16 @@ interface IconCardProps {
 export function IconCard({ icon: Icon, name, set }: IconCardProps) {
   const [copied, setCopied] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const { customization } = useIconCustomization();
 
   const handleCopy = async () => {
     try {
-      // Generate SVG string
-      const svgString = `<${Icon.displayName || 'Icon'} className="w-6 h-6" />`;
+      // Generate SVG string with current customization
+      const svgString = `<${Icon.displayName || name} 
+  size={${customization.size}} 
+  color="${customization.color}" 
+  strokeWidth={${customization.strokeWidth}} 
+/>`;
       
       await navigator.clipboard.writeText(svgString);
       setCopied(true);
@@ -49,7 +55,12 @@ export function IconCard({ icon: Icon, name, set }: IconCardProps) {
             className="relative h-20 w-full flex-col gap-2 rounded-lg border border-transparent p-4 transition-all duration-200 hover:border-border hover:bg-hover-bg hover:shadow-sm"
           >
             <div className="flex h-8 w-8 items-center justify-center">
-              <Icon className="h-6 w-6 text-foreground transition-colors" />
+              <Icon 
+                size={customization.size} 
+                color={customization.color}
+                strokeWidth={customization.strokeWidth}
+                className="transition-colors" 
+              />
             </div>
             
             {/* Copy indicator */}
