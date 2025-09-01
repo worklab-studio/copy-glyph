@@ -97,36 +97,36 @@ function IconGridPage() {
           onSetChange={setSelectedSet}
         />
         
-        <div className="flex-1 flex flex-col overflow-hidden">{/* Prevent horizontal scroll */}
+        <div className="flex-1 flex flex-col h-screen">{/* Fixed layout container */}
           <Header 
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onSearchClear={() => setSearchQuery("")}
           />
           
-          <main className="flex-1 overflow-auto">
-            {/* Header with padding */}
-            <div className="px-6 pt-6 pb-4 border-b border-border/30">
-              <div className="space-y-1">
-                <h2 className="text-2xl font-semibold">
-                  {selectedSet === "all" ? "All Icons" : 
-                   selectedSet === "favorites" ? "Favorites" : 
-                   selectedSet === "lucide" ? "Lucide Icons" :
-                   selectedSet === "feather" ? "Feather Icons" :
-                   selectedSet === "heroicons-outline" ? "Heroicons Outline" :
-                   selectedSet === "heroicons-solid" ? "Heroicons Solid" :
-                   selectedSet === "phosphor" ? "Phosphor Icons" :
-                   selectedSet === "tabler" ? "Tabler Icons" :
-                   selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  {displayedIcons.length.toLocaleString()} icons
-                  {searchQuery && ` matching "${searchQuery}"`}
-                </p>
-              </div>
+          {/* Fixed header with padding */}
+          <div className="px-6 pt-6 pb-4 border-b border-border/30 bg-background">
+            <div className="space-y-1">
+              <h2 className="text-2xl font-semibold">
+                {selectedSet === "all" ? "All Icons" : 
+                 selectedSet === "favorites" ? "Favorites" : 
+                 selectedSet === "lucide" ? "Lucide Icons" :
+                 selectedSet === "feather" ? "Feather Icons" :
+                 selectedSet === "heroicons-outline" ? "Heroicons Outline" :
+                 selectedSet === "heroicons-solid" ? "Heroicons Solid" :
+                 selectedSet === "phosphor" ? "Phosphor Icons" :
+                 selectedSet === "tabler" ? "Tabler Icons" :
+                 selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {displayedIcons.length.toLocaleString()} icons
+                {searchQuery && ` matching "${searchQuery}"`}
+              </p>
             </div>
+          </div>
 
-            {/* Grid - edge to edge */}
+          {/* Scrollable main content */}
+          <main className="flex-1 overflow-hidden">
             {displayedIcons.length === 0 ? (
               <div className="flex h-64 items-center justify-center text-center px-6">
                 <div className="space-y-2">
@@ -153,7 +153,7 @@ function IconGridPage() {
             )}
           </main>
           
-          <footer className="border-t p-4 text-center text-xs text-muted-foreground">
+          <footer className="border-t p-4 text-center text-xs text-muted-foreground bg-background">
             <p>Built at Ossian Design Lab • <a href="mailto:support@notionicons.so" className="hover:text-primary">Support</a></p>
           </footer>
         </div>
