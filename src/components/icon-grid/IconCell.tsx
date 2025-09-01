@@ -232,7 +232,7 @@ export function IconCell({
         {/* Tooltip - shows after 0.5s hover, using exact same styling as copied tooltip */}
         {showTooltip && (
           <div 
-            className="z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md bg-foreground text-background text-xs py-1 px-2 absolute left-1/2 transform -translate-x-1/2 whitespace-nowrap pointer-events-none"
+            className="absolute left-1/2 transform -translate-x-1/2 bg-foreground text-background text-xs py-1 px-2 rounded whitespace-nowrap pointer-events-none z-50"
             style={{ 
               bottom: 'calc(100% + 4px)'
             }}
