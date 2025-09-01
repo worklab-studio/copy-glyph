@@ -1,5 +1,8 @@
-import { Package2, Home, Star, Layers, Map, Grid3X3, Box, Code2, Feather, Shield, Paintbrush, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table } from "lucide-react";
+import { useState } from "react";
+import { Package2, Home, Star, Layers, Map, Grid3X3, Box, Code2, Feather, Shield, Paintbrush, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, ChevronDown, ChevronRight } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator, useSidebar } from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 
 // Fixed top navigation items  
 const topNavItems = [{
@@ -19,22 +22,30 @@ const activeLibraries = [{
   name: "Lucide",
   id: "lucide", 
   count: 37,
-  icon: Zap
+  icon: Zap,
+  hasVariants: false
 }, {
   name: "Feather",
   id: "feather",
   count: 287,
-  icon: Feather
+  icon: Feather,
+  hasVariants: false
 }, {
   name: "Heroicons",
   id: "heroicons",
-  count: 292,
-  icon: Shield
+  count: 584,
+  icon: Shield,
+  hasVariants: true,
+  variants: [
+    { name: "Outline", id: "heroicons-outline", count: 292 },
+    { name: "Solid", id: "heroicons-solid", count: 292 }
+  ]
 }, {
   name: "Phosphor",
   id: "phosphor",
   count: 6000,
-  icon: Atom
+  icon: Atom,
+  hasVariants: false
 }];
 
 // Placeholder icon library sets (not implemented yet)
@@ -108,6 +119,7 @@ interface AppSidebarProps {
   selectedSet: string;
   onSetChange: (setId: string) => void;
 }
+
 export function AppSidebar({
   selectedSet,
   onSetChange
@@ -115,6 +127,22 @@ export function AppSidebar({
   const {
     open: sidebarOpen
   } = useSidebar();
+
+  const [expandedLibraries, setExpandedLibraries] = useState<Set<string>>(
+    new Set(['heroicons']) // Keep heroicons expanded by default
+  );
+
+  const toggleLibrary = (libraryId: string) => {
+    setExpandedLibraries(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(libraryId)) {
+        newSet.delete(libraryId);
+      } else {
+        newSet.add(libraryId);
+      }
+      return newSet;
+    });
+  };
   return <Sidebar className="w-64 border-r">
       <SidebarHeader className="border-b border-border/50 p-4">
         <div className="flex items-center gap-3">
@@ -157,17 +185,94 @@ export function AppSidebar({
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
-              {activeLibraries.map(library => <SidebarMenuItem key={library.id}>
-                  <SidebarMenuButton onClick={() => onSetChange(library.id)} isActive={selectedSet === library.id} className={`group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50 ${selectedSet === library.id ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
-                    <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
-                    {sidebarOpen && <>
-                        <span className="flex-1 truncate text-left">{library.name}</span>
-                        <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
-                          {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
-                        </span>
-                      </>}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>)}
+              {activeLibraries.map(library => {
+                if (!library.hasVariants) {
+                  return (
+                    <SidebarMenuItem key={library.id}>
+                      <SidebarMenuButton 
+                        onClick={() => onSetChange(library.id)} 
+                        isActive={selectedSet === library.id} 
+                        className={cn(
+                          "group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50",
+                          selectedSet === library.id 
+                            ? 'bg-accent text-accent-foreground shadow-sm' 
+                            : 'text-muted-foreground hover:text-foreground'
+                        )}
+                      >
+                        <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                        {sidebarOpen && (
+                          <>
+                            <span className="flex-1 truncate text-left">{library.name}</span>
+                            <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+                              {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
+                            </span>
+                          </>
+                        )}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                }
+
+                // Handle libraries with variants (like Heroicons)
+                const isExpanded = expandedLibraries.has(library.id);
+                const hasActiveVariant = library.variants?.some(variant => selectedSet === variant.id);
+
+                return (
+                  <SidebarMenuItem key={library.id}>
+                    <Collapsible open={isExpanded} onOpenChange={() => toggleLibrary(library.id)}>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton 
+                          className={cn(
+                            "group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50",
+                            hasActiveVariant 
+                              ? 'bg-accent/30 text-accent-foreground' 
+                              : 'text-muted-foreground hover:text-foreground'
+                          )}
+                        >
+                          <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                          {sidebarOpen && (
+                            <>
+                              <span className="flex-1 truncate text-left">{library.name}</span>
+                              <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+                                {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
+                              </span>
+                              {isExpanded ? (
+                                <ChevronDown className="ml-2 h-3 w-3" />
+                              ) : (
+                                <ChevronRight className="ml-2 h-3 w-3" />
+                              )}
+                            </>
+                          )}
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="pl-6">
+                        {library.variants?.map(variant => (
+                          <SidebarMenuButton
+                            key={variant.id}
+                            onClick={() => onSetChange(variant.id)}
+                            isActive={selectedSet === variant.id}
+                            className={cn(
+                              "group relative flex h-8 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50 mb-0.5",
+                              selectedSet === variant.id 
+                                ? 'bg-accent text-accent-foreground shadow-sm' 
+                                : 'text-muted-foreground hover:text-foreground'
+                            )}
+                          >
+                            {sidebarOpen && (
+                              <>
+                                <span className="flex-1 truncate text-left">{variant.name}</span>
+                                <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+                                  {variant.count.toLocaleString()}
+                                </span>
+                              </>
+                            )}
+                          </SidebarMenuButton>
+                        ))}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

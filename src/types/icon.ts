@@ -5,6 +5,8 @@ export type IconItem = {
   name: string;
   svg: string | ComponentType<any>;
   tags?: string[];
+  style?: string; // outline, solid, micro, mini, etc.
+  category?: string; // navigation, communication, system, etc.
 };
 
 export type IconGridProps = {

@@ -8,7 +8,8 @@ import { IconCustomizationProvider, useIconCustomization } from "@/contexts/Icon
 import { type IconItem } from "@/types/icon";
 import { toast } from "@/hooks/use-toast";
 import { featherIcons } from "@/data/feather-icons";
-import { heroiconsV2 } from "@/data/heroicons-v2";
+import { heroiconsOutline } from "@/data/heroicons-outline";
+import { heroiconsSolid } from "@/data/heroicons-solid";
 import { phosphorIcons } from "@/data/phosphor-icons";
 import { lucideIcons } from "@/data/lucide-icons";
 
@@ -16,7 +17,8 @@ import { lucideIcons } from "@/data/lucide-icons";
 const allIcons: IconItem[] = [
   ...lucideIcons,
   ...featherIcons,
-  ...heroiconsV2,
+  ...heroiconsOutline,
+  ...heroiconsSolid,
   ...phosphorIcons
 ];
 
@@ -57,8 +59,11 @@ function IconGridPage() {
     if (selectedSet === "feather") {
       return filteredIcons.filter(icon => icon.id.startsWith('feather-'));
     }
-    if (selectedSet === "heroicons") {
-      return filteredIcons.filter(icon => icon.id.startsWith('heroicons-'));
+    if (selectedSet === "heroicons-outline") {
+      return filteredIcons.filter(icon => icon.id.startsWith('heroicons-outline-'));
+    }
+    if (selectedSet === "heroicons-solid") {
+      return filteredIcons.filter(icon => icon.id.startsWith('heroicons-solid-'));
     }
     if (selectedSet === "phosphor") {
       return filteredIcons.filter(icon => icon.id.startsWith('phosphor-'));
@@ -103,7 +108,8 @@ function IconGridPage() {
                    selectedSet === "favorites" ? "Favorites" : 
                    selectedSet === "lucide" ? "Lucide Icons" :
                    selectedSet === "feather" ? "Feather Icons" :
-                   selectedSet === "heroicons" ? "Heroicons" :
+                   selectedSet === "heroicons-outline" ? "Heroicons Outline" :
+                   selectedSet === "heroicons-solid" ? "Heroicons Solid" :
                    selectedSet === "phosphor" ? "Phosphor Icons" :
                    selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
                 </h2>
