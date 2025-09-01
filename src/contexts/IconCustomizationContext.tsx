@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 
 interface IconCustomization {
   color: string;
@@ -24,6 +25,7 @@ const IconCustomizationContext = createContext<IconCustomizationContextType | un
 
 export function IconCustomizationProvider({ children }: { children: React.ReactNode }) {
   const [customization, setCustomization] = useState<IconCustomization>(defaultCustomization);
+  const { theme } = useTheme();
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -37,6 +39,28 @@ export function IconCustomizationProvider({ children }: { children: React.ReactN
       }
     }
   }, []);
+
+  // Auto-adjust color when theme changes for better visibility
+  useEffect(() => {
+    if (!theme) return; // Wait for theme to be loaded
+    
+    setCustomization(prev => {
+      const currentColor = prev.color.toLowerCase();
+      
+      // When switching to light mode: change white icons to black
+      if (theme === 'light' && currentColor === '#ffffff') {
+        return { ...prev, color: '#000000' };
+      }
+      
+      // When switching to dark mode: change black icons to white  
+      if (theme === 'dark' && currentColor === '#000000') {
+        return { ...prev, color: '#ffffff' };
+      }
+      
+      // No change needed for other colors
+      return prev;
+    });
+  }, [theme]);
 
   // Save to localStorage when customization changes
   useEffect(() => {
