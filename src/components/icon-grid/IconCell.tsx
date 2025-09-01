@@ -93,7 +93,7 @@ export function IconCell({
         className={cn(
           "group relative aspect-square flex items-center justify-center transition-all duration-200",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-          "hover:bg-black/5",
+          "hover:bg-black/10",
           "p-3",
           isSelected && "bg-black/10 border border-black/20",
           // Corner highlights on hover - all four corners
