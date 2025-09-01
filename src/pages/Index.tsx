@@ -38,6 +38,12 @@ function IconGridPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { customization } = useIconCustomization();
 
+  // Get the selected icon object
+  const selectedIcon = useMemo(() => {
+    if (!selectedId) return null;
+    return allIcons.find(icon => icon.id === selectedId) || null;
+  }, [selectedId]);
+
   // Filter icons based on search query
   const filteredIcons = useMemo(() => {
     if (!searchQuery) return allIcons;
@@ -136,7 +142,7 @@ function IconGridPage() {
           </footer>
         </div>
         
-        <ControlPanel />
+        <ControlPanel selectedIcon={selectedIcon} />
       </div>
     </SidebarProvider>
   );

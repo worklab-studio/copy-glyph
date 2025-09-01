@@ -72,10 +72,13 @@ export function IconCell({
       const IconComponent = icon.svg as React.ComponentType<any>;
       return (
         <IconComponent
-          size="clamp(24px,32%,40px)"
-          color={color}
-          strokeWidth={strokeWidth}
           className="transition-colors"
+          style={{
+            width: 'clamp(24px,32%,40px)',
+            height: 'clamp(24px,32%,40px)',
+            color,
+            strokeWidth,
+          }}
         />
       );
     }
@@ -113,20 +116,13 @@ export function IconCell({
       >
         {renderIcon()}
         
-        {/* Free badge for selected icon */}
-        {isSelected && (
-          <span className="absolute left-1.5 top-1.5 rounded-full bg-black/10 px-2 py-0.5 text-[11px] font-medium text-black/90">
-            Free
-          </span>
-        )}
-        
-        {/* Copy badge - shows on hover or when selected */}
-        {(isHovered || isSelected) && (
+        {/* Copy badge - shows on hover only */}
+        {isHovered && !isSelected && (
           <div 
             className="pointer-events-auto absolute bottom-1.5 right-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full border border-black/20 bg-black/10 text-xs text-black/90 cursor-pointer hover:bg-black/20 transition-colors"
             onClick={handleCopy}
           >
-            {isSelected ? "+" : <Copy className="h-3 w-3" />}
+            <Copy className="h-3 w-3" />
           </div>
         )}
       </button>

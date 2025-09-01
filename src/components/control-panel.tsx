@@ -7,8 +7,63 @@ import { Copy, Download } from "lucide-react";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { toast } from "@/hooks/use-toast";
 
-export function ControlPanel() {
+interface ControlPanelProps {
+  selectedIcon?: {
+    id: string;
+    name: string;
+    svg: string | React.ComponentType<any>;
+  } | null;
+}
+
+export function ControlPanel({ selectedIcon }: ControlPanelProps) {
   const { customization } = useIconCustomization();
+
+  const handleDownloadSVG = async () => {
+    if (!selectedIcon) return;
+    
+    try {
+      let svgContent = '';
+      
+      if (typeof selectedIcon.svg === 'string') {
+        svgContent = selectedIcon.svg;
+      } else {
+        // For React components, create a temporary SVG
+        const IconComponent = selectedIcon.svg as React.ComponentType<any>;
+        // This is a simplified approach - in a real app you'd want to render the component to get the actual SVG
+        svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${customization.color}" stroke-width="${customization.strokeWidth}" stroke-linecap="round" stroke-linejoin="round">
+          <!-- ${selectedIcon.name} icon -->
+          <circle cx="12" cy="12" r="10"/>
+        </svg>`;
+      }
+      
+      // Apply current customizations to the SVG
+      const customizedSVG = svgContent
+        .replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`)
+        .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+      
+      // Create and download the file
+      const blob = new Blob([customizedSVG], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${selectedIcon.name}.svg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast({
+        description: `${selectedIcon.name}.svg downloaded successfully!`,
+        duration: 2000,
+      });
+    } catch (error) {
+      toast({
+        description: "Failed to download SVG",
+        variant: "destructive",
+        duration: 2000,
+      });
+    }
+  };
 
   const handleCopySettings = async () => {
     try {
@@ -58,7 +113,8 @@ export function ControlPanel() {
               <Button
                 variant="outline"
                 size="sm"
-                disabled
+                onClick={handleDownloadSVG}
+                disabled={!selectedIcon}
                 className="text-xs"
               >
                 <Download className="h-3 w-3 mr-1" />
