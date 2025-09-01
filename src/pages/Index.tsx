@@ -4,6 +4,7 @@ import { Header } from "@/components/header";
 import { AppSidebar } from "@/components/app-sidebar";
 import { IconGrid } from "@/components/icon-grid/IconGrid";
 import { ControlPanel } from "@/components/control-panel";
+import { CategoryFilter } from "@/components/CategoryFilter";
 import { IconCustomizationProvider, useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { type IconItem } from "@/types/icon";
 import { toast } from "@/hooks/use-toast";
@@ -27,6 +28,7 @@ const allIcons: IconItem[] = [
 function IconGridPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSet, setSelectedSet] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { customization } = useIconCustomization();
 
@@ -47,8 +49,8 @@ function IconGridPage() {
     );
   }, [searchQuery]);
 
-  // Filter by selected set
-  const displayedIcons = useMemo(() => {
+  // Filter by selected set  
+  const libraryFilteredIcons = useMemo(() => {
     if (selectedSet === "favorites") {
       return []; // Empty for now - would load from localStorage
     }
@@ -75,6 +77,28 @@ function IconGridPage() {
     }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
+
+  // Get available categories from current icon set
+  const availableCategories = useMemo(() => {
+    const categories = new Set<string>();
+    libraryFilteredIcons.forEach(icon => {
+      if (icon.category) categories.add(icon.category);
+    });
+    return Array.from(categories).sort();
+  }, [libraryFilteredIcons]);
+
+  // Filter by category
+  const displayedIcons = useMemo(() => {
+    if (!selectedCategory) {
+      return libraryFilteredIcons;
+    }
+    return libraryFilteredIcons.filter(icon => icon.category === selectedCategory);
+  }, [libraryFilteredIcons, selectedCategory]);
+
+  // Reset category when library changes
+  React.useEffect(() => {
+    setSelectedCategory(null);
+  }, [selectedSet]);
 
   const handleCopy = (icon: IconItem) => {
     setSelectedId(icon.id);
@@ -106,22 +130,33 @@ function IconGridPage() {
           
           {/* Fixed header with padding */}
           <div className="px-6 pt-6 pb-4 border-b border-border/30 bg-background">
-            <div className="space-y-1">
-              <h2 className="text-2xl font-semibold">
-                {selectedSet === "all" ? "All Icons" : 
-                 selectedSet === "favorites" ? "Favorites" : 
-                 selectedSet === "lucide" ? "Lucide Icons" :
-                 selectedSet === "feather" ? "Feather Icons" :
-                 selectedSet === "heroicons-outline" ? "Heroicons Outline" :
-                 selectedSet === "heroicons-solid" ? "Heroicons Solid" :
-                 selectedSet === "phosphor" ? "Phosphor Icons" :
-                 selectedSet === "tabler" ? "Tabler Icons" :
-                 selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {displayedIcons.length.toLocaleString()} icons
-                {searchQuery && ` matching "${searchQuery}"`}
-              </p>
+            <div className="space-y-3">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-semibold">
+                    {selectedSet === "all" ? "All Icons" : 
+                     selectedSet === "favorites" ? "Favorites" : 
+                     selectedSet === "lucide" ? "Lucide Icons" :
+                     selectedSet === "feather" ? "Feather Icons" :
+                     selectedSet === "heroicons-outline" ? "Heroicons Outline" :
+                     selectedSet === "heroicons-solid" ? "Heroicons Solid" :
+                     selectedSet === "phosphor" ? "Phosphor Icons" :
+                     selectedSet === "tabler" ? "Tabler Icons" :
+                     selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    {displayedIcons.length.toLocaleString()} icons
+                    {searchQuery && ` matching "${searchQuery}"`}
+                    {selectedCategory && ` in ${selectedCategory}`}
+                  </p>
+                </div>
+                
+                <CategoryFilter 
+                  categories={availableCategories}
+                  selectedCategory={selectedCategory}
+                  onCategoryChange={setSelectedCategory}
+                />
+              </div>
             </div>
           </div>
 
