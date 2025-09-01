@@ -8,6 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
 
@@ -44,32 +45,46 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
 
   return (
     <Sidebar className="w-64 border-r">
-      <SidebarContent className="p-4">
+      <SidebarHeader className="border-b border-border/50 p-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
+            <span className="text-lg font-bold text-primary-foreground">N</span>
+          </div>
+          {sidebarOpen && (
+            <div className="flex flex-col">
+              <h1 className="text-lg font-semibold tracking-tight">NotionIcons</h1>
+              <p className="text-xs text-muted-foreground">40,000+ Free Icons</p>
+            </div>
+          )}
+        </div>
+      </SidebarHeader>
+      
+      <SidebarContent className="p-3">
         <SidebarGroup>
-          <SidebarGroupLabel className="mb-4 text-sm font-medium text-muted-foreground">
-            Icon Sets
+          <SidebarGroupLabel className="mb-3 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
+            Icon Libraries
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+            <SidebarMenu className="space-y-0.5">
               {iconSets.map((set) => (
                 <SidebarMenuItem key={set.id}>
                   <SidebarMenuButton
                     onClick={() => onSetChange(set.id)}
                     isActive={selectedSet === set.id}
-                    className={`w-full justify-start text-left transition-all hover:bg-hover-bg ${
+                    className={`group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50 ${
                       selectedSet === set.id
-                        ? 'bg-icon-hover text-primary font-medium'
-                        : ''
+                        ? 'bg-accent text-accent-foreground shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     <set.icon className="mr-3 h-4 w-4 flex-shrink-0" />
                     {sidebarOpen && (
-                      <div className="flex w-full items-center justify-between">
-                        <span className="truncate">{set.name}</span>
-                        <span className="ml-2 text-xs text-muted-foreground">
-                          {set.count.toLocaleString()}
+                      <>
+                        <span className="flex-1 truncate text-left">{set.name}</span>
+                        <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+                          {set.count > 1000 ? `${Math.floor(set.count / 1000)}k` : set.count.toLocaleString()}
                         </span>
-                      </div>
+                      </>
                     )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
