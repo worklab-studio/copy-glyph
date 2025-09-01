@@ -229,14 +229,14 @@ export function AppSidebar({
                       <div className="relative">
                         <SidebarMenuButton 
                           className={cn(
-                            "group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
+                            "relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
                             hasActiveVariant 
                               ? 'bg-accent/30 text-accent-foreground' 
                               : 'text-muted-foreground hover:text-foreground'
                           )}
                         >
                           {/* Icon area with hover replacement */}
-                          <div className="relative mr-3 h-4 w-4 flex-shrink-0 flex items-center justify-center">
+                          <div className="group relative mr-3 h-4 w-4 flex-shrink-0 flex items-center justify-center">
                             {/* Normal library icon */}
                             <library.icon className="h-4 w-4 transition-opacity duration-300 group-hover:opacity-0" />
                             {/* Dropdown trigger that replaces icon on hover */}
