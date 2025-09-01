@@ -24,6 +24,11 @@ const allIcons: IconItem[] = [
   ...tablerIcons
 ];
 
+// Debug logging
+console.log('Tabler icons count:', tablerIcons.length);
+console.log('Sample Tabler icon:', tablerIcons[0]);
+console.log('All icons count:', allIcons.length);
+
 function IconGridPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSet, setSelectedSet] = useState("all");
@@ -71,7 +76,9 @@ function IconGridPage() {
       return filteredIcons.filter(icon => icon.id.startsWith('phosphor-'));
     }
     if (selectedSet === "tabler") {
-      return filteredIcons.filter(icon => icon.id.startsWith('tabler-'));
+      const tablerFiltered = filteredIcons.filter(icon => icon.id.startsWith('tabler-'));
+      console.log('Tabler filtered icons:', tablerFiltered.length, 'out of', filteredIcons.length);
+      return tablerFiltered;
     }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
