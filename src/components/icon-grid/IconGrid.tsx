@@ -21,46 +21,37 @@ export function IconGrid({
     enabled: items.length > 100, // Only virtualize for large lists
   });
 
-  const gridLabel = useMemo(() => {
+  const computedAriaLabel = useMemo(() => {
     return ariaLabel || getGridAriaLabel(items.length);
   }, [ariaLabel, items.length]);
 
-  // Always use fixed grid columns (consistent with virtualized mode)
-  const fixedColumnsCount = 13; // Fixed number of columns for consistency
-  
-  // For small lists, render without virtualization but with fixed columns
+  // For small lists, render without virtualization with responsive columns
   if (items.length <= 100) {
     return (
       <div 
         className="w-full"
         style={{
           display: 'grid',
-          gridTemplateColumns: `repeat(${fixedColumnsCount}, 1fr)`,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
           gap: '0',
           backgroundImage: `
             repeating-linear-gradient(to right, rgba(0,0,0,0.1) 0 0.5px, transparent 0.5px 100%),
             repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0 0.5px, transparent 0.5px 100%)
           `,
+          backgroundSize: '1fr 1fr'
         }}
-        role="grid"
-        aria-label={gridLabel}
+        aria-label={computedAriaLabel}
       >
         {items.map((icon) => (
-            <IconCell
+          <IconCell
               key={icon.id}
               icon={icon}
-              isSelected={icon.id === selectedId}
+              isSelected={selectedId === icon.id}
               color={color}
               strokeWidth={strokeWidth}
               onCopy={onCopy}
               onIconClick={onIconClick}
             />
-        ))}
-        {/* Fill remaining cells to maintain grid structure */}
-        {Array.from({ length: fixedColumnsCount - (items.length % fixedColumnsCount) }).map((_, index) => (
-          items.length % fixedColumnsCount !== 0 && (
-            <div key={`empty-${index}`} className="aspect-square" />
-          )
         ))}
       </div>
     );
@@ -72,7 +63,7 @@ export function IconGrid({
       ref={containerRef}
       className="h-[600px] overflow-auto w-full"
       role="grid"
-      aria-label={gridLabel}
+      aria-label={computedAriaLabel}
     >
       <div
         style={{
@@ -100,7 +91,7 @@ export function IconGrid({
                 height: `${virtualItem.size}px`,
                 transform: `translateY(${virtualItem.start}px)`,
                 display: 'grid',
-                gridTemplateColumns: `repeat(${fixedColumnsCount}, 1fr)`,
+                gridTemplateColumns: `repeat(${columnsCount}, 1fr)`,
               }}
             >
               {row.map((icon) => (
@@ -116,8 +107,8 @@ export function IconGrid({
               ))}
               
               {/* Fill empty cells in the last row */}
-              {row.length < fixedColumnsCount && 
-                Array.from({ length: fixedColumnsCount - row.length }).map((_, index) => (
+              {row.length < columnsCount && 
+                Array.from({ length: columnsCount - row.length }).map((_, index) => (
                   <div key={`empty-${index}`} className="aspect-square" />
                 ))
               }
