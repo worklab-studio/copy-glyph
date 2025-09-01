@@ -81,25 +81,21 @@ function IconGridPage() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full">
+      <div className="flex min-h-screen w-full overflow-hidden">{/* Prevent horizontal scroll */}
         <AppSidebar 
           selectedSet={selectedSet}
           onSetChange={setSelectedSet}
         />
         
-        <div className="flex-1 flex flex-col">
-          {/* Fixed Header */}
-          <div className="sticky top-0 z-50 bg-background border-b">
-            <Header 
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-            />
-          </div>
+        <div className="flex-1 flex flex-col overflow-hidden">{/* Prevent horizontal scroll */}
+          <Header 
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+          />
           
-          {/* Main Content Area */}
-          <div className="flex-1 flex flex-col min-h-0">
-            {/* Page Header - fixed height section */}
-            <div className="flex-shrink-0 px-6 pt-6 pb-4 border-b border-border/30">
+          <main className="flex-1 overflow-auto">
+            {/* Header with padding */}
+            <div className="px-6 pt-6 pb-4 border-b border-border/30">
               <div className="space-y-1">
                 <h2 className="text-2xl font-semibold">
                   {selectedSet === "all" ? "All Icons" : 
@@ -117,23 +113,22 @@ function IconGridPage() {
               </div>
             </div>
 
-            {/* Scrollable Icon Grid */}
-            <div className="flex-1 min-h-0 overflow-auto">
-              {displayedIcons.length === 0 ? (
-                <div className="flex h-64 items-center justify-center text-center px-6">
-                  <div className="space-y-2">
-                    <p className="text-lg text-muted-foreground">
-                      {selectedSet === "favorites" ? "No favorites yet" : "No icons found"}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedSet === "favorites" 
-                        ? "Star some icons to see them here"
-                        : "Try a different search term or select a different library"
-                      }
-                    </p>
-                  </div>
+            {/* Grid - edge to edge */}
+            {displayedIcons.length === 0 ? (
+              <div className="flex h-64 items-center justify-center text-center px-6">
+                <div className="space-y-2">
+                  <p className="text-lg text-muted-foreground">
+                    {selectedSet === "favorites" ? "No favorites yet" : "No icons found"}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedSet === "favorites" 
+                      ? "Star some icons to see them here"
+                      : "Try a different search term or select a different library"
+                    }
+                  </p>
                 </div>
-              ) : (
+              </div>
+            ) : (
                 <IconGrid
                   items={displayedIcons}
                   selectedId={selectedId}
@@ -142,20 +137,15 @@ function IconGridPage() {
                   color={customization.color}
                   strokeWidth={customization.strokeWidth}
                 />
-              )}
-            </div>
-          </div>
+            )}
+          </main>
           
-          {/* Fixed Footer */}
-          <footer className="flex-shrink-0 border-t p-4 text-center text-xs text-muted-foreground bg-background">
+          <footer className="border-t p-4 text-center text-xs text-muted-foreground">
             <p>Built with ❤️ • <a href="mailto:support@notionicons.so" className="hover:text-primary">Support</a></p>
           </footer>
         </div>
         
-        {/* Fixed Control Panel */}
-        <div className="w-80 flex-shrink-0 border-l">
-          <ControlPanel selectedIcon={selectedIcon} />
-        </div>
+        <ControlPanel selectedIcon={selectedIcon} />
       </div>
     </SidebarProvider>
   );
