@@ -25,11 +25,11 @@ export function IconGrid({
     return ariaLabel || getGridAriaLabel(items.length);
   }, [ariaLabel, items.length]);
 
-  // Always use fixed height container with consistent layout
+  // Fixed height container matching Lucide's design
   return (
     <div 
       ref={containerRef}
-      className="h-[calc(100vh-200px)] overflow-auto w-full"
+      className="h-[600px] overflow-auto w-full"
       role="grid"
       aria-label={computedAriaLabel}
     >
