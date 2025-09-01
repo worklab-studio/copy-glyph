@@ -229,25 +229,28 @@ export function AppSidebar({
                       <div className="relative">
                         <SidebarMenuButton 
                           className={cn(
-                            "relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
+                            "group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
                             hasActiveVariant 
                               ? 'bg-accent/30 text-accent-foreground' 
                               : 'text-muted-foreground hover:text-foreground'
                           )}
                         >
-                          {/* Icon area with dropdown indicator */}
+                          {/* Icon area with hover replacement */}
                           <div className="relative mr-3 h-4 w-4 flex-shrink-0 flex items-center justify-center">
-                            <library.icon className="h-4 w-4" />
-                            {/* Dropdown chevron in corner on hover */}
-                            <CollapsibleTrigger asChild>
-                              <button className="absolute -top-1 -right-1 opacity-0 hover:opacity-100 transition-opacity duration-200 flex items-center justify-center w-3 h-3 rounded-full bg-background border border-border/30 hover:bg-accent/50">
-                                {isExpanded ? (
-                                  <ChevronDown className="h-2 w-2" />
-                                ) : (
-                                  <ChevronRight className="h-2 w-2" />
-                                )}
-                              </button>
-                            </CollapsibleTrigger>
+                            {/* Normal library icon - hidden on group hover */}
+                            <library.icon className="h-4 w-4 transition-opacity duration-200 group-hover:opacity-0" />
+                            {/* Dropdown chevron - shown on group hover */}
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                              <CollapsibleTrigger asChild>
+                                <button className="flex h-4 w-4 items-center justify-center text-current">
+                                  {isExpanded ? (
+                                    <ChevronDown className="h-4 w-4" />
+                                  ) : (
+                                    <ChevronRight className="h-4 w-4" />
+                                  )}
+                                </button>
+                              </CollapsibleTrigger>
+                            </div>
                           </div>
                           {sidebarOpen && (
                             <>
