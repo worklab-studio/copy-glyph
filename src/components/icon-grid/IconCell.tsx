@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Copy } from "lucide-react";
 import { type IconItem } from "@/types/icon";
 import { copyIcon } from "@/lib/copy";
@@ -29,9 +30,11 @@ export function IconCell({
   const [isHovered, setIsHovered] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const { customization } = useIconCustomization();
   const { theme } = useTheme();
-  const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Convert hex color to RGB for background opacity
   const hexToRgb = (hex: string) => {
@@ -169,13 +172,24 @@ export function IconCell({
   };
 
   return (
-    <CopyTooltip showCopied={showCopied}>
-      <button
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
+    <>
+      <CopyTooltip showCopied={showCopied}>
+        <button
+          ref={buttonRef}
+          onClick={handleClick}
+          onKeyDown={handleKeyDown}
         onMouseEnter={() => {
           setIsHovered(true);
-          hoverTimeoutRef.current = setTimeout(() => setShowTooltip(true), 500);
+          hoverTimeoutRef.current = setTimeout(() => {
+            if (buttonRef.current) {
+              const rect = buttonRef.current.getBoundingClientRect();
+              setTooltipPosition({
+                x: rect.left + rect.width / 2,
+                y: rect.top - 10
+              });
+              setShowTooltip(true);
+            }
+          }, 500);
         }}
         onMouseLeave={() => {
           setIsHovered(false);
@@ -220,19 +234,25 @@ export function IconCell({
         />
         
         {renderIcon()}
-        
-        {/* Tooltip - shows after 0.5s hover */}
-        {showTooltip && !isSelected && (
-          <div 
-            className="absolute -top-10 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs bg-background text-foreground rounded border shadow-lg whitespace-nowrap z-50 pointer-events-none"
-            style={{
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-            }}
-          >
-            Double click to copy icon
-          </div>
-        )}
-      </button>
-    </CopyTooltip>
+        </button>
+      </CopyTooltip>
+      
+      {/* Tooltip portal - shows after 0.5s hover */}
+      {showTooltip && createPortal(
+        <div 
+          className="fixed px-2 py-1 text-xs bg-popover text-popover-foreground rounded border shadow-lg whitespace-nowrap pointer-events-none"
+          style={{
+            left: tooltipPosition.x,
+            top: tooltipPosition.y,
+            transform: 'translateX(-50%)',
+            zIndex: 9999,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+          }}
+        >
+          Double click to copy icon
+        </div>,
+        document.body
+      )}
+    </>
   );
 }
