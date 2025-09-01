@@ -72,7 +72,7 @@ export function IconGrid({ searchQuery, selectedSet }: IconGridProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-6 gap-4">
+      <div className="grid grid-cols-4 gap-2 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10">
         {displayedIcons.map(([name, icon]) => (
           <IconCard
             key={name}

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Check, Copy01 as Copy } from "@untitled-ui/icons-react";
-import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { toast } from "@/hooks/use-toast";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
@@ -55,30 +54,14 @@ export function IconCard({ icon: Icon, name, set }: IconCardProps) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
+          <div
             onClick={handleCopy}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="relative aspect-square w-full flex-col gap-3 rounded-xl border border-transparent p-6 transition-all duration-300 hover:border-border hover:bg-hover-bg hover:shadow-lg hover:scale-105"
+            className="relative aspect-square w-full cursor-pointer rounded-lg border border-transparent bg-card transition-all duration-200 hover:border-border hover:bg-accent/5 hover:shadow-sm"
           >
-            <div className="flex h-12 w-12 items-center justify-center mx-auto">
-              {isValidIcon ? (
-                <Icon 
-                  size={customization.size} 
-                  color={customization.color}
-                  strokeWidth={customization.strokeWidth}
-                  className="transition-colors" 
-                />
-              ) : (
-                <div className="w-6 h-6 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">
-                  ?
-                </div>
-              )}
-            </div>
-            
             {/* Copy indicator */}
-            <div className={`absolute right-2 top-2 transition-opacity duration-200 ${
+            <div className={`absolute right-1.5 top-1.5 transition-opacity duration-200 ${
               isHovered || copied ? 'opacity-100' : 'opacity-0'
             }`}>
               {copied ? (
@@ -88,10 +71,29 @@ export function IconCard({ icon: Icon, name, set }: IconCardProps) {
               )}
             </div>
             
-            <span className="text-xs text-muted-foreground truncate w-full text-center">
-              {name}
-            </span>
-          </Button>
+            {/* Icon area - takes up 75% of card height */}
+            <div className="flex h-3/4 w-full items-center justify-center">
+              {isValidIcon ? (
+                <Icon 
+                  size={Math.max(20, customization.size)} 
+                  color={customization.color}
+                  strokeWidth={customization.strokeWidth}
+                  className="transition-colors" 
+                />
+              ) : (
+                <div className="flex h-6 w-6 items-center justify-center rounded bg-muted text-xs text-muted-foreground">
+                  ?
+                </div>
+              )}
+            </div>
+            
+            {/* Text area - bottom 25% */}
+            <div className="flex h-1/4 w-full items-center justify-center px-1">
+              <span className="truncate text-xs text-muted-foreground">
+                {name}
+              </span>
+            </div>
+          </div>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="animate-fade-in">
           <p>{copied ? "Copied!" : "Click to copy"}</p>
