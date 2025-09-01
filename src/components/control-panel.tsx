@@ -200,7 +200,7 @@ export function ControlPanel({ selectedIcon }: ControlPanelProps) {
               className="w-full text-xs"
             >
               <Download className="h-3 w-3 mr-1" />
-              Download SVG
+              Download svg icon
             </Button>
           </div>
           

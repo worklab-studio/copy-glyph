@@ -7,6 +7,7 @@ import { CopyTooltip } from "@/components/ui/copy-tooltip";
 import { cn } from "@/lib/utils";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { useTheme } from "next-themes";
+import { renderToStaticMarkup } from "react-dom/server";
 
 interface IconCellProps {
   icon: IconItem;
@@ -27,8 +28,10 @@ export function IconCell({
 }: IconCellProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const { customization } = useIconCustomization();
   const { theme } = useTheme();
+  const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   // Convert hex color to RGB for background opacity
   const hexToRgb = (hex: string) => {
@@ -83,6 +86,43 @@ export function IconCell({
     onIconClick?.(icon);
   }, [icon, onIconClick]);
 
+  const handleDoubleClick = useCallback(async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    try {
+      let svgString: string;
+
+      if (typeof icon.svg === 'string') {
+        svgString = icon.svg;
+      } else {
+        // Render the React component to SVG string
+        const IconComponent = icon.svg as React.ComponentType<any>;
+        const element = React.createElement(IconComponent, {
+          size: 24,
+          strokeWidth: customization.strokeWidth,
+          color: customization.color
+        });
+        
+        svgString = renderToStaticMarkup(element);
+      }
+
+      // Apply current customizations to the SVG
+      const customizedSVG = svgString
+        .replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`)
+        .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+
+      await navigator.clipboard.writeText(customizedSVG);
+      setShowCopied(true);
+      onCopy?.(icon);
+      
+      // Auto-hide tooltip after 1.2s
+      setTimeout(() => setShowCopied(false), 1200);
+    } catch (error) {
+      console.error('Copy failed:', error);
+    }
+  }, [icon, onCopy, customization]);
+
   const handleCopy = useCallback(async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -133,8 +173,19 @@ export function IconCell({
       <button
         onClick={handleClick}
         onKeyDown={handleKeyDown}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          hoverTimeoutRef.current = setTimeout(() => setShowTooltip(true), 1500);
+        }}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          setShowTooltip(false);
+          if (hoverTimeoutRef.current) {
+            clearTimeout(hoverTimeoutRef.current);
+            hoverTimeoutRef.current = null;
+          }
+        }}
+        onDoubleClick={handleDoubleClick}
         tabIndex={0}
         role="button"
         aria-label={getIconAriaLabel(icon.name, isSelected)}
@@ -170,13 +221,12 @@ export function IconCell({
         
         {renderIcon()}
         
-        {/* Copy badge - shows on hover only */}
-        {isHovered && !isSelected && (
+        {/* Tooltip - shows after 1.5s hover */}
+        {showTooltip && !isSelected && (
           <div 
-            className="pointer-events-auto absolute bottom-1.5 right-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full border border-black/20 bg-black/10 text-xs text-black/90 cursor-pointer hover:bg-black/20 transition-colors"
-            onClick={handleCopy}
+            className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs bg-popover text-popover-foreground rounded border shadow-md whitespace-nowrap z-10"
           >
-            <Copy className="h-3 w-3" />
+            double click to copy icon
           </div>
         )}
       </button>
