@@ -229,10 +229,10 @@ export function IconCell({
         
         {renderIcon()}
         
-        {/* Tooltip - shows after 0.5s hover, positioned like copied tooltip */}
+        {/* Tooltip - shows after 0.5s hover, positioned exactly like copied tooltip */}
         {showTooltip && (
           <div 
-            className="absolute -top-9 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs bg-foreground text-background rounded whitespace-nowrap pointer-events-none"
+            className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-foreground text-background text-xs py-1 px-2 rounded whitespace-nowrap pointer-events-none"
             style={{ zIndex: 1000 }}
           >
             Double click to copy icon
