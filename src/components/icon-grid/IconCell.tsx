@@ -89,7 +89,13 @@ export function IconCell({
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
           "hover:bg-black/5",
           "p-3",
-          isSelected && "bg-black/10 border border-black/20"
+          isSelected && "bg-black/10 border border-black/20",
+          // Corner highlights on hover
+          "before:absolute before:inset-0 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-200",
+          "before:[background-image:linear-gradient(to_right,rgba(0,0,0,0.3)_0_8px,transparent_8px),linear-gradient(to_right,rgba(0,0,0,0.3)_0_8px,transparent_8px),linear-gradient(to_bottom,rgba(0,0,0,0.3)_0_8px,transparent_8px),linear-gradient(to_bottom,rgba(0,0,0,0.3)_0_8px,transparent_8px)]",
+          "before:[background-position:left_top,right_top,left_top,left_bottom]",
+          "before:[background-size:8px_2px,8px_2px,2px_8px,2px_8px]",
+          "before:[background-repeat:no-repeat]"
         )}
         style={{
           willChange: 'transform, opacity',
