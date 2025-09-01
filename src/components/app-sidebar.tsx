@@ -1,4 +1,4 @@
-import { Package2, Home, Star } from "lucide-react";
+import { Package2, Home, Star, Layers, Map, Grid3X3, Box, Code2, Feather, Shield, Paintbrush, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator, useSidebar } from "@/components/ui/sidebar";
 
 // Fixed top navigation items
@@ -19,87 +19,87 @@ const iconLibraries = [{
   name: "Untitled UI",
   id: "untitled-ui",
   count: 2400,
-  icon: Package2
+  icon: Layers
 }, {
   name: "Atlas",
   id: "atlas",
   count: 1800,
-  icon: Package2
+  icon: Map
 }, {
   name: "Bootstrap",
   id: "bootstrap",
   count: 1600,
-  icon: Package2
+  icon: Grid3X3
 }, {
   name: "Boxicons",
   id: "boxicons",
   count: 1500,
-  icon: Package2
+  icon: Box
 }, {
   name: "CSS.GG",
   id: "css-gg",
   count: 700,
-  icon: Package2
+  icon: Code2
 }, {
   name: "Feather",
   id: "feather",
   count: 287,
-  icon: Package2
+  icon: Feather
 }, {
   name: "Heroicons",
   id: "heroicons",
   count: 292,
-  icon: Package2
+  icon: Shield
 }, {
   name: "Iconoir",
   id: "iconoir",
   count: 1400,
-  icon: Package2
+  icon: Paintbrush
 }, {
   name: "Lucide",
   id: "lucide",
   count: 1200,
-  icon: Package2
+  icon: Zap
 }, {
   name: "Majesticons",
   id: "majesticons",
   count: 720,
-  icon: Package2
+  icon: Crown
 }, {
   name: "Material Icons",
   id: "material",
   count: 10000,
-  icon: Package2
+  icon: Palette
 }, {
   name: "Phosphor",
   id: "phosphor",
   count: 6000,
-  icon: Package2
+  icon: Atom
 }, {
   name: "Pixelarticons",
   id: "pixelart",
   count: 460,
-  icon: Package2
+  icon: Gamepad2
 }, {
   name: "Remix",
   id: "remix",
   count: 2800,
-  icon: Package2
+  icon: Music
 }, {
   name: "Scarlab",
   id: "scarlab",
   count: 300,
-  icon: Package2
+  icon: TestTube
 }, {
   name: "Simple Icons",
   id: "simple",
   count: 2700,
-  icon: Package2
+  icon: Circle
 }, {
   name: "Tabler",
   id: "tabler",
   count: 4500,
-  icon: Package2
+  icon: Table
 }];
 interface AppSidebarProps {
   selectedSet: string;
