@@ -226,35 +226,42 @@ export function AppSidebar({
                 return (
                   <SidebarMenuItem key={library.id}>
                     <Collapsible open={isExpanded} onOpenChange={() => toggleLibrary(library.id)}>
-                      <CollapsibleTrigger asChild>
+                      <div className="relative">
                         <SidebarMenuButton 
                           className={cn(
-                            "group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
+                            "relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
                             hasActiveVariant 
                               ? 'bg-accent/30 text-accent-foreground' 
                               : 'text-muted-foreground hover:text-foreground'
                           )}
                         >
-                          {/* Library icon that disappears on hover */}
-                          <library.icon className="mr-3 h-4 w-4 flex-shrink-0 opacity-100 group-hover:opacity-0 transition-opacity duration-200" />
+                          {/* Icon area with hover replacement */}
+                          <div className="relative mr-3 h-4 w-4 flex-shrink-0 flex items-center justify-center">
+                            {/* Normal library icon */}
+                            <library.icon className="h-4 w-4 transition-opacity duration-300 group-hover:opacity-0" />
+                            {/* Dropdown trigger that replaces icon on hover */}
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                              <CollapsibleTrigger asChild>
+                                <button className="flex h-4 w-4 items-center justify-center rounded text-current hover:bg-accent/20 transition-colors duration-300">
+                                  {isExpanded ? (
+                                    <ChevronDown className="h-3 w-3" />
+                                  ) : (
+                                    <ChevronRight className="h-3 w-3" />
+                                  )}
+                                </button>
+                              </CollapsibleTrigger>
+                            </div>
+                          </div>
                           {sidebarOpen && (
                             <>
-                              <span className="flex-1 truncate text-left">{library.name}</span>
+                              <span className="group flex-1 truncate text-left">{library.name}</span>
                               <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
                                 {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
                               </span>
                             </>
                           )}
-                          {/* Chevron that replaces icon on hover, positioned to the right */}
-                          <div className="absolute right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                            {isExpanded ? (
-                              <ChevronDown className="h-4 w-4" />
-                            ) : (
-                              <ChevronRight className="h-4 w-4" />
-                            )}
-                          </div>
                         </SidebarMenuButton>
-                      </CollapsibleTrigger>
+                      </div>
                       <CollapsibleContent className="pl-6">
                         {library.variants?.map(variant => (
                           <SidebarMenuButton
