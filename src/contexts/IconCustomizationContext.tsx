@@ -15,7 +15,7 @@ interface IconCustomizationContextType {
 }
 
 const defaultCustomization: IconCustomization = {
-  color: '#664FC2',
+  color: '#ffffff',
   strokeWidth: 2,
   size: 24,
 };
