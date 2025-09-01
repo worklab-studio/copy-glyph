@@ -6,31 +6,19 @@ import { IconGrid } from "@/components/icon-grid/IconGrid";
 import { ControlPanel } from "@/components/control-panel";
 import { IconCustomizationProvider, useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { type IconItem } from "@/types/icon";
-import { 
-  Activity, AlertCircle, Archive, ArrowDown, ArrowLeft, ArrowRight, ArrowUp, 
-  Bell, Bookmark, Calendar, Camera, Check, Clock,
-  Download, Edit, Eye, EyeOff, File, Globe, Heart,
-  Home, Image, Lock, Mail, Menu, Minus,
-  Phone, Play, Plus, Search, Send, Settings,
-  Share, Star, Sun, Upload, User
-} from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { featherIcons } from "@/data/feather-icons";
+import { heroiconsV2 } from "@/data/heroicons-v2";
+import { phosphorIcons } from "@/data/phosphor-icons";
+import { lucideIcons } from "@/data/lucide-icons";
 
-// Transform Lucide icons to IconItem format
-const iconMap = {
-  Home, User, Settings, Search, Menu, Heart, Star, Check, Plus,
-  Minus, Edit, Download, Upload, Mail, Phone, Calendar, Clock,
-  ArrowRight, ArrowLeft, ArrowUp, ArrowDown, Play,
-  Camera, Image, File, Globe, Lock, Eye, EyeOff, Bell, 
-  Send, Share, Archive, Bookmark, Sun, Activity, AlertCircle
-};
-
-const allIcons: IconItem[] = Object.entries(iconMap).map(([name, IconComponent]) => ({
-  id: name.toLowerCase(),
-  name,
-  svg: IconComponent,
-  tags: [name.toLowerCase()]
-}));
+// Combine all icon libraries
+const allIcons: IconItem[] = [
+  ...lucideIcons,
+  ...featherIcons,
+  ...heroiconsV2,
+  ...phosphorIcons
+];
 
 function IconGridPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,8 +48,20 @@ function IconGridPage() {
     if (selectedSet === "favorites") {
       return []; // Empty for now - would load from localStorage
     }
-    if (selectedSet === "untitled-ui" || selectedSet === "all") {
+    if (selectedSet === "all") {
       return filteredIcons;
+    }
+    if (selectedSet === "lucide") {
+      return filteredIcons.filter(icon => icon.id.startsWith('lucide-'));
+    }
+    if (selectedSet === "feather") {
+      return filteredIcons.filter(icon => icon.id.startsWith('feather-'));
+    }
+    if (selectedSet === "heroicons") {
+      return filteredIcons.filter(icon => icon.id.startsWith('heroicons-'));
+    }
+    if (selectedSet === "phosphor") {
+      return filteredIcons.filter(icon => icon.id.startsWith('phosphor-'));
     }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
@@ -100,7 +100,10 @@ function IconGridPage() {
                 <h2 className="text-2xl font-semibold">
                   {selectedSet === "all" ? "All Icons" : 
                    selectedSet === "favorites" ? "Favorites" : 
-                   selectedSet === "untitled-ui" ? "Untitled UI Icons" :
+                   selectedSet === "lucide" ? "Lucide Icons" :
+                   selectedSet === "feather" ? "Feather Icons" :
+                   selectedSet === "heroicons" ? "Heroicons" :
+                   selectedSet === "phosphor" ? "Phosphor Icons" :
                    selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
                 </h2>
                 <p className="text-sm text-muted-foreground">

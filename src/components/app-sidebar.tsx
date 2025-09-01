@@ -1,23 +1,46 @@
 import { Package2, Home, Star, Layers, Map, Grid3X3, Box, Code2, Feather, Shield, Paintbrush, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator, useSidebar } from "@/components/ui/sidebar";
 
-// Fixed top navigation items
+// Fixed top navigation items  
 const topNavItems = [{
   name: "All Icons",
   id: "all",
-  count: 40000,
+  count: 10000, // Approximate total from all libraries
   icon: Home
 }, {
-  name: "Favorites",
+  name: "Favorites", 
   id: "favorites",
   count: 0,
   icon: Star
 }];
 
-// Scrollable icon library sets
-const iconLibraries = [{
+// Active icon libraries (actually implemented)
+const activeLibraries = [{
+  name: "Lucide",
+  id: "lucide", 
+  count: 37,
+  icon: Zap
+}, {
+  name: "Feather",
+  id: "feather",
+  count: 287,
+  icon: Feather
+}, {
+  name: "Heroicons",
+  id: "heroicons",
+  count: 292,
+  icon: Shield
+}, {
+  name: "Phosphor",
+  id: "phosphor",
+  count: 6000,
+  icon: Atom
+}];
+
+// Placeholder icon library sets (not implemented yet)
+const placeholderLibraries = [{
   name: "Untitled UI",
-  id: "untitled-ui",
+  id: "untitled-ui", 
   count: 2400,
   icon: Layers
 }, {
@@ -26,7 +49,7 @@ const iconLibraries = [{
   count: 1800,
   icon: Map
 }, {
-  name: "Bootstrap",
+  name: "Bootstrap", 
   id: "bootstrap",
   count: 1600,
   icon: Grid3X3
@@ -41,25 +64,10 @@ const iconLibraries = [{
   count: 700,
   icon: Code2
 }, {
-  name: "Feather",
-  id: "feather",
-  count: 287,
-  icon: Feather
-}, {
-  name: "Heroicons",
-  id: "heroicons",
-  count: 292,
-  icon: Shield
-}, {
   name: "Iconoir",
   id: "iconoir",
   count: 1400,
   icon: Paintbrush
-}, {
-  name: "Lucide",
-  id: "lucide",
-  count: 1200,
-  icon: Zap
 }, {
   name: "Majesticons",
   id: "majesticons",
@@ -71,13 +79,8 @@ const iconLibraries = [{
   count: 10000,
   icon: Palette
 }, {
-  name: "Phosphor",
-  id: "phosphor",
-  count: 6000,
-  icon: Atom
-}, {
   name: "Pixelarticons",
-  id: "pixelart",
+  id: "pixelart", 
   count: 460,
   icon: Gamepad2
 }, {
@@ -147,19 +150,43 @@ export function AppSidebar({
 
         <SidebarSeparator className="my-3" />
 
-        {/* Scrollable icon libraries */}
-        <SidebarGroup className="flex-1 overflow-hidden">
+        {/* Active icon libraries */}
+        <SidebarGroup className="flex-shrink-0">
           <SidebarGroupLabel className="mb-3 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
-            Icon Libraries
+            Available Libraries
           </SidebarGroupLabel>
-          <SidebarGroupContent className="h-full overflow-y-auto">
+          <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
-              {iconLibraries.map(library => <SidebarMenuItem key={library.id}>
+              {activeLibraries.map(library => <SidebarMenuItem key={library.id}>
                   <SidebarMenuButton onClick={() => onSetChange(library.id)} isActive={selectedSet === library.id} className={`group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50 ${selectedSet === library.id ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
                     <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
                     {sidebarOpen && <>
                         <span className="flex-1 truncate text-left">{library.name}</span>
                         <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+                          {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
+                        </span>
+                      </>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>)}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator className="my-3" />
+
+        {/* Placeholder icon libraries */}
+        <SidebarGroup className="flex-1 overflow-hidden">
+          <SidebarGroupLabel className="mb-3 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
+            Coming Soon
+          </SidebarGroupLabel>
+          <SidebarGroupContent className="h-full overflow-y-auto">
+            <SidebarMenu className="space-y-0.5">
+              {placeholderLibraries.map(library => <SidebarMenuItem key={library.id}>
+                  <SidebarMenuButton disabled className="group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium text-muted-foreground/50 cursor-not-allowed">
+                    <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                    {sidebarOpen && <>
+                        <span className="flex-1 truncate text-left">{library.name}</span>
+                        <span className="ml-2 rounded-full bg-muted/50 px-2 py-0.5 text-xs tabular-nums text-muted-foreground/50">
                           {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
                         </span>
                       </>}
