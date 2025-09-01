@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Copy, Download } from "lucide-react";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { toast } from "@/hooks/use-toast";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 
 interface ControlPanelProps {
   selectedIcon?: {
@@ -27,13 +29,15 @@ export function ControlPanel({ selectedIcon }: ControlPanelProps) {
       if (typeof selectedIcon.svg === 'string') {
         svgContent = selectedIcon.svg;
       } else {
-        // For React components, create a temporary SVG
+        // Render the React component to SVG string
         const IconComponent = selectedIcon.svg as React.ComponentType<any>;
-        // This is a simplified approach - in a real app you'd want to render the component to get the actual SVG
-        svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${customization.color}" stroke-width="${customization.strokeWidth}" stroke-linecap="round" stroke-linejoin="round">
-          <!-- ${selectedIcon.name} icon -->
-          <circle cx="12" cy="12" r="10"/>
-        </svg>`;
+        const element = React.createElement(IconComponent, {
+          size: 24,
+          strokeWidth: customization.strokeWidth,
+          color: customization.color
+        });
+        
+        svgContent = renderToStaticMarkup(element);
       }
       
       // Apply current customizations to the SVG
@@ -65,17 +69,46 @@ export function ControlPanel({ selectedIcon }: ControlPanelProps) {
     }
   };
 
-  const handleCopySettings = async () => {
-    try {
-      const settings = `color: ${customization.color}, stroke: ${customization.strokeWidth}px`;
-      await navigator.clipboard.writeText(settings);
+  const handleCopySVG = async () => {
+    if (!selectedIcon) {
       toast({
-        description: "Settings copied to clipboard!",
+        description: "Please select an icon first",
+        variant: "destructive",
+        duration: 2000,
+      });
+      return;
+    }
+
+    try {
+      let svgContent = '';
+      
+      if (typeof selectedIcon.svg === 'string') {
+        svgContent = selectedIcon.svg;
+      } else {
+        // Render the React component to SVG string
+        const IconComponent = selectedIcon.svg as React.ComponentType<any>;
+        const element = React.createElement(IconComponent, {
+          size: 24,
+          strokeWidth: customization.strokeWidth,
+          color: customization.color
+        });
+        
+        svgContent = renderToStaticMarkup(element);
+      }
+
+      // Apply current customizations to the SVG
+      const customizedSVG = svgContent
+        .replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`)
+        .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+
+      await navigator.clipboard.writeText(customizedSVG);
+      toast({
+        description: "SVG copied to clipboard!",
         duration: 2000,
       });
     } catch (error) {
       toast({
-        description: "Failed to copy settings",
+        description: "Failed to copy SVG",
         variant: "destructive",
         duration: 2000,
       });
@@ -104,11 +137,12 @@ export function ControlPanel({ selectedIcon }: ControlPanelProps) {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={handleCopySettings}
+                onClick={handleCopySVG}
+                disabled={!selectedIcon}
                 className="text-xs"
               >
                 <Copy className="h-3 w-3 mr-1" />
-                Copy CSS
+                Copy SVG
               </Button>
               <Button
                 variant="outline"
