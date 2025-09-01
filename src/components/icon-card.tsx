@@ -58,27 +58,31 @@ export function IconCard({ icon: Icon, name, set }: IconCardProps) {
             onClick={handleCopy}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="relative aspect-square w-full cursor-pointer rounded-lg border border-transparent bg-card transition-all duration-200 hover:border-border hover:bg-accent/5 hover:shadow-sm"
+            className="group relative aspect-square w-full cursor-pointer rounded-md border border-border/20 bg-background/50 p-3 transition-all duration-200 hover:border-border hover:bg-accent/10 hover:shadow-sm"
           >
             {/* Copy indicator */}
-            <div className={`absolute right-1.5 top-1.5 transition-opacity duration-200 ${
+            <div className={`absolute right-1 top-1 z-10 transition-opacity duration-200 ${
               isHovered || copied ? 'opacity-100' : 'opacity-0'
             }`}>
               {copied ? (
-                <Check className="h-3 w-3 text-green-500" />
+                <div className="rounded-sm bg-green-500/10 p-0.5">
+                  <Check className="h-2.5 w-2.5 text-green-500" />
+                </div>
               ) : (
-                <Copy className="h-3 w-3 text-muted-foreground" />
+                <div className="rounded-sm bg-background/80 p-0.5">
+                  <Copy className="h-2.5 w-2.5 text-muted-foreground" />
+                </div>
               )}
             </div>
             
-            {/* Icon area - takes up 75% of card height */}
-            <div className="flex h-3/4 w-full items-center justify-center">
+            {/* Icon centered in the card */}
+            <div className="flex h-full w-full items-center justify-center">
               {isValidIcon ? (
                 <Icon 
-                  size={Math.max(20, customization.size)} 
+                  size={24} 
                   color={customization.color}
                   strokeWidth={customization.strokeWidth}
-                  className="transition-colors" 
+                  className="transition-all duration-200 group-hover:scale-110" 
                 />
               ) : (
                 <div className="flex h-6 w-6 items-center justify-center rounded bg-muted text-xs text-muted-foreground">
@@ -86,17 +90,13 @@ export function IconCard({ icon: Icon, name, set }: IconCardProps) {
                 </div>
               )}
             </div>
-            
-            {/* Text area - bottom 25% */}
-            <div className="flex h-1/4 w-full items-center justify-center px-1">
-              <span className="truncate text-xs text-muted-foreground">
-                {name}
-              </span>
-            </div>
           </div>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="animate-fade-in">
-          <p>{copied ? "Copied!" : "Click to copy"}</p>
+          <div className="text-xs">
+            <div className="font-medium">{name}</div>
+            <div className="text-muted-foreground">{copied ? "Copied!" : "Click to copy"}</div>
+          </div>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
