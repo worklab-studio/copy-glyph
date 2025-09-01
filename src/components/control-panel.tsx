@@ -69,6 +69,31 @@ export function ControlPanel({ selectedIcon }: ControlPanelProps) {
     }
   };
 
+  const getCustomizedSVG = () => {
+    if (!selectedIcon) return '';
+    
+    let svgContent = '';
+    
+    if (typeof selectedIcon.svg === 'string') {
+      svgContent = selectedIcon.svg;
+    } else {
+      // Render the React component to SVG string
+      const IconComponent = selectedIcon.svg as React.ComponentType<any>;
+      const element = React.createElement(IconComponent, {
+        size: 24,
+        strokeWidth: customization.strokeWidth,
+        color: customization.color
+      });
+      
+      svgContent = renderToStaticMarkup(element);
+    }
+
+    // Apply current customizations to the SVG
+    return svgContent
+      .replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`)
+      .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+  };
+
   const handleCopySVG = async () => {
     if (!selectedIcon) {
       toast({
@@ -80,27 +105,8 @@ export function ControlPanel({ selectedIcon }: ControlPanelProps) {
     }
 
     try {
-      let svgContent = '';
+      const customizedSVG = getCustomizedSVG();
       
-      if (typeof selectedIcon.svg === 'string') {
-        svgContent = selectedIcon.svg;
-      } else {
-        // Render the React component to SVG string
-        const IconComponent = selectedIcon.svg as React.ComponentType<any>;
-        const element = React.createElement(IconComponent, {
-          size: 24,
-          strokeWidth: customization.strokeWidth,
-          color: customization.color
-        });
-        
-        svgContent = renderToStaticMarkup(element);
-      }
-
-      // Apply current customizations to the SVG
-      const customizedSVG = svgContent
-        .replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`)
-        .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
-
       // Encode SVG as data URL
       const encodedSVG = encodeURIComponent(customizedSVG);
       const dataURL = `data:image/svg+xml,${encodedSVG}`;
@@ -113,6 +119,33 @@ export function ControlPanel({ selectedIcon }: ControlPanelProps) {
     } catch (error) {
       toast({
         description: "Failed to copy SVG",
+        variant: "destructive",
+        duration: 2000,
+      });
+    }
+  };
+
+  const handleCopyXML = async () => {
+    if (!selectedIcon) {
+      toast({
+        description: "Please select an icon first",
+        variant: "destructive",
+        duration: 2000,
+      });
+      return;
+    }
+
+    try {
+      const customizedSVG = getCustomizedSVG();
+
+      await navigator.clipboard.writeText(customizedSVG);
+      toast({
+        description: "SVG XML copied to clipboard!",
+        duration: 2000,
+      });
+    } catch (error) {
+      toast({
+        description: "Failed to copy XML",
         variant: "destructive",
         duration: 2000,
       });
@@ -151,14 +184,24 @@ export function ControlPanel({ selectedIcon }: ControlPanelProps) {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={handleDownloadSVG}
+                onClick={handleCopyXML}
                 disabled={!selectedIcon}
                 className="text-xs"
               >
-                <Download className="h-3 w-3 mr-1" />
-                SVG
+                <Copy className="h-3 w-3 mr-1" />
+                Copy XML
               </Button>
             </div>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={handleDownloadSVG}
+              disabled={!selectedIcon}
+              className="w-full text-xs"
+            >
+              <Download className="h-3 w-3 mr-1" />
+              Download SVG
+            </Button>
           </div>
           
           <div className="mt-6 p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground">
