@@ -154,7 +154,7 @@ function IconGridPage() {
           </main>
           
           <footer className="border-t p-4 text-center text-xs text-muted-foreground">
-            <p>Built with ❤️ at Ossian Design Lab • <a href="mailto:support@notionicons.so" className="hover:text-primary">Support</a></p>
+            <p>Built at Ossian Design Lab • <a href="mailto:support@notionicons.so" className="hover:text-primary">Support</a></p>
           </footer>
         </div>
         
