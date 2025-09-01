@@ -61,28 +61,19 @@ export function IconCell({
       return (
         <div 
           dangerouslySetInnerHTML={{ __html: icon.svg }}
-          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors [&_svg]:stroke-current [&_path]:!stroke-current [&_svg]:!stroke-[var(--stroke-width)] [&_path]:!stroke-[var(--stroke-width)]"
-          style={{ 
-            color,
-            '--stroke-width': strokeWidth,
-          } as React.CSSProperties & { '--stroke-width': number }}
+          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors"
+          style={{ color }}
         />
       );
     } else {
       const IconComponent = icon.svg as React.ComponentType<any>;
       return (
-        <div
-          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors [&_svg]:stroke-current [&_path]:!stroke-current [&_svg]:!stroke-[var(--stroke-width)] [&_path]:!stroke-[var(--stroke-width)]"
-          style={{
-            color,
-            '--stroke-width': strokeWidth,
-          } as React.CSSProperties & { '--stroke-width': number }}
-        >
-          <IconComponent
-            className="w-full h-full"
-            size="100%"
-          />
-        </div>
+        <IconComponent
+          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors"
+          color={color}
+          strokeWidth={strokeWidth}
+          size="clamp(24px,32%,40px)"
+        />
       );
     }
   };

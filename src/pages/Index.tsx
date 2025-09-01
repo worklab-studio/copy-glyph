@@ -8,15 +8,15 @@ import { IconCustomizationProvider, useIconCustomization } from "@/contexts/Icon
 import { type IconItem } from "@/types/icon";
 import { 
   Activity, AlertCircle, Archive, ArrowDown, ArrowLeft, ArrowRight, ArrowUp, 
-  Bell01 as Bell, Bookmark, Calendar, Camera01 as Camera, Check, Clock,
-  Download01 as Download, Edit02 as Edit, Eye, EyeOff, File02 as File, Globe01 as Globe, Heart,
-  Home01 as Home, Image01 as Image, Lock01 as Lock, Mail01 as Mail, Menu01 as Menu, Minus,
-  Phone, Play, Plus, SearchLg as Search, Send01 as Send, Settings01 as Settings,
-  Share01 as Share, Star01 as Star, Sun, Upload01 as Upload, User01 as User
-} from "@untitled-ui/icons-react";
+  Bell, Bookmark, Calendar, Camera, Check, Clock,
+  Download, Edit, Eye, EyeOff, File, Globe, Heart,
+  Home, Image, Lock, Mail, Menu, Minus,
+  Phone, Play, Plus, Search, Send, Settings,
+  Share, Star, Sun, Upload, User
+} from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
-// Transform Untitled UI icons to IconItem format
+// Transform Lucide icons to IconItem format
 const iconMap = {
   Home, User, Settings, Search, Menu, Heart, Star, Check, Plus,
   Minus, Edit, Download, Upload, Mail, Phone, Calendar, Clock,
