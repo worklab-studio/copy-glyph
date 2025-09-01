@@ -98,6 +98,9 @@ export function IconCell({
       hoverTimeoutRef.current = null;
     }
     
+    // Check if this is a hero icon (filled icons don't use stroke width)
+    const isHeroIcon = icon.id.startsWith('heroicons-');
+    
     try {
       let svgString: string;
 
@@ -106,19 +109,26 @@ export function IconCell({
       } else {
         // Render the React component to SVG string
         const IconComponent = icon.svg as React.ComponentType<any>;
-        const element = React.createElement(IconComponent, {
+        const iconProps: any = {
           size: 24,
-          strokeWidth: customization.strokeWidth,
           color: customization.color
-        });
+        };
         
+        // Only add strokeWidth for non-hero icons
+        if (!isHeroIcon) {
+          iconProps.strokeWidth = customization.strokeWidth;
+        }
+        
+        const element = React.createElement(IconComponent, iconProps);
         svgString = renderToStaticMarkup(element);
       }
 
-      // Apply current customizations to the SVG
-      const customizedSVG = svgString
-        .replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`)
-        .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+      // Apply current customizations to the SVG (skip stroke-width for hero icons)
+      let customizedSVG = svgString.replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`);
+      
+      if (!isHeroIcon) {
+        customizedSVG = customizedSVG.replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+      }
 
       await navigator.clipboard.writeText(customizedSVG);
       setShowCopied(true);
@@ -159,6 +169,9 @@ export function IconCell({
     const iconColor = customization.color;
     const iconStrokeWidth = customization.strokeWidth;
     
+    // Check if this is a hero icon (filled icons don't use stroke width)
+    const isHeroIcon = icon.id.startsWith('heroicons-');
+    
     if (typeof icon.svg === 'string') {
       return (
         <div 
@@ -179,8 +192,10 @@ export function IconCell({
       // Apply size as number (32px equivalent for consistent sizing)
       iconProps.size = 32;
       
-      // Apply strokeWidth for libraries that support it (Lucide, some react-icons)
-      iconProps.strokeWidth = iconStrokeWidth;
+      // Apply strokeWidth for libraries that support it (exclude hero icons)
+      if (!isHeroIcon) {
+        iconProps.strokeWidth = iconStrokeWidth;
+      }
       
       // Apply color prop (most libraries support this)
       iconProps.color = iconColor;
