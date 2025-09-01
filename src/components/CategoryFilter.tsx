@@ -1,7 +1,11 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface CategoryFilterProps {
   categories: string[];
@@ -16,42 +20,32 @@ export function CategoryFilter({
 }: CategoryFilterProps) {
   if (categories.length === 0) return null;
 
+  const handleValueChange = (value: string) => {
+    onCategoryChange(value === "all" ? null : value);
+  };
+
   return (
-    <div className="flex flex-wrap gap-2 items-center">
-      <span className="text-sm text-muted-foreground mr-2 hidden sm:inline">
-        Categories:
+    <div className="flex items-center gap-2">
+      <span className="text-sm text-muted-foreground hidden sm:inline">
+        Category:
       </span>
       
-      <Button
-        variant={selectedCategory === null ? "default" : "outline"}
-        size="sm"
-        onClick={() => onCategoryChange(null)}
-        className={cn(
-          "h-7 px-3 text-xs font-medium",
-          selectedCategory === null 
-            ? "bg-primary text-primary-foreground" 
-            : "text-muted-foreground hover:text-foreground"
-        )}
+      <Select
+        value={selectedCategory || "all"}
+        onValueChange={handleValueChange}
       >
-        All
-      </Button>
-      
-      {categories.map(category => (
-        <Button
-          key={category}
-          variant={selectedCategory === category ? "default" : "outline"}
-          size="sm"
-          onClick={() => onCategoryChange(category)}
-          className={cn(
-            "h-7 px-3 text-xs font-medium capitalize",
-            selectedCategory === category 
-              ? "bg-primary text-primary-foreground" 
-              : "text-muted-foreground hover:text-foreground"
-          )}
-        >
-          {category.replace('-', ' ')}
-        </Button>
-      ))}
+        <SelectTrigger className="w-[140px] h-8">
+          <SelectValue placeholder="All categories" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All categories</SelectItem>
+          {categories.map(category => (
+            <SelectItem key={category} value={category}>
+              {category.charAt(0).toUpperCase() + category.slice(1).replace('-', ' ')}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }
