@@ -235,26 +235,23 @@ export function AppSidebar({
                               : 'text-muted-foreground hover:text-foreground'
                           )}
                         >
-                          {/* Icon area with hover replacement */}
-                          <div className="group relative mr-3 h-4 w-4 flex-shrink-0 flex items-center justify-center">
-                            {/* Normal library icon */}
-                            <library.icon className="h-4 w-4 transition-opacity duration-300 group-hover:opacity-0" />
-                            {/* Dropdown trigger that replaces icon on hover */}
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                              <CollapsibleTrigger asChild>
-                                <button className="flex h-4 w-4 items-center justify-center rounded text-current hover:bg-accent/20 transition-colors duration-300">
-                                  {isExpanded ? (
-                                    <ChevronDown className="h-3 w-3" />
-                                  ) : (
-                                    <ChevronRight className="h-3 w-3" />
-                                  )}
-                                </button>
-                              </CollapsibleTrigger>
-                            </div>
+                          {/* Icon area with dropdown indicator */}
+                          <div className="relative mr-3 h-4 w-4 flex-shrink-0 flex items-center justify-center">
+                            <library.icon className="h-4 w-4" />
+                            {/* Dropdown chevron in corner on hover */}
+                            <CollapsibleTrigger asChild>
+                              <button className="absolute -top-1 -right-1 opacity-0 hover:opacity-100 transition-opacity duration-200 flex items-center justify-center w-3 h-3 rounded-full bg-background border border-border/30 hover:bg-accent/50">
+                                {isExpanded ? (
+                                  <ChevronDown className="h-2 w-2" />
+                                ) : (
+                                  <ChevronRight className="h-2 w-2" />
+                                )}
+                              </button>
+                            </CollapsibleTrigger>
                           </div>
                           {sidebarOpen && (
                             <>
-                              <span className="group flex-1 truncate text-left">{library.name}</span>
+                              <span className="flex-1 truncate text-left">{library.name}</span>
                               <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
                                 {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
                               </span>
