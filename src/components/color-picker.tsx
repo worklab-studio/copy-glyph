@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 
 const presetColors = [
-  // Row 1 - Vibrant colors
-  "#FF0000", "#FF8800", "#FFDD00", "#00FF00", "#00FFAA", "#0088FF", "#4400FF", "#FF00AA",
-  // Row 2 - Muted colors
-  "#DC2626", "#EA580C", "#EAB308", "#16A34A", "#14B8A6", "#3B82F6", "#8B5CF6", "#EC4899"
+  // Row 1 - Essential colors including white and blue
+  "#ffffff", "#000000", "#3B82F6", "#664FC2", "#FF0000", "#FF8800", "#FFDD00", "#00FF00",
+  // Row 2 - Additional vibrant and muted colors  
+  "#00FFAA", "#0088FF", "#4400FF", "#FF00AA", "#DC2626", "#EA580C", "#EAB308", "#16A34A"
 ];
 
 // Convert Hex to HSV
@@ -80,7 +80,7 @@ const rgbToHex = (r: number, g: number, b: number) => {
 export function ColorPicker() {
   const { customization, updateColor } = useIconCustomization();
   const [hexInput, setHexInput] = useState(customization.color);
-  const [hue, setHue] = useState(270);
+  const [hue, setHue] = useState(220);
   const [saturation, setSaturation] = useState(0.6);
   const [value, setValue] = useState(0.8);
   const [isDragging, setIsDragging] = useState(false);
