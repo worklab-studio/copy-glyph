@@ -2,6 +2,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useRef, useEffect } from "react";
 
 interface HeaderProps {
   searchQuery: string;
@@ -9,6 +10,26 @@ interface HeaderProps {
 }
 
 export function Header({ searchQuery, onSearchChange }: HeaderProps) {
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Add keyboard shortcut for Cmd+K / Ctrl+K
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+        event.preventDefault();
+        searchInputRef.current?.focus();
+        searchInputRef.current?.select();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Detect if user is on Mac for the right key indicator
+  const isMac = typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  const shortcutKey = isMac ? '⌘K' : 'Ctrl+K';
+
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
@@ -20,7 +41,8 @@ export function Header({ searchQuery, onSearchChange }: HeaderProps) {
           <div className="relative w-full max-w-md">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search icons..."
+              ref={searchInputRef}
+              placeholder={`Search icons... (${shortcutKey})`}
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               className="h-10 pl-10 pr-4 shadow-search transition-all focus:shadow-elegant"
