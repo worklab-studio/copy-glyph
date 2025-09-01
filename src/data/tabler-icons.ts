@@ -1,4 +1,37 @@
 import { type IconItem } from '@/types/icon';
+import { tablerIconMap } from '../../TrablerStroke';
 
-// Tabler icons data - currently empty, awaiting new file
-export const tablerIcons: IconItem[] = [];
+// Helper function to parse metadata from HTML comments
+function parseIconMetadata(svgString: string): { category?: string; tags?: string[] } {
+  const commentMatch = svgString.match(/<!--\s*(.*?)\s*-->/s);
+  if (!commentMatch) return {};
+
+  const commentContent = commentMatch[1];
+  const categoryMatch = commentContent.match(/category:\s*([^\n]+)/);
+  const tagsMatch = commentContent.match(/tags:\s*\[(.*?)\]/);
+
+  return {
+    category: categoryMatch?.[1]?.trim(),
+    tags: tagsMatch?.[1]?.split(',').map(tag => tag.trim().replace(/['"]/g, '')) || []
+  };
+}
+
+// Helper function to clean SVG content (remove HTML comments)
+function cleanSvgContent(svgString: string): string {
+  return svgString.replace(/<!--[\s\S]*?-->/g, '').trim();
+}
+
+// Transform the tablerIconMap into IconItem array
+export const tablerIcons: IconItem[] = Object.entries(tablerIconMap).map(([iconName, svgContent]: [string, string]) => {
+  const metadata = parseIconMetadata(svgContent);
+  const cleanSvg = cleanSvgContent(svgContent);
+
+  return {
+    id: `tabler-${iconName}`,
+    name: iconName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+    svg: cleanSvg,
+    tags: metadata.tags || [],
+    style: 'outline',
+    category: metadata.category || 'General'
+  };
+});

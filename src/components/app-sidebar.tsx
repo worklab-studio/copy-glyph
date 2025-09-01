@@ -49,7 +49,7 @@ const activeLibraries = [{
 }, {
   name: "Tabler",
   id: "tabler",
-  count: 4500,
+  count: 4968,
   icon: Table,
   hasVariants: false
 }];
