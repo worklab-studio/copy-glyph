@@ -9,33 +9,8 @@ interface UseVirtualGridProps {
 }
 
 export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtualGridProps) {
-  // Calculate responsive columns based on container width
-  const [columnsCount, setColumnsCount] = useState(6);
-  
-  // Calculate columns based on container width
-  useEffect(() => {
-    const updateColumns = () => {
-      if (!containerRef.current) return;
-      
-      const containerWidth = containerRef.current.offsetWidth;
-      const padding = 32; // 16px each side
-      const availableWidth = containerWidth - padding;
-      
-      // Minimum cell width of 80px for responsive behavior
-      const minCellWidth = 80;
-      const columns = Math.max(3, Math.floor(availableWidth / minCellWidth));
-      setColumnsCount(columns);
-    };
-
-    updateColumns();
-    
-    const resizeObserver = new ResizeObserver(updateColumns);
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
-    
-    return () => resizeObserver.disconnect();
-  }, [containerRef]);
+  // Fixed columns count matching Lucide's layout
+  const columnsCount = 10;
 
   // Group items into rows with fixed column count
   const rows = useMemo(() => {

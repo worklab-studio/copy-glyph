@@ -25,11 +25,11 @@ export function IconGrid({
     return ariaLabel || getGridAriaLabel(items.length);
   }, [ariaLabel, items.length]);
 
-  // Fixed height container matching Lucide's design
+  // Fixed size container matching Lucide's exact dimensions
   return (
     <div 
       ref={containerRef}
-      className="h-[600px] overflow-auto w-full"
+      className="w-[800px] h-[600px] overflow-auto mx-auto"
       role="grid"
       aria-label={computedAriaLabel}
     >
@@ -40,10 +40,6 @@ export function IconGrid({
             height: `${virtualizer.getTotalSize()}px`,
             width: '100%',
             position: 'relative',
-            backgroundImage: `
-              repeating-linear-gradient(to right, rgba(0,0,0,0.1) 0 0.5px, transparent 0.5px 100%),
-              repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0 0.5px, transparent 0.5px 100%)
-            `,
           }}
         >
           {virtualizer.getVirtualItems().map((virtualItem) => {
@@ -61,7 +57,8 @@ export function IconGrid({
                   height: `${virtualItem.size}px`,
                   transform: `translateY(${virtualItem.start}px)`,
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
+                  gridTemplateColumns: 'repeat(10, 80px)',
+                  justifyContent: 'center',
                 }}
               >
                 {row.map((icon) => (
@@ -84,13 +81,9 @@ export function IconGrid({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
+            gridTemplateColumns: 'repeat(10, 80px)',
+            justifyContent: 'center',
             gap: '0',
-            backgroundImage: `
-              repeating-linear-gradient(to right, rgba(0,0,0,0.1) 0 0.5px, transparent 0.5px 100%),
-              repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0 0.5px, transparent 0.5px 100%)
-            `,
-            backgroundSize: '1fr 1fr'
           }}
         >
           {items.map((icon) => (
