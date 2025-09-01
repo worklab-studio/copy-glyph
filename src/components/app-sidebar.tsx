@@ -235,23 +235,24 @@ export function AppSidebar({
                               : 'text-muted-foreground hover:text-foreground'
                           )}
                         >
-                          <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                          {/* Library icon that disappears on hover */}
+                          <library.icon className="mr-3 h-4 w-4 flex-shrink-0 opacity-100 group-hover:opacity-0 transition-opacity duration-200" />
                           {sidebarOpen && (
                             <>
                               <span className="flex-1 truncate text-left">{library.name}</span>
                               <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
                                 {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
                               </span>
-                              {/* Chevron that appears on hover */}
-                              <div className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                {isExpanded ? (
-                                  <ChevronDown className="h-3 w-3" />
-                                ) : (
-                                  <ChevronRight className="h-3 w-3" />
-                                )}
-                              </div>
                             </>
                           )}
+                          {/* Chevron that replaces icon on hover, positioned to the right */}
+                          <div className="absolute right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            {isExpanded ? (
+                              <ChevronDown className="h-4 w-4" />
+                            ) : (
+                              <ChevronRight className="h-4 w-4" />
+                            )}
+                          </div>
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
                       <CollapsibleContent className="pl-6">
