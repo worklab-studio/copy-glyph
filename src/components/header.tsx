@@ -45,7 +45,7 @@ export function Header({ searchQuery, onSearchChange }: HeaderProps) {
               placeholder="Search icons..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="h-10 pl-10 pr-16 shadow-search transition-all focus:shadow-elegant"
+              className="h-10 pl-10 pr-16 transition-all"
             />
             <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:flex items-center">
               <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">

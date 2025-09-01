@@ -26,14 +26,14 @@ export function StrokeSlider() {
         <Slider
           value={[customization.strokeWidth]}
           onValueChange={(value) => updateStrokeWidth(value[0])}
-          min={0.25}
+          min={0.5}
           max={3}
           step={0.25}
           className="w-full"
         />
         
         <div className="flex justify-between text-xs text-muted-foreground">
-          <span>0.25</span>
+          <span>0.5</span>
           <span className="font-medium text-foreground">
             {customization.strokeWidth}px
           </span>
