@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Package2, Home, Star, Layers, Map, Grid3X3, Box, Code2, Feather, Shield, Paintbrush, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, ChevronDown, ChevronRight } from "lucide-react";
+import { Package2, Home, Star, Layers, Map, Grid3X3, Box, Code2, Feather, Shield, Paintbrush, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, ChevronDown, ChevronRight, Hash } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator, useSidebar } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
@@ -45,6 +45,12 @@ const activeLibraries = [{
   id: "phosphor",
   count: 6000,
   icon: Atom,
+  hasVariants: false
+}, {
+  name: "Tabler",
+  id: "tabler",
+  count: 1000,
+  icon: Hash,
   hasVariants: false
 }];
 
@@ -109,11 +115,6 @@ const placeholderLibraries = [{
   id: "simple",
   count: 2700,
   icon: Circle
-}, {
-  name: "Tabler",
-  id: "tabler",
-  count: 4500,
-  icon: Table
 }];
 interface AppSidebarProps {
   selectedSet: string;
