@@ -1,6 +1,6 @@
 import React from 'react';
 import { type IconItem } from '@/types/icon';
-import tablerIconMap from '../../Tabler';
+import { tablerIconMap } from '../../Tabler';
 
 // Helper function to parse metadata from SVG comments
 function parseIconMetadata(svgString: string) {

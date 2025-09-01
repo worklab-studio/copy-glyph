@@ -46,6 +46,12 @@ const activeLibraries = [{
   count: 6000,
   icon: Atom,
   hasVariants: false
+}, {
+  name: "Tabler",
+  id: "tabler",
+  count: 4500,
+  icon: Table,
+  hasVariants: false
 }];
 
 // Placeholder icon library sets (not implemented yet)
@@ -109,11 +115,6 @@ const placeholderLibraries = [{
   id: "simple",
   count: 2700,
   icon: Circle
-}, {
-  name: "Tabler",
-  id: "tabler",
-  count: 4500,
-  icon: Table
 }];
 interface AppSidebarProps {
   selectedSet: string;
