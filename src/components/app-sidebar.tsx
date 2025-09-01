@@ -262,7 +262,7 @@ export function AppSidebar({
                           )}
                         </SidebarMenuButton>
                       </div>
-                      <CollapsibleContent className="pl-7">
+                      <CollapsibleContent className="pl-10">
                         {library.variants?.map(variant => (
                           <SidebarMenuButton
                             key={variant.id}
