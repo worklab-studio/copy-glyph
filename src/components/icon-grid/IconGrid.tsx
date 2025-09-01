@@ -26,7 +26,7 @@ export function IconGrid({
   }, [ariaLabel, items.length]);
 
   // Always use fixed grid columns (consistent with virtualized mode)
-  const fixedColumnsCount = 8; // Fixed number of columns for consistency
+  const fixedColumnsCount = 13; // Fixed number of columns for consistency
   
   // For small lists, render without virtualization but with fixed columns
   if (items.length <= 100) {

@@ -10,7 +10,7 @@ interface UseVirtualGridProps {
 
 export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtualGridProps) {
   // Fixed columns count for consistency across all libraries
-  const columnsCount = 8;
+  const columnsCount = 13;
 
   // Group items into rows with fixed column count
   const rows = useMemo(() => {
