@@ -91,7 +91,7 @@ export function IconGrid({
                 height: `${virtualItem.size}px`,
                 transform: `translateY(${virtualItem.start}px)`,
                 display: 'grid',
-                gridTemplateColumns: `repeat(${columnsCount}, 1fr)`,
+                gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
               }}
             >
               {row.map((icon) => (
@@ -105,13 +105,6 @@ export function IconGrid({
                   onIconClick={onIconClick}
                 />
               ))}
-              
-              {/* Fill empty cells in the last row */}
-              {row.length < columnsCount && 
-                Array.from({ length: columnsCount - row.length }).map((_, index) => (
-                  <div key={`empty-${index}`} className="aspect-square" />
-                ))
-              }
             </div>
           );
         })}

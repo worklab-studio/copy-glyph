@@ -81,13 +81,13 @@ function IconGridPage() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full">
+      <div className="flex min-h-screen w-full overflow-hidden">{/* Prevent horizontal scroll */}
         <AppSidebar 
           selectedSet={selectedSet}
           onSetChange={setSelectedSet}
         />
         
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col overflow-hidden">{/* Prevent horizontal scroll */}
           <Header 
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
