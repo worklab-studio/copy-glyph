@@ -1,11 +1,11 @@
 import { Package2, Home, Star, Layers, Map, Grid3X3, Box, Code2, Feather, Shield, Paintbrush, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator, useSidebar } from "@/components/ui/sidebar";
 
-// Fixed top navigation items  
+// Fixed top navigation items
 const topNavItems = [{
   name: "All Icons",
   id: "all",
-  count: 324, // 37 Lucide + 287 Feather
+  count: 40000,
   icon: Home
 }, {
   name: "Favorites",
@@ -58,7 +58,7 @@ const iconLibraries = [{
 }, {
   name: "Lucide",
   id: "lucide",
-  count: 37,
+  count: 1200,
   icon: Zap
 }, {
   name: "Majesticons",

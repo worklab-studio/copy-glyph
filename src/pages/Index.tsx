@@ -6,12 +6,31 @@ import { IconGrid } from "@/components/icon-grid/IconGrid";
 import { ControlPanel } from "@/components/control-panel";
 import { IconCustomizationProvider, useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { type IconItem } from "@/types/icon";
+import { 
+  Activity, AlertCircle, Archive, ArrowDown, ArrowLeft, ArrowRight, ArrowUp, 
+  Bell, Bookmark, Calendar, Camera, Check, Clock,
+  Download, Edit, Eye, EyeOff, File, Globe, Heart,
+  Home, Image, Lock, Mail, Menu, Minus,
+  Phone, Play, Plus, Search, Send, Settings,
+  Share, Star, Sun, Upload, User
+} from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { lucideIcons } from "@/data/lucide-icons";
-import { featherIcons } from "@/data/feather-icons";
 
-// Combine all icon sets
-const allIcons: IconItem[] = [...lucideIcons, ...featherIcons];
+// Transform Lucide icons to IconItem format
+const iconMap = {
+  Home, User, Settings, Search, Menu, Heart, Star, Check, Plus,
+  Minus, Edit, Download, Upload, Mail, Phone, Calendar, Clock,
+  ArrowRight, ArrowLeft, ArrowUp, ArrowDown, Play,
+  Camera, Image, File, Globe, Lock, Eye, EyeOff, Bell, 
+  Send, Share, Archive, Bookmark, Sun, Activity, AlertCircle
+};
+
+const allIcons: IconItem[] = Object.entries(iconMap).map(([name, IconComponent]) => ({
+  id: name.toLowerCase(),
+  name,
+  svg: IconComponent,
+  tags: [name.toLowerCase()]
+}));
 
 function IconGridPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,17 +60,10 @@ function IconGridPage() {
     if (selectedSet === "favorites") {
       return []; // Empty for now - would load from localStorage
     }
-    if (selectedSet === "all") {
+    if (selectedSet === "untitled-ui" || selectedSet === "all") {
       return filteredIcons;
     }
-    if (selectedSet === "lucide") {
-      return filteredIcons.filter(icon => icon.id.startsWith("lucide-"));
-    }
-    if (selectedSet === "feather") {
-      return filteredIcons.filter(icon => icon.id.startsWith("feather-"));
-    }
-    // Other sets not implemented yet
-    return [];
+    return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
 
   const handleCopy = (icon: IconItem) => {
@@ -88,8 +100,6 @@ function IconGridPage() {
                 <h2 className="text-2xl font-semibold">
                   {selectedSet === "all" ? "All Icons" : 
                    selectedSet === "favorites" ? "Favorites" : 
-                   selectedSet === "lucide" ? "Lucide Icons" :
-                   selectedSet === "feather" ? "Feather Icons" :
                    selectedSet === "untitled-ui" ? "Untitled UI Icons" :
                    selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
                 </h2>
