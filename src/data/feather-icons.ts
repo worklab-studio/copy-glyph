@@ -24,24 +24,10 @@ export const featherIcons: IconItem[] = featherIconNames.map(name => {
     ...(name.includes('Lock') || name.includes('Shield') ? ['security', 'privacy'] : []),
   ];
 
-  const category = 
-    name.includes('Arrow') ? 'navigation' :
-    name.includes('Alert') ? 'status' :
-    name.includes('Settings') || name.includes('Tool') ? 'system' :
-    name.includes('User') || name.includes('Person') ? 'user' :
-    name.includes('Mail') || name.includes('Message') ? 'communication' :
-    name.includes('File') || name.includes('Folder') ? 'files' :
-    name.includes('Play') || name.includes('Pause') || name.includes('Music') ? 'media' :
-    name.includes('Heart') || name.includes('Star') ? 'social' :
-    name.includes('Lock') || name.includes('Shield') ? 'security' :
-    'actions';
-
   return {
     id: `feather-${name.toLowerCase()}`,
     name: displayName,
     svg: IconComponent,
-    tags: [...new Set(tags)],
-    style: 'outline' as const,
-    category
+    tags: [...new Set(tags)] // Remove duplicates
   };
 });

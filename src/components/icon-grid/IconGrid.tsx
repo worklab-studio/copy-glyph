@@ -1,6 +1,5 @@
 import React, { useRef, useMemo } from "react";
 import { type IconGridProps } from "@/types/icon";
-import { CategorySection } from "./CategorySection";
 import { IconCell } from "./IconCell";
 import { useVirtualGrid } from "./useVirtualGrid";
 import { getGridAriaLabel } from "@/lib/a11y";
@@ -26,31 +25,16 @@ export function IconGrid({
     return ariaLabel || getGridAriaLabel(items.length);
   }, [ariaLabel, items.length]);
 
-  // Group icons by category
-  const groupedIcons = useMemo(() => {
-    const categoryOrder = ['navigation', 'communication', 'media', 'files', 'system', 'user', 'security', 'time', 'finance', 'social', 'status', 'actions', 'shopping', 'other'];
-    const grouped = items.reduce((acc, icon) => {
-      const category = icon.category || 'other';
-      if (!acc[category]) acc[category] = [];
-      acc[category].push(icon);
-      return acc;
-    }, {} as Record<string, typeof items>);
-    
-    return categoryOrder.map(category => ({
-      category,
-      icons: grouped[category] || []
-    })).filter(group => group.icons.length > 0);
-  }, [items]);
-
-  // For very large lists, use virtualization with simple grid
-  if (items.length > 500) {
-    return (
-      <div 
-        ref={containerRef}
-        className="w-full h-[600px] overflow-auto"
-        role="grid"
-        aria-label={computedAriaLabel}
-      >
+  // Fixed size container matching Lucide's exact dimensions
+  return (
+    <div 
+      ref={containerRef}
+      className="w-full h-[600px] overflow-auto"
+      role="grid"
+      aria-label={computedAriaLabel}
+    >
+      {items.length > 100 ? (
+        // Virtualized rendering for large lists
         <div
           style={{
             height: `${virtualizer.getTotalSize()}px`,
@@ -93,29 +77,29 @@ export function IconGrid({
             );
           })}
         </div>
-      </div>
-    );
-  }
-
-  // For smaller lists, show grouped by category
-  return (
-    <div 
-      className="w-full overflow-auto"
-      role="grid"
-      aria-label={computedAriaLabel}
-    >
-      {groupedIcons.map(({ category, icons }) => (
-        <CategorySection
-          key={category}
-          category={category}
-          icons={icons}
-          selectedId={selectedId}
-          onCopy={onCopy}
-          onIconClick={onIconClick}
-          color={color}
-          strokeWidth={strokeWidth}
-        />
-      ))}
+      ) : (
+        // Simple grid for smaller lists
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, 80px)',
+            justifyContent: 'start',
+            gap: 0,
+          }}
+        >
+          {items.map((icon) => (
+            <IconCell
+              key={icon.id}
+              icon={icon}
+              isSelected={selectedId === icon.id}
+              color={color}
+              strokeWidth={strokeWidth}
+              onCopy={onCopy}
+              onIconClick={onIconClick}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

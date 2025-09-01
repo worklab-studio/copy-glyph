@@ -5,8 +5,6 @@ export type IconItem = {
   name: string;
   svg: string | ComponentType<any>;
   tags?: string[];
-  style?: 'outline' | 'filled' | 'solid' | 'regular';
-  category?: string;
 };
 
 export type IconGridProps = {

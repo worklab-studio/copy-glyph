@@ -33,24 +33,10 @@ export const lucideIcons: IconItem[] = Object.entries(iconMap).map(([name, IconC
     ...(name === 'Calendar' || name === 'Clock' ? ['time', 'schedule'] : []),
   ];
 
-  const category = 
-    name.includes('Arrow') ? 'navigation' :
-    name === 'Settings' ? 'system' :
-    name === 'User' ? 'user' :
-    name === 'Mail' || name === 'Phone' ? 'communication' :
-    name === 'File' ? 'files' :
-    name === 'Play' ? 'media' :
-    name.includes('Heart') || name.includes('Star') ? 'social' :
-    name === 'Lock' ? 'security' :
-    name === 'Calendar' || name === 'Clock' ? 'time' :
-    'actions';
-
   return {
     id: `lucide-${name.toLowerCase()}`,
     name,
     svg: IconComponent,
-    tags: [...new Set(tags)],
-    style: 'outline' as const,
-    category
+    tags: [...new Set(tags)]
   };
 });

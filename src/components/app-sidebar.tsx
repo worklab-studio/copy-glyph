@@ -1,7 +1,5 @@
-import { Package2, Home, Star, Layers, Map, Grid3X3, Box, Code2, Feather, Shield, Paintbrush, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, ChevronDown } from "lucide-react";
+import { Package2, Home, Star, Layers, Map, Grid3X3, Box, Code2, Feather, Shield, Paintbrush, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator, useSidebar } from "@/components/ui/sidebar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
 
 // Fixed top navigation items  
 const topNavItems = [{
@@ -21,29 +19,22 @@ const activeLibraries = [{
   name: "Lucide",
   id: "lucide", 
   count: 37,
-  icon: Zap,
-  styles: null // Single style library
+  icon: Zap
 }, {
   name: "Feather",
   id: "feather",
   count: 287,
-  icon: Feather,
-  styles: null // Single style library
+  icon: Feather
 }, {
   name: "Heroicons",
   id: "heroicons",
   count: 292,
-  icon: Shield,
-  styles: [
-    { name: "Outline", id: "heroicons-outline", count: 146 },
-    { name: "Solid", id: "heroicons-solid", count: 146 }
-  ]
+  icon: Shield
 }, {
   name: "Phosphor",
   id: "phosphor",
   count: 6000,
-  icon: Atom,
-  styles: null // Single style library
+  icon: Atom
 }];
 
 // Placeholder icon library sets (not implemented yet)
@@ -124,7 +115,6 @@ export function AppSidebar({
   const {
     open: sidebarOpen
   } = useSidebar();
-  const [hoveredLibrary, setHoveredLibrary] = useState<string | null>(null);
   return <Sidebar className="w-64 border-r">
       <SidebarHeader className="border-b border-border/50 p-4">
         <div className="flex items-center gap-3">
@@ -167,76 +157,17 @@ export function AppSidebar({
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
-              {activeLibraries.map(library => {
-                const hasStyles = library.styles && library.styles.length > 0;
-                const isActive = hasStyles 
-                  ? library.styles.some(style => selectedSet === style.id)
-                  : selectedSet === library.id;
-                
-                if (hasStyles) {
-                  return (
-                    <SidebarMenuItem key={library.id}>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <SidebarMenuButton 
-                            isActive={isActive}
-                            className={`group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50 ${isActive ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-                            onMouseEnter={() => setHoveredLibrary(library.id)}
-                            onMouseLeave={() => setHoveredLibrary(null)}
-                          >
-                            <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
-                            {sidebarOpen && (
-                              <>
-                                <span className="flex-1 truncate text-left">{library.name}</span>
-                                <div className="flex items-center gap-1">
-                                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
-                                    {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
-                                  </span>
-                                  <ChevronDown className="h-3 w-3 transition-transform group-hover:rotate-180" />
-                                </div>
-                              </>
-                            )}
-                          </SidebarMenuButton>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" side="right" className="w-48">
-                          {library.styles?.map(style => (
-                            <DropdownMenuItem 
-                              key={style.id}
-                              onClick={() => onSetChange(style.id)}
-                              className={selectedSet === style.id ? 'bg-accent' : ''}
-                            >
-                              <span className="flex-1">{style.name}</span>
-                              <span className="text-xs text-muted-foreground">
-                                {style.count}
-                              </span>
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </SidebarMenuItem>
-                  );
-                }
-                
-                return (
-                  <SidebarMenuItem key={library.id}>
-                    <SidebarMenuButton 
-                      onClick={() => onSetChange(library.id)} 
-                      isActive={selectedSet === library.id} 
-                      className={`group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50 ${selectedSet === library.id ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-                    >
-                      <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
-                      {sidebarOpen && (
-                        <>
-                          <span className="flex-1 truncate text-left">{library.name}</span>
-                          <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
-                            {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
-                          </span>
-                        </>
-                      )}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {activeLibraries.map(library => <SidebarMenuItem key={library.id}>
+                  <SidebarMenuButton onClick={() => onSetChange(library.id)} isActive={selectedSet === library.id} className={`group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50 ${selectedSet === library.id ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
+                    <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                    {sidebarOpen && <>
+                        <span className="flex-1 truncate text-left">{library.name}</span>
+                        <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+                          {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
+                        </span>
+                      </>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
