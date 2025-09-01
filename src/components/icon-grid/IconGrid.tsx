@@ -59,6 +59,7 @@ export function IconGrid({
                   display: 'grid',
                   gridTemplateColumns: 'repeat(10, 80px)',
                   justifyContent: 'center',
+                  gap: 0,
                 }}
               >
                 {row.map((icon) => (
