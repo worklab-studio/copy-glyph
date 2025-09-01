@@ -61,33 +61,25 @@ export function IconCell({
       return (
         <div 
           dangerouslySetInnerHTML={{ __html: icon.svg }}
-          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors [&_svg]:stroke-current"
+          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors [&_svg]:stroke-current [&_path]:!stroke-current [&_svg]:!stroke-[var(--stroke-width)] [&_path]:!stroke-[var(--stroke-width)]"
           style={{ 
             color,
-            '--icon-stroke': strokeWidth,
             '--stroke-width': strokeWidth,
-            strokeWidth,
-          } as React.CSSProperties & { '--icon-stroke': number; '--stroke-width': number }}
+          } as React.CSSProperties & { '--stroke-width': number }}
         />
       );
     } else {
       const IconComponent = icon.svg as React.ComponentType<any>;
       return (
         <div
-          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors [&_svg]:stroke-current"
+          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors [&_svg]:stroke-current [&_path]:!stroke-current [&_svg]:!stroke-[var(--stroke-width)] [&_path]:!stroke-[var(--stroke-width)]"
           style={{
             color,
             '--stroke-width': strokeWidth,
-            strokeWidth,
           } as React.CSSProperties & { '--stroke-width': number }}
         >
           <IconComponent
             className="w-full h-full"
-            style={{
-              color,
-              strokeWidth,
-            }}
-            strokeWidth={strokeWidth}
             size="100%"
           />
         </div>
