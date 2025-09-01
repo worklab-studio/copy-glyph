@@ -6,25 +6,44 @@ interface IconGridProps {
   selectedSet: string;
 }
 
-// Get all Lucide icons with improved filtering
+// Simple approach: exclude known non-icon exports and focus on PascalCase function components
+const excludedExports = new Set([
+  'createLucideIcon', 'Icon', 'icons', 'default', 'dynamicIconImports'
+]);
+
 const allIcons = Object.entries(LucideIcons)
   .filter(([name, icon]) => {
-    // More lenient filtering - only exclude obvious non-icons
+    // Simple filtering: must be a function, PascalCase, and not in excluded list
     const isFunction = typeof icon === 'function';
-    const isReactComponent = isFunction && (icon.prototype === undefined || icon.prototype.constructor === icon);
-    const isNotUtility = !['createLucideIcon', 'Icon', 'icons'].includes(name);
-    const isNotCapitalized = name[0] === name[0].toUpperCase(); // Lucide icons are PascalCase
+    const isPascalCase = /^[A-Z][a-zA-Z0-9]*$/.test(name);
+    const isNotExcluded = !excludedExports.has(name);
     
-    console.log(`Icon ${name}: function=${isFunction}, component=${isReactComponent}, notUtility=${isNotUtility}, capitalized=${isNotCapitalized}`);
-    
-    return isFunction && isNotUtility && isNotCapitalized;
-  });
+    if (isFunction && isPascalCase && isNotExcluded) {
+      console.log(`✅ Valid icon: ${name}`);
+      return true;
+    } else {
+      console.log(`❌ Filtered out: ${name} (function: ${isFunction}, PascalCase: ${isPascalCase}, notExcluded: ${isNotExcluded})`);
+      return false;
+    }
+  }) as [string, any][];
 
-console.log(`Total icons found: ${allIcons.length}`, allIcons.slice(0, 5).map(([name]) => name));
+// Fallback: if no icons found, use a manual list of known working Lucide icons
+const fallbackIcons = [
+  'Home', 'User', 'Settings', 'Search', 'Menu', 'Heart', 'Star', 'Check', 'X', 'Plus',
+  'Minus', 'Edit', 'Trash2', 'Download', 'Upload', 'Mail', 'Phone', 'Calendar', 'Clock', 'MapPin'
+];
+
+const finalIcons: [string, any][] = allIcons.length > 0 
+  ? allIcons 
+  : fallbackIcons
+      .map(name => [name, LucideIcons[name as keyof typeof LucideIcons]] as [string, any])
+      .filter(([, icon]) => typeof icon === 'function');
+
+console.log(`Total icons loaded: ${finalIcons.length}`);
 
 export function IconGrid({ searchQuery, selectedSet }: IconGridProps) {
   // Filter icons based on search query
-  const filteredIcons = allIcons.filter(([name]) =>
+  const filteredIcons = finalIcons.filter(([name]) =>
     name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
