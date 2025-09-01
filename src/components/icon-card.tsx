@@ -60,9 +60,9 @@ export function IconCard({ icon: Icon, name, set }: IconCardProps) {
             onClick={handleCopy}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="relative h-20 w-full flex-col gap-2 rounded-lg border border-transparent p-4 transition-all duration-200 hover:border-border hover:bg-hover-bg hover:shadow-sm"
+            className="relative aspect-square w-full flex-col gap-3 rounded-xl border border-transparent p-6 transition-all duration-300 hover:border-border hover:bg-hover-bg hover:shadow-lg hover:scale-105"
           >
-            <div className="flex h-8 w-8 items-center justify-center">
+            <div className="flex h-12 w-12 items-center justify-center mx-auto">
               {isValidIcon ? (
                 <Icon 
                   size={customization.size} 
