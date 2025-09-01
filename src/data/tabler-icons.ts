@@ -1,6 +1,6 @@
 import React from 'react';
 import { type IconItem } from '@/types/icon';
-import { tablerIconMap } from '../../Tabler';
+import tablerIconMap from '../../Tabler';
 
 // Helper function to parse metadata from SVG comments
 const parseMetadata = (svgString: string) => {
@@ -90,7 +90,9 @@ export const tablerIcons: IconItem[] = iconEntries
     const { category, tags } = parseMetadata(svgString);
     const IconComponent = createIconComponent(svgString, iconName);
     
-    if (!IconComponent) return null;
+    if (!IconComponent) {
+      return null;
+    }
     
     const mappedCategory = mapCategory(category);
     
