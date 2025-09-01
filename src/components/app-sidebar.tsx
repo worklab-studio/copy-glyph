@@ -162,7 +162,12 @@ export function AppSidebar({
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
               {topNavItems.map(item => <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton onClick={() => onSetChange(item.id)} isActive={selectedSet === item.id} className={`group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50 ${selectedSet === item.id ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
+                    <SidebarMenuButton onClick={() => onSetChange(item.id)} isActive={selectedSet === item.id} className={cn(
+                      "group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
+                      selectedSet === item.id 
+                        ? 'bg-accent text-accent-foreground shadow-sm' 
+                        : 'text-muted-foreground hover:text-foreground'
+                    )}>
                     <item.icon className="mr-3 h-4 w-4 flex-shrink-0" />
                     {sidebarOpen && <>
                         <span className="flex-1 truncate text-left">{item.name}</span>
@@ -193,7 +198,7 @@ export function AppSidebar({
                         onClick={() => onSetChange(library.id)} 
                         isActive={selectedSet === library.id} 
                         className={cn(
-                          "group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50",
+                          "group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
                           selectedSet === library.id 
                             ? 'bg-accent text-accent-foreground shadow-sm' 
                             : 'text-muted-foreground hover:text-foreground'
@@ -223,7 +228,7 @@ export function AppSidebar({
                       <div className="group relative">
                         <SidebarMenuButton 
                           className={cn(
-                            "relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50",
+                            "relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
                             hasActiveVariant 
                               ? 'bg-accent/30 text-accent-foreground' 
                               : 'text-muted-foreground hover:text-foreground'
@@ -232,11 +237,11 @@ export function AppSidebar({
                           {/* Icon area with hover replacement */}
                           <div className="relative mr-3 h-4 w-4 flex-shrink-0 flex items-center justify-center">
                             {/* Normal library icon */}
-                            <library.icon className="h-4 w-4 transition-opacity duration-200 group-hover:opacity-0" />
+                            <library.icon className="h-4 w-4 transition-opacity duration-300 group-hover:opacity-0" />
                             {/* Dropdown trigger that replaces icon on hover */}
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                               <CollapsibleTrigger asChild>
-                                <button className="flex h-4 w-4 items-center justify-center rounded text-current hover:bg-accent/20">
+                                <button className="flex h-4 w-4 items-center justify-center rounded text-current hover:bg-accent/20 transition-colors duration-300">
                                   {isExpanded ? (
                                     <ChevronDown className="h-3 w-3" />
                                   ) : (
@@ -263,7 +268,7 @@ export function AppSidebar({
                             onClick={() => onSetChange(variant.id)}
                             isActive={selectedSet === variant.id}
                             className={cn(
-                              "group relative flex h-8 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50 mb-0.5",
+                              "group relative flex h-8 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50 mb-0.5",
                               selectedSet === variant.id 
                                 ? 'bg-accent text-accent-foreground shadow-sm' 
                                 : 'text-muted-foreground hover:text-foreground'
