@@ -25,14 +25,18 @@ export function IconGrid({
     return ariaLabel || getGridAriaLabel(items.length);
   }, [ariaLabel, items.length]);
 
-  // For small lists, render without virtualization
+  // Always use fixed grid columns (consistent with virtualized mode)
+  const fixedColumnsCount = 8; // Fixed number of columns for consistency
+  
+  // For small lists, render without virtualization but with fixed columns
   if (items.length <= 100) {
     return (
       <div 
         className="w-full"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(88px, 1fr))',
+          gridTemplateColumns: `repeat(${fixedColumnsCount}, 1fr)`,
+          gap: '0',
           backgroundImage: `
             repeating-linear-gradient(to right, rgba(0,0,0,0.1) 0 0.5px, transparent 0.5px 100%),
             repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0 0.5px, transparent 0.5px 100%)
@@ -51,6 +55,12 @@ export function IconGrid({
               onCopy={onCopy}
               onIconClick={onIconClick}
             />
+        ))}
+        {/* Fill remaining cells to maintain grid structure */}
+        {Array.from({ length: fixedColumnsCount - (items.length % fixedColumnsCount) }).map((_, index) => (
+          items.length % fixedColumnsCount !== 0 && (
+            <div key={`empty-${index}`} className="aspect-square" />
+          )
         ))}
       </div>
     );
@@ -90,7 +100,7 @@ export function IconGrid({
                 height: `${virtualItem.size}px`,
                 transform: `translateY(${virtualItem.start}px)`,
                 display: 'grid',
-                gridTemplateColumns: `repeat(${columnsCount}, 1fr)`,
+                gridTemplateColumns: `repeat(${fixedColumnsCount}, 1fr)`,
               }}
             >
               {row.map((icon) => (
@@ -106,8 +116,8 @@ export function IconGrid({
               ))}
               
               {/* Fill empty cells in the last row */}
-              {row.length < columnsCount && 
-                Array.from({ length: columnsCount - row.length }).map((_, index) => (
+              {row.length < fixedColumnsCount && 
+                Array.from({ length: fixedColumnsCount - row.length }).map((_, index) => (
                   <div key={`empty-${index}`} className="aspect-square" />
                 ))
               }
