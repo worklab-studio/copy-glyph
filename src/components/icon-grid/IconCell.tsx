@@ -93,6 +93,13 @@ export function IconCell({
     e.preventDefault();
     e.stopPropagation();
     
+    // Hide tooltip immediately when double-clicking
+    setShowTooltip(false);
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    
     try {
       let svgString: string;
 
