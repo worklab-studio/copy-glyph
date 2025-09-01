@@ -91,6 +91,7 @@ export function ColorPicker() {
   const [saturation, setSaturation] = useState(initialHsv[1]);
   const [value, setValue] = useState(initialHsv[2]);
   const [isDragging, setIsDragging] = useState(false);
+  const [dragTarget, setDragTarget] = useState<'color-area' | 'hue-slider' | null>(null);
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hueSliderRef = useRef<HTMLDivElement>(null);
@@ -136,7 +137,7 @@ export function ColorPicker() {
 
   const handleCanvasInteraction = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
-    if (!target) return;
+    if (!target || isDragging) return; // Prevent interaction if already dragging something else
     
     const rect = target.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -149,11 +150,11 @@ export function ColorPicker() {
     setValue(newValue);
     
     debouncedUpdateColor(hue, newSaturation, newValue);
-  }, [hue, debouncedUpdateColor]);
+  }, [hue, isDragging, debouncedUpdateColor]);
 
   const handleHueSliderInteraction = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const slider = hueSliderRef.current;
-    if (!slider) return;
+    if (!slider || isDragging) return; // Prevent interaction if already dragging something else
     
     const rect = slider.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -161,45 +162,43 @@ export function ColorPicker() {
     
     setHue(newHue);
     debouncedUpdateColor(newHue, saturation, value);
-  }, [saturation, value, debouncedUpdateColor]);
+  }, [saturation, value, isDragging, debouncedUpdateColor]);
 
   // Handle mouse events for smooth dragging
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging) return;
+      if (!isDragging || !dragTarget) return;
       
-      const colorArea = document.querySelector('[data-color-area]') as HTMLDivElement;
-      const hueSlider = hueSliderRef.current;
-      
-      // Check if we're dragging on the hue slider
-      if (hueSlider) {
+      // Only handle the specific drag target to prevent cross-interaction
+      if (dragTarget === 'hue-slider') {
+        const hueSlider = hueSliderRef.current;
+        if (!hueSlider) return;
+        
         const hueRect = hueSlider.getBoundingClientRect();
-        if (e.clientY >= hueRect.top && e.clientY <= hueRect.bottom) {
-          const x = e.clientX - hueRect.left;
-          const newHue = Math.max(0, Math.min(360, (x / hueRect.width) * 360));
-          setHue(newHue);
-          debouncedUpdateColor(newHue, saturation, value);
-          return;
-        }
+        const x = e.clientX - hueRect.left;
+        const newHue = Math.max(0, Math.min(360, (x / hueRect.width) * 360));
+        setHue(newHue);
+        debouncedUpdateColor(newHue, saturation, value);
+      } else if (dragTarget === 'color-area') {
+        const colorArea = document.querySelector('[data-color-area]') as HTMLDivElement;
+        if (!colorArea) return;
+        
+        const rect = colorArea.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const newSaturation = Math.max(0, Math.min(1, x / rect.width));
+        const newValue = Math.max(0, Math.min(1, 1 - (y / rect.height)));
+        
+        setSaturation(newSaturation);
+        setValue(newValue);
+        debouncedUpdateColor(hue, newSaturation, newValue);
       }
-      
-      // Otherwise handle color area dragging
-      if (!colorArea) return;
-      
-      const rect = colorArea.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      const newSaturation = Math.max(0, Math.min(1, x / rect.width));
-      const newValue = Math.max(0, Math.min(1, 1 - (y / rect.height)));
-      
-      setSaturation(newSaturation);
-      setValue(newValue);
-      debouncedUpdateColor(hue, newSaturation, newValue);
     };
 
     const handleMouseUp = () => {
       setIsDragging(false);
+      setDragTarget(null);
     };
 
     if (isDragging) {
@@ -211,7 +210,7 @@ export function ColorPicker() {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, hue, saturation, value, debouncedUpdateColor]);
+  }, [isDragging, dragTarget, hue, saturation, value, debouncedUpdateColor]);
 
   // Sync HSV values when customization color changes externally
   useEffect(() => {
@@ -246,6 +245,7 @@ export function ColorPicker() {
             }}
             onMouseDown={(e) => {
               setIsDragging(true);
+              setDragTarget('color-area');
               handleCanvasInteraction(e);
             }}
             onClick={handleCanvasInteraction}
@@ -271,6 +271,7 @@ export function ColorPicker() {
           }}
           onMouseDown={(e) => {
             setIsDragging(true);
+            setDragTarget('hue-slider');
             handleHueSliderInteraction(e);
           }}
           onClick={handleHueSliderInteraction}
