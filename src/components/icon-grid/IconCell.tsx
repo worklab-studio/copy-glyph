@@ -93,9 +93,9 @@ export function IconCell({
         className={cn(
           "group relative aspect-square flex items-center justify-center transition-all duration-200",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-          "hover:bg-black/10",
+          "hover:bg-primary/10 hover:border hover:border-primary/20",
           "p-3",
-          isSelected && "bg-black/10 border border-black/20",
+          isSelected && "bg-primary/10 border border-primary/20",
           // Corner highlights on hover - all four corners
           "before:absolute before:inset-0 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-200",
           "before:[background-image:linear-gradient(to_right,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_left,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_right,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_left,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_bottom,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_bottom,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_top,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_top,rgba(0,0,0,0.4)_0_12px,transparent_12px)]",
