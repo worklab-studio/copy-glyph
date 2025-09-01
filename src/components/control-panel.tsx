@@ -83,7 +83,7 @@ export function ControlPanel({ selectedIcon }: ControlPanelProps) {
   };
 
   return (
-    <div className="w-80 border-l border-border bg-background">
+    <div className="w-80 border-l bg-background">
       <Card className="border-0 rounded-none h-full">
         <CardHeader className="pb-4">
           <CardTitle className="text-lg">Customize</CardTitle>
