@@ -82,12 +82,10 @@ const mapCategory = (tablerCategory: string): string => {
   return categoryMap[tablerCategory.toLowerCase()] || 'general';
 };
 
-// Transform Tabler icons to IconItem format (using a subset for performance)
+// Transform Tabler icons to IconItem format
 const iconEntries = Object.entries(tablerIconMap);
-const maxIcons = 1000; // Limit to first 1000 icons for performance
-const selectedEntries = iconEntries.slice(0, maxIcons);
 
-export const tablerIcons: IconItem[] = selectedEntries
+export const tablerIcons: IconItem[] = iconEntries
   .map(([iconName, svgString]) => {
     const { category, tags } = parseMetadata(svgString);
     const IconComponent = createIconComponent(svgString, iconName);
