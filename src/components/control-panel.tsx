@@ -101,9 +101,13 @@ export function ControlPanel({ selectedIcon }: ControlPanelProps) {
         .replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`)
         .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
 
-      await navigator.clipboard.writeText(customizedSVG);
+      // Encode SVG as data URL
+      const encodedSVG = encodeURIComponent(customizedSVG);
+      const dataURL = `data:image/svg+xml,${encodedSVG}`;
+
+      await navigator.clipboard.writeText(dataURL);
       toast({
-        description: "SVG copied to clipboard!",
+        description: "SVG data URL copied to clipboard!",
         duration: 2000,
       });
     } catch (error) {
