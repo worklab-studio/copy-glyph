@@ -115,9 +115,9 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
   
-  /* Custom scrollbar */
+  /* Hide scrollbars while maintaining scroll functionality */
   ::-webkit-scrollbar {
-    @apply w-2;
+    @apply w-0;
   }
   
   ::-webkit-scrollbar-track {
@@ -125,20 +125,12 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-border rounded-full;
+    @apply bg-transparent;
   }
   
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/30;
-  }
-}
-
-@layer base {
+  /* Firefox scrollbar hiding */
   * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 }
