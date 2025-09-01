@@ -5,10 +5,14 @@ import { Button } from "@/components/ui/button";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 
 const presetColors = [
-  // Row 1 - Essential colors including white and blue
-  "#ffffff", "#000000", "#3B82F6", "#664FC2", "#FF0000", "#FF8800", "#FFDD00", "#00FF00",
-  // Row 2 - Additional vibrant and muted colors  
-  "#00FFAA", "#0088FF", "#4400FF", "#FF00AA", "#DC2626", "#EA580C", "#EAB308", "#16A34A"
+  // Row 1 - Grayscale
+  "#000000", "#FFFFFF", "#4A4A4A", "#B0B0B0",
+  // Row 2 - Blues/Purples  
+  "#3B82F6", "#6366F1", "#A855F7", "#EC4899",
+  // Row 3 - Reds/Oranges/Browns
+  "#EF4444", "#F97316", "#F59E0B", "#8B5E3C", 
+  // Row 4 - Greens/Teals/Blues
+  "#22C55E", "#14B8A6", "#06B6D4", "#0EA5E9"
 ];
 
 // Convert Hex to HSV
