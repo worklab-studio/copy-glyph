@@ -12,6 +12,7 @@ interface IconCellProps {
   color?: string;
   strokeWidth?: number;
   onCopy?: (icon: IconItem) => void;
+  onIconClick?: (icon: IconItem) => void;
 }
 
 export function IconCell({ 
@@ -19,10 +20,18 @@ export function IconCell({
   isSelected = false, 
   color = "#666", 
   strokeWidth = 1.5,
-  onCopy 
+  onCopy,
+  onIconClick
 }: IconCellProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
+
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    onIconClick?.(icon);
+  }, [icon, onIconClick]);
 
   const handleCopy = useCallback(async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -43,16 +52,16 @@ export function IconCell({
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      handleCopy(e as any);
+      handleClick(e as any);
     }
-  }, [handleCopy]);
+  }, [handleClick]);
 
   const renderIcon = () => {
     if (typeof icon.svg === 'string') {
       return (
         <div 
           dangerouslySetInnerHTML={{ __html: icon.svg }}
-          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] text-black/70 group-hover:text-black transition-colors"
+          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors"
           style={{ 
             color,
             '--icon-stroke': strokeWidth,
@@ -66,7 +75,7 @@ export function IconCell({
           size="clamp(24px,32%,40px)"
           color={color}
           strokeWidth={strokeWidth}
-          className="text-black/70 group-hover:text-black transition-colors"
+          className="transition-colors"
         />
       );
     }
@@ -75,7 +84,7 @@ export function IconCell({
   return (
     <CopyTooltip showCopied={showCopied}>
       <button
-        onClick={handleCopy}
+        onClick={handleClick}
         onKeyDown={handleKeyDown}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -113,7 +122,10 @@ export function IconCell({
         
         {/* Copy badge - shows on hover or when selected */}
         {(isHovered || isSelected) && (
-          <div className="pointer-events-none absolute bottom-1.5 right-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full border border-black/20 bg-black/10 text-xs text-black/90">
+          <div 
+            className="pointer-events-auto absolute bottom-1.5 right-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full border border-black/20 bg-black/10 text-xs text-black/90 cursor-pointer hover:bg-black/20 transition-colors"
+            onClick={handleCopy}
+          >
             {isSelected ? "+" : <Copy className="h-3 w-3" />}
           </div>
         )}

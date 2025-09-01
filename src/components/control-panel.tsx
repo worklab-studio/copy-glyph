@@ -62,7 +62,7 @@ export function ControlPanel() {
                 className="text-xs"
               >
                 <Download className="h-3 w-3 mr-1" />
-                PNG
+                SVG
               </Button>
             </div>
           </div>

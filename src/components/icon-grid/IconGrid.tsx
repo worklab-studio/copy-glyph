@@ -9,6 +9,7 @@ export function IconGrid({
   items,
   selectedId,
   onCopy,
+  onIconClick,
   color = "#666",
   strokeWidth = 1.5,
   ariaLabel,
@@ -41,14 +42,15 @@ export function IconGrid({
         aria-label={gridLabel}
       >
         {items.map((icon) => (
-          <IconCell
-            key={icon.id}
-            icon={icon}
-            isSelected={icon.id === selectedId}
-            color={color}
-            strokeWidth={strokeWidth}
-            onCopy={onCopy}
-          />
+            <IconCell
+              key={icon.id}
+              icon={icon}
+              isSelected={icon.id === selectedId}
+              color={color}
+              strokeWidth={strokeWidth}
+              onCopy={onCopy}
+              onIconClick={onIconClick}
+            />
         ))}
       </div>
     );
@@ -99,6 +101,7 @@ export function IconGrid({
                   color={color}
                   strokeWidth={strokeWidth}
                   onCopy={onCopy}
+                  onIconClick={onIconClick}
                 />
               ))}
               

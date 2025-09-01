@@ -9,9 +9,11 @@ export type IconItem = {
 
 export type IconGridProps = {
   items: IconItem[];
-  selectedId?: string | null;
-  onCopy?: (icon: IconItem) => void;
-  color?: string;
-  strokeWidth?: number;
-  ariaLabel?: string;
+  selectedId?: string | null;        // to highlight one "featured" tile
+  onCopy?: (icon: IconItem) => void; // called after successful copy
+  onIconClick?: (icon: IconItem) => void; // called when icon is clicked for selection
+  // global styling controls:
+  color?: string;        // CSS color value, applied as currentColor
+  strokeWidth?: number;  // 0.25–3.0
+  ariaLabel?: string;    // e.g., "Icon results grid"
 };

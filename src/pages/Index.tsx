@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Header } from "@/components/header";
 import { AppSidebar } from "@/components/app-sidebar";
@@ -66,9 +66,11 @@ function IconGridPage() {
       description: `${icon.name} icon copied to clipboard!`,
       duration: 2000,
     });
-    
-    // Clear selection after a delay
-    setTimeout(() => setSelectedId(null), 1200);
+  };
+
+  const handleIconClick = (icon: IconItem) => {
+    // Toggle selection - if already selected, deselect; otherwise select
+    setSelectedId(prevId => prevId === icon.id ? null : icon.id);
   };
 
   return (
@@ -118,13 +120,14 @@ function IconGridPage() {
                 </div>
               </div>
             ) : (
-              <IconGrid
-                items={displayedIcons}
-                selectedId={selectedId}
-                onCopy={handleCopy}
-                color={customization.color}
-                strokeWidth={customization.strokeWidth}
-              />
+                <IconGrid
+                  items={displayedIcons}
+                  selectedId={selectedId}
+                  onCopy={handleCopy}
+                  onIconClick={handleIconClick}
+                  color={customization.color}
+                  strokeWidth={customization.strokeWidth}
+                />
             )}
           </main>
           
