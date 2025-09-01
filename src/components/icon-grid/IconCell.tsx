@@ -175,7 +175,7 @@ export function IconCell({
         onKeyDown={handleKeyDown}
         onMouseEnter={() => {
           setIsHovered(true);
-          hoverTimeoutRef.current = setTimeout(() => setShowTooltip(true), 1500);
+          hoverTimeoutRef.current = setTimeout(() => setShowTooltip(true), 500);
         }}
         onMouseLeave={() => {
           setIsHovered(false);
@@ -221,12 +221,15 @@ export function IconCell({
         
         {renderIcon()}
         
-        {/* Tooltip - shows after 1.5s hover */}
+        {/* Tooltip - shows after 0.5s hover */}
         {showTooltip && !isSelected && (
           <div 
-            className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs bg-popover text-popover-foreground rounded border shadow-md whitespace-nowrap z-10"
+            className="absolute -top-10 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs bg-background text-foreground rounded border shadow-lg whitespace-nowrap z-50 pointer-events-none"
+            style={{
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+            }}
           >
-            double click to copy icon
+            Double click to copy icon
           </div>
         )}
       </button>
