@@ -16,6 +16,14 @@ export function IconCard({ icon: Icon, name, set }: IconCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { customization } = useIconCustomization();
 
+  // Validate icon component
+  const isValidIcon = Icon && typeof Icon === 'function';
+  
+  if (!isValidIcon) {
+    console.warn(`Invalid icon component for ${name}:`, Icon);
+    return null;
+  }
+
   const handleCopy = async () => {
     try {
       // Generate SVG string with current customization
@@ -55,12 +63,18 @@ export function IconCard({ icon: Icon, name, set }: IconCardProps) {
             className="relative h-20 w-full flex-col gap-2 rounded-lg border border-transparent p-4 transition-all duration-200 hover:border-border hover:bg-hover-bg hover:shadow-sm"
           >
             <div className="flex h-8 w-8 items-center justify-center">
-              <Icon 
-                size={customization.size} 
-                color={customization.color}
-                strokeWidth={customization.strokeWidth}
-                className="transition-colors" 
-              />
+              {isValidIcon ? (
+                <Icon 
+                  size={customization.size} 
+                  color={customization.color}
+                  strokeWidth={customization.strokeWidth}
+                  className="transition-colors" 
+                />
+              ) : (
+                <div className="w-6 h-6 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">
+                  ?
+                </div>
+              )}
             </div>
             
             {/* Copy indicator */}

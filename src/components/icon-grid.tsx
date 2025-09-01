@@ -6,15 +6,21 @@ interface IconGridProps {
   selectedSet: string;
 }
 
-// Get all Lucide icons
+// Get all Lucide icons with improved filtering
 const allIcons = Object.entries(LucideIcons)
   .filter(([name, icon]) => {
-    // Filter out non-icon exports
-    return typeof icon === 'function' && 
-           name !== 'createLucideIcon' && 
-           name !== 'Icon' &&
-           !name.startsWith('Lucide');
+    // More lenient filtering - only exclude obvious non-icons
+    const isFunction = typeof icon === 'function';
+    const isReactComponent = isFunction && (icon.prototype === undefined || icon.prototype.constructor === icon);
+    const isNotUtility = !['createLucideIcon', 'Icon', 'icons'].includes(name);
+    const isNotCapitalized = name[0] === name[0].toUpperCase(); // Lucide icons are PascalCase
+    
+    console.log(`Icon ${name}: function=${isFunction}, component=${isReactComponent}, notUtility=${isNotUtility}, capitalized=${isNotCapitalized}`);
+    
+    return isFunction && isNotUtility && isNotCapitalized;
   });
+
+console.log(`Total icons found: ${allIcons.length}`, allIcons.slice(0, 5).map(([name]) => name));
 
 export function IconGrid({ searchQuery, selectedSet }: IconGridProps) {
   // Filter icons based on search query
