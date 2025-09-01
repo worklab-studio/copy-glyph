@@ -29,7 +29,7 @@ export function IconGrid({
   if (items.length <= 100) {
     return (
       <div 
-        className="w-full"
+        className="w-full h-full overflow-auto"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
@@ -38,7 +38,8 @@ export function IconGrid({
             repeating-linear-gradient(to right, rgba(0,0,0,0.1) 0 0.5px, transparent 0.5px 100%),
             repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0 0.5px, transparent 0.5px 100%)
           `,
-          backgroundSize: '1fr 1fr'
+          backgroundSize: '1fr 1fr',
+          alignContent: 'start'
         }}
         aria-label={computedAriaLabel}
       >
@@ -61,7 +62,7 @@ export function IconGrid({
   return (
     <div 
       ref={containerRef}
-      className="h-[600px] overflow-auto w-full"
+      className="h-full overflow-auto w-full"
       role="grid"
       aria-label={computedAriaLabel}
     >

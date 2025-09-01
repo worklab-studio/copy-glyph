@@ -93,9 +93,9 @@ function IconGridPage() {
             onSearchChange={setSearchQuery}
           />
           
-          <main className="flex-1 overflow-hidden">{/* Fill available space */}
+          <main className="flex-1 flex flex-col overflow-hidden">{/* Full height with flex layout */}
             {/* Header with padding */}
-            <div className="px-6 pt-6 pb-4 border-b border-border/30">
+            <div className="px-6 pt-6 pb-4 border-b border-border/30 flex-shrink-0">
               <div className="space-y-1">
                 <h2 className="text-2xl font-semibold">
                   {selectedSet === "all" ? "All Icons" : 
@@ -113,8 +113,8 @@ function IconGridPage() {
               </div>
             </div>
 
-            {/* Grid - fill remaining space */}
-            <div className="flex-1 overflow-auto">
+            {/* Grid - fill remaining space with proper scroll */}
+            <div className="flex-1 min-h-0">
               {displayedIcons.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-center px-6">
                   <div className="space-y-2">
