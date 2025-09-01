@@ -1,12 +1,10 @@
 import { 
   Activity, AlertCircle, Archive, ArrowDown, ArrowLeft, ArrowRight, ArrowUp, 
-  Award01 as Award, Bell01 as Bell, Bookmark, Calendar, Camera01 as Camera, Check, CheckCircle, Clock, Cloud01 as Cloud,
-  Copy01 as Copy, Download01 as Download, Edit02 as Edit, Eye, EyeOff, File02 as File, FilterLines as Filter, Flag01 as Flag, Globe01 as Globe, Heart,
-  Home01 as Home, Image01 as Image, Key01 as Key, Lock01 as Lock, Mail01 as Mail, Menu01 as Menu, MessageCircle01 as MessageCircle, Minus, Moon01 as Moon, 
-  PauseCircle as Pause, Phone, Play, Plus, RefreshCcw01 as RefreshCcw, RefreshCw01 as RefreshCw, SearchLg as Search, Send01 as Send, Settings01 as Settings,
-  Share01 as Share, Shield01 as Shield, Square, Star01 as Star, Sun, Tag01 as Tag, Trash02 as Trash2, Upload01 as Upload, User01 as User, VolumeX as Volume2,
-  Wifi, BatteryCharging01 as Battery, Folder, BookOpen01 as BookOpen, Scissors01 as Scissors, Clipboard,
-  Lightbulb01 as Lightbulb, Zap, Umbrella01 as Umbrella, Thermometer01 as ThermometerSun, Droplets01 as Droplets, Wind01 as Wind, Snowflake01 as Snowflake
+  Bell01 as Bell, Bookmark, Calendar, Camera01 as Camera, Check, Clock,
+  Download01 as Download, Edit02 as Edit, Eye, EyeOff, File02 as File, Globe01 as Globe, Heart,
+  Home01 as Home, Image01 as Image, Lock01 as Lock, Mail01 as Mail, Menu01 as Menu, Minus,
+  Phone, Play, Plus, SearchLg as Search, Send01 as Send, Settings01 as Settings,
+  Share01 as Share, Star01 as Star, Sun, Upload01 as Upload, User01 as User
 } from "@untitled-ui/icons-react";
 import { IconCard } from "@/components/icon-card";
 
@@ -18,17 +16,15 @@ interface IconGridProps {
 // Direct import approach - guaranteed to work with proper TypeScript types
 const iconMap = {
   Home, User, Settings, Search, Menu, Heart, Star, Check, Plus,
-  Minus, Edit, Trash2, Download, Upload, Mail, Phone, Calendar, Clock,
-  ArrowRight, ArrowLeft, ArrowUp, ArrowDown, Play, Pause, Square, Volume2, Wifi, Battery,
-  Camera, Image, File, Folder, BookOpen, Globe, Shield, Lock, Key, Eye,
-  EyeOff, Bell, MessageCircle, Send, Share, Copy, Scissors, Clipboard, Archive,
-  Bookmark, Flag, Tag, Filter, RefreshCw, RefreshCcw, Zap, Lightbulb,
-  Sun, Moon, Cloud, Umbrella, ThermometerSun, Droplets, Wind, Snowflake
+  Minus, Edit, Download, Upload, Mail, Phone, Calendar, Clock,
+  ArrowRight, ArrowLeft, ArrowUp, ArrowDown, Play,
+  Camera, Image, File, Globe, Lock, Eye, EyeOff, Bell, 
+  Send, Share, Archive, Bookmark, Sun, Activity, AlertCircle
 };
 
 const allIcons = Object.entries(iconMap);
 
-console.log(`✅ Loaded ${allIcons.length} Untitled UI icons:`, allIcons.slice(0, 5).map(([name]) => name));
+console.log(`✅ Loaded ${allIcons.length} basic Untitled UI icons:`, allIcons.slice(0, 5).map(([name]) => name));
 
 export function IconGrid({ searchQuery, selectedSet }: IconGridProps) {
   // Filter icons based on search query
