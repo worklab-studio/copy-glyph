@@ -155,24 +155,37 @@ export function IconCell({
   }, [handleClick]);
 
   const renderIcon = () => {
+    // Use customization context values for consistency
+    const iconColor = customization.color;
+    const iconStrokeWidth = customization.strokeWidth;
+    
     if (typeof icon.svg === 'string') {
       return (
         <div 
           dangerouslySetInnerHTML={{ __html: icon.svg }}
           className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors"
-          style={{ color }}
+          style={{ color: iconColor }}
         />
       );
     } else {
       const IconComponent = icon.svg as React.ComponentType<any>;
-      return (
-        <IconComponent
-          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors"
-          color={color}
-          strokeWidth={strokeWidth}
-          size="clamp(24px,32%,40px)"
-        />
-      );
+      
+      // Standardized props for all icon libraries
+      const iconProps: any = {
+        className: "h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors",
+        style: { color: iconColor },
+      };
+      
+      // Apply size as number (32px equivalent for consistent sizing)
+      iconProps.size = 32;
+      
+      // Apply strokeWidth for libraries that support it (Lucide, some react-icons)
+      iconProps.strokeWidth = iconStrokeWidth;
+      
+      // Apply color prop (most libraries support this)
+      iconProps.color = iconColor;
+      
+      return <IconComponent {...iconProps} />;
     }
   };
 
