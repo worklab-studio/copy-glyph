@@ -1,4 +1,12 @@
-import * as LucideIcons from "lucide-react";
+import { 
+  Home, User, Settings, Search, Menu, Heart, Star, Check, X, Plus,
+  Minus, Edit, Trash2, Download, Upload, Mail, Phone, Calendar, Clock, MapPin,
+  ArrowRight, ArrowLeft, ArrowUp, ArrowDown, Play, Pause, Square, Volume2, Wifi, Battery,
+  Camera, Image, File, Folder, BookOpen, Globe, Shield, Lock, Key, Eye,
+  EyeOff, Bell, MessageCircle, Send, Share, Copy, Scissors, Clipboard, Archive,
+  Bookmark, Flag, Tag, Filter, SortAsc, RefreshCw, RotateCcw, Zap, Lightbulb,
+  Sun, Moon, Cloud, Umbrella, ThermometerSun, Droplets, Wind, Snowflake, Mountain, Trees
+} from "lucide-react";
 import { IconCard } from "@/components/icon-card";
 
 interface IconGridProps {
@@ -6,44 +14,24 @@ interface IconGridProps {
   selectedSet: string;
 }
 
-// Simple approach: exclude known non-icon exports and focus on PascalCase function components
-const excludedExports = new Set([
-  'createLucideIcon', 'Icon', 'icons', 'default', 'dynamicIconImports'
-]);
+// Direct import approach - guaranteed to work with proper TypeScript types
+const iconMap = {
+  Home, User, Settings, Search, Menu, Heart, Star, Check, X, Plus,
+  Minus, Edit, Trash2, Download, Upload, Mail, Phone, Calendar, Clock, MapPin,
+  ArrowRight, ArrowLeft, ArrowUp, ArrowDown, Play, Pause, Square, Volume2, Wifi, Battery,
+  Camera, Image, File, Folder, BookOpen, Globe, Shield, Lock, Key, Eye,
+  EyeOff, Bell, MessageCircle, Send, Share, Copy, Scissors, Clipboard, Archive,
+  Bookmark, Flag, Tag, Filter, SortAsc, RefreshCw, RotateCcw, Zap, Lightbulb,
+  Sun, Moon, Cloud, Umbrella, ThermometerSun, Droplets, Wind, Snowflake, Mountain, Trees
+};
 
-const allIcons = Object.entries(LucideIcons)
-  .filter(([name, icon]) => {
-    // Simple filtering: must be a function, PascalCase, and not in excluded list
-    const isFunction = typeof icon === 'function';
-    const isPascalCase = /^[A-Z][a-zA-Z0-9]*$/.test(name);
-    const isNotExcluded = !excludedExports.has(name);
-    
-    if (isFunction && isPascalCase && isNotExcluded) {
-      console.log(`✅ Valid icon: ${name}`);
-      return true;
-    } else {
-      console.log(`❌ Filtered out: ${name} (function: ${isFunction}, PascalCase: ${isPascalCase}, notExcluded: ${isNotExcluded})`);
-      return false;
-    }
-  }) as [string, any][];
+const allIcons = Object.entries(iconMap);
 
-// Fallback: if no icons found, use a manual list of known working Lucide icons
-const fallbackIcons = [
-  'Home', 'User', 'Settings', 'Search', 'Menu', 'Heart', 'Star', 'Check', 'X', 'Plus',
-  'Minus', 'Edit', 'Trash2', 'Download', 'Upload', 'Mail', 'Phone', 'Calendar', 'Clock', 'MapPin'
-];
-
-const finalIcons: [string, any][] = allIcons.length > 0 
-  ? allIcons 
-  : fallbackIcons
-      .map(name => [name, LucideIcons[name as keyof typeof LucideIcons]] as [string, any])
-      .filter(([, icon]) => typeof icon === 'function');
-
-console.log(`Total icons loaded: ${finalIcons.length}`);
+console.log(`✅ Loaded ${allIcons.length} icons directly:`, allIcons.slice(0, 5).map(([name]) => name));
 
 export function IconGrid({ searchQuery, selectedSet }: IconGridProps) {
   // Filter icons based on search query
-  const filteredIcons = finalIcons.filter(([name]) =>
+  const filteredIcons = allIcons.filter(([name]) =>
     name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
