@@ -236,7 +236,7 @@ export function ColorPicker() {
       <Label className="text-sm font-medium">Color</Label>
       
       {/* Main color picker area */}
-      <div className="space-y-3">
+      <div className="space-y-6">
         <div className="relative select-none">
           <div
             data-color-area
