@@ -1,13 +1,40 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { Header } from "@/components/header";
+import { AppSidebar } from "@/components/app-sidebar";
+import { IconGrid } from "@/components/icon-grid";
 
 const Index = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSet, setSelectedSet] = useState("all");
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full">
+        <AppSidebar 
+          selectedSet={selectedSet}
+          onSetChange={setSelectedSet}
+        />
+        
+        <div className="flex-1 flex flex-col">
+          <Header 
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+          />
+          
+          <main className="flex-1 overflow-auto">
+            <IconGrid 
+              searchQuery={searchQuery}
+              selectedSet={selectedSet}
+            />
+          </main>
+          
+          <footer className="border-t p-4 text-center text-xs text-muted-foreground">
+            <p>Built with ❤️ • <a href="mailto:support@notionicons.so" className="hover:text-primary">Support</a></p>
+          </footer>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
