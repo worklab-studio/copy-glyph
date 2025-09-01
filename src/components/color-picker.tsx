@@ -80,9 +80,12 @@ const rgbToHex = (r: number, g: number, b: number) => {
 export function ColorPicker() {
   const { customization, updateColor } = useIconCustomization();
   const [hexInput, setHexInput] = useState(customization.color);
-  const [hue, setHue] = useState(220);
-  const [saturation, setSaturation] = useState(0.6);
-  const [value, setValue] = useState(0.8);
+  
+  // Initialize HSV values based on the current customization color
+  const initialHsv = useMemo(() => hexToHsv(customization.color), []);
+  const [hue, setHue] = useState(initialHsv[0]);
+  const [saturation, setSaturation] = useState(initialHsv[1]);
+  const [value, setValue] = useState(initialHsv[2]);
   const [isDragging, setIsDragging] = useState(false);
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -192,6 +195,15 @@ export function ColorPicker() {
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isDragging, hue, debouncedUpdateColor]);
+
+  // Sync HSV values when customization color changes externally
+  useEffect(() => {
+    const [h, s, v] = hexToHsv(customization.color);
+    setHue(h);
+    setSaturation(s);
+    setValue(v);
+    setHexInput(customization.color);
+  }, [customization.color]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
