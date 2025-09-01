@@ -9,13 +9,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
+  SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar";
 
-// Icon set data matching NotionIcons
-const iconSets = [
+// Fixed top navigation items
+const topNavItems = [
   { name: "All Icons", id: "all", count: 40000, icon: Home },
   { name: "Favorites", id: "favorites", count: 0, icon: Star },
+];
+
+// Scrollable icon library sets
+const iconLibraries = [
   { name: "Untitled UI", id: "untitled-ui", count: 2400, icon: Package2 },
   { name: "Atlas", id: "atlas", count: 1800, icon: Package2 },
   { name: "Bootstrap", id: "bootstrap", count: 1600, icon: Package2 },
@@ -59,30 +64,64 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
         </div>
       </SidebarHeader>
       
-      <SidebarContent className="p-3">
-        <SidebarGroup>
-          <SidebarGroupLabel className="mb-3 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
-            Icon Libraries
-          </SidebarGroupLabel>
+      <SidebarContent className="flex flex-col p-3">
+        {/* Fixed top navigation */}
+        <SidebarGroup className="flex-shrink-0">
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
-              {iconSets.map((set) => (
-                <SidebarMenuItem key={set.id}>
+              {topNavItems.map((item) => (
+                <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton
-                    onClick={() => onSetChange(set.id)}
-                    isActive={selectedSet === set.id}
+                    onClick={() => onSetChange(item.id)}
+                    isActive={selectedSet === item.id}
                     className={`group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50 ${
-                      selectedSet === set.id
+                      selectedSet === item.id
                         ? 'bg-accent text-accent-foreground shadow-sm'
                         : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
-                    <set.icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                    <item.icon className="mr-3 h-4 w-4 flex-shrink-0" />
                     {sidebarOpen && (
                       <>
-                        <span className="flex-1 truncate text-left">{set.name}</span>
+                        <span className="flex-1 truncate text-left">{item.name}</span>
                         <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
-                          {set.count > 1000 ? `${Math.floor(set.count / 1000)}k` : set.count.toLocaleString()}
+                          {item.count > 1000 ? `${Math.floor(item.count / 1000)}k` : item.count.toLocaleString()}
+                        </span>
+                      </>
+                    )}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator className="my-3" />
+
+        {/* Scrollable icon libraries */}
+        <SidebarGroup className="flex-1 overflow-hidden">
+          <SidebarGroupLabel className="mb-3 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
+            Icon Libraries
+          </SidebarGroupLabel>
+          <SidebarGroupContent className="h-full overflow-y-auto">
+            <SidebarMenu className="space-y-0.5">
+              {iconLibraries.map((library) => (
+                <SidebarMenuItem key={library.id}>
+                  <SidebarMenuButton
+                    onClick={() => onSetChange(library.id)}
+                    isActive={selectedSet === library.id}
+                    className={`group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50 ${
+                      selectedSet === library.id
+                        ? 'bg-accent text-accent-foreground shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                    {sidebarOpen && (
+                      <>
+                        <span className="flex-1 truncate text-left">{library.name}</span>
+                        <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+                          {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
                         </span>
                       </>
                     )}
