@@ -225,7 +225,7 @@ export function AppSidebar({
                 return (
                   <SidebarMenuItem key={library.id}>
                     <Collapsible open={isExpanded} onOpenChange={() => toggleLibrary(library.id)}>
-                      <div className="group relative">
+                      <div className="relative">
                         <SidebarMenuButton 
                           className={cn(
                             "relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
@@ -253,7 +253,7 @@ export function AppSidebar({
                           </div>
                           {sidebarOpen && (
                             <>
-                              <span className="flex-1 truncate text-left">{library.name}</span>
+                              <span className="group flex-1 truncate text-left">{library.name}</span>
                               <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
                                 {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
                               </span>
