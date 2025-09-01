@@ -229,17 +229,18 @@ export function AppSidebar({
                               : 'text-muted-foreground hover:text-foreground'
                           )}
                         >
-                          {/* Icon area with hover trigger */}
-                          <div className="relative mr-3 h-4 w-4 flex-shrink-0">
-                            <library.icon className="h-4 w-4" />
-                            {/* Dropdown indicator on hover */}
-                            <div className="absolute -left-1 -top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          {/* Icon area with hover replacement */}
+                          <div className="relative mr-3 h-4 w-4 flex-shrink-0 flex items-center justify-center">
+                            {/* Normal library icon */}
+                            <library.icon className="h-4 w-4 transition-opacity duration-200 group-hover:opacity-0" />
+                            {/* Dropdown trigger that replaces icon on hover */}
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
                               <CollapsibleTrigger asChild>
-                                <button className="flex h-3 w-3 items-center justify-center rounded-full bg-accent/80 text-accent-foreground hover:bg-accent">
+                                <button className="flex h-4 w-4 items-center justify-center rounded text-current hover:bg-accent/20">
                                   {isExpanded ? (
-                                    <ChevronDown className="h-2 w-2" />
+                                    <ChevronDown className="h-3 w-3" />
                                   ) : (
-                                    <ChevronRight className="h-2 w-2" />
+                                    <ChevronRight className="h-3 w-3" />
                                   )}
                                 </button>
                               </CollapsibleTrigger>
