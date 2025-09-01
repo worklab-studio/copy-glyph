@@ -1,4 +1,6 @@
 import { type IconItem } from "@/types/icon";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 
 export async function copyIcon(icon: IconItem): Promise<void> {
   try {
@@ -7,11 +9,15 @@ export async function copyIcon(icon: IconItem): Promise<void> {
     if (typeof icon.svg === 'string') {
       svgString = icon.svg;
     } else {
-      // If it's a React component, we need to serialize it
-      // For now, we'll create a basic SVG wrapper
-      svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <!-- ${icon.name} -->
-      </svg>`;
+      // Render the React component to SVG string
+      const IconComponent = icon.svg as React.ComponentType<any>;
+      const element = React.createElement(IconComponent, {
+        size: 24,
+        strokeWidth: 2,
+        color: "currentColor"
+      });
+      
+      svgString = renderToStaticMarkup(element);
     }
 
     await navigator.clipboard.writeText(svgString);
