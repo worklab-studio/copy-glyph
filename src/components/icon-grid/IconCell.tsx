@@ -90,11 +90,11 @@ export function IconCell({
           "hover:bg-black/5",
           "p-3",
           isSelected && "bg-black/10 border border-black/20",
-          // Corner highlights on hover
+          // Corner highlights on hover - all four corners
           "before:absolute before:inset-0 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-200",
-          "before:[background-image:linear-gradient(to_right,rgba(0,0,0,0.3)_0_8px,transparent_8px),linear-gradient(to_right,rgba(0,0,0,0.3)_0_8px,transparent_8px),linear-gradient(to_bottom,rgba(0,0,0,0.3)_0_8px,transparent_8px),linear-gradient(to_bottom,rgba(0,0,0,0.3)_0_8px,transparent_8px)]",
-          "before:[background-position:left_top,right_top,left_top,left_bottom]",
-          "before:[background-size:8px_2px,8px_2px,2px_8px,2px_8px]",
+          "before:[background-image:linear-gradient(to_right,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_left,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_right,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_left,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_bottom,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_bottom,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_top,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_top,rgba(0,0,0,0.4)_0_12px,transparent_12px)]",
+          "before:[background-position:left_top,right_top,left_bottom,right_bottom,left_top,right_top,left_bottom,right_bottom]",
+          "before:[background-size:12px_2px,12px_2px,12px_2px,12px_2px,2px_12px,2px_12px,2px_12px,2px_12px]",
           "before:[background-repeat:no-repeat]"
         )}
         style={{
