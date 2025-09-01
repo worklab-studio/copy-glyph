@@ -301,7 +301,7 @@ export function ColorPicker() {
               className="h-7 w-7 p-0 rounded-full border-2 hover:scale-110 transition-transform duration-150"
               style={{ 
                 backgroundColor: color,
-                borderColor: customization.color === color ? '#ffffff' : (color === '#FFFFFF' ? 'rgba(128, 128, 128, 0.25)' : 'transparent'),
+                borderColor: customization.color === color ? '#ffffff' : (color === '#FFFFFF' ? 'rgba(128, 128, 128, 0.5)' : 'transparent'),
                 boxShadow: customization.color === color ? '0 0 0 2px rgba(0,0,0,0.2)' : 'none'
               }}
             />
