@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -54,9 +54,14 @@ export function ColorPicker() {
   const [hue, setHue] = useState(270);
   const [saturation, setSaturation] = useState(0.6);
   const [value, setValue] = useState(0.8);
+  const [isDragging, setIsDragging] = useState(false);
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hueSliderRef = useRef<HTMLDivElement>(null);
+  const updateTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Memoize the current HSL color for the gradient
+  const hslColor = useMemo(() => `hsl(${hue}, 100%, 50%)`, [hue]);
 
   const handleHexChange = (inputValue: string) => {
     setHexInput(inputValue);
@@ -73,43 +78,94 @@ export function ColorPicker() {
     updateColor(color);
   };
 
-  const updateColorFromHSV = useCallback(() => {
-    const [r, g, b] = hsvToRgb(hue, saturation, value);
-    const hexColor = rgbToHex(r, g, b);
-    setHexInput(hexColor);
-    updateColor(hexColor);
-  }, [hue, saturation, value, updateColor]);
-
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  // Debounced color update
+  const debouncedUpdateColor = useCallback((h: number, s: number, v: number) => {
+    if (updateTimeoutRef.current) {
+      clearTimeout(updateTimeoutRef.current);
+    }
     
-    const rect = canvas.getBoundingClientRect();
+    updateTimeoutRef.current = setTimeout(() => {
+      const [r, g, b] = hsvToRgb(h, s, v);
+      const hexColor = rgbToHex(r, g, b);
+      setHexInput(hexColor);
+      updateColor(hexColor);
+    }, 16); // ~60fps
+  }, [updateColor]);
+
+  const handleCanvasInteraction = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    if (!target) return;
+    
+    const rect = target.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     
-    const newSaturation = x / rect.width;
-    const newValue = 1 - (y / rect.height);
+    const newSaturation = Math.max(0, Math.min(1, x / rect.width));
+    const newValue = Math.max(0, Math.min(1, 1 - (y / rect.height)));
     
-    setSaturation(Math.max(0, Math.min(1, newSaturation)));
-    setValue(Math.max(0, Math.min(1, newValue)));
-  };
+    setSaturation(newSaturation);
+    setValue(newValue);
+    
+    if (!isDragging) {
+      debouncedUpdateColor(hue, newSaturation, newValue);
+    }
+  }, [hue, isDragging, debouncedUpdateColor]);
 
-  const handleHueSliderClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleHueSliderInteraction = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const slider = hueSliderRef.current;
     if (!slider) return;
     
     const rect = slider.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    const newHue = (x / rect.width) * 360;
+    const newHue = Math.max(0, Math.min(360, (x / rect.width) * 360));
     
-    setHue(Math.max(0, Math.min(360, newHue)));
-  };
+    setHue(newHue);
+    debouncedUpdateColor(newHue, saturation, value);
+  }, [saturation, value, debouncedUpdateColor]);
 
-  // Update color when HSV changes
+  // Handle mouse events for smooth dragging
   useEffect(() => {
-    updateColorFromHSV();
-  }, [updateColorFromHSV]);
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+      
+      const colorArea = document.querySelector('[data-color-area]') as HTMLDivElement;
+      if (!colorArea) return;
+      
+      const rect = colorArea.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const newSaturation = Math.max(0, Math.min(1, x / rect.width));
+      const newValue = Math.max(0, Math.min(1, 1 - (y / rect.height)));
+      
+      setSaturation(newSaturation);
+      setValue(newValue);
+      debouncedUpdateColor(hue, newSaturation, newValue);
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, hue, debouncedUpdateColor]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="space-y-4">
@@ -117,24 +173,27 @@ export function ColorPicker() {
       
       {/* Main color picker area */}
       <div className="space-y-3">
-        <div className="relative">
-          <canvas
-            ref={canvasRef}
-            width={280}
-            height={160}
-            className="w-full h-40 rounded-lg cursor-crosshair"
-            onClick={handleCanvasClick}
+        <div className="relative select-none">
+          <div
+            data-color-area
+            className="w-full h-40 rounded-lg cursor-crosshair transition-none"
             style={{
-              background: `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, hsl(${hue}, 100%, 50%))`
+              background: `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, ${hslColor})`
             }}
+            onMouseDown={(e) => {
+              setIsDragging(true);
+              handleCanvasInteraction(e);
+            }}
+            onClick={handleCanvasInteraction}
           />
           {/* Picker indicator */}
           <div
-            className="absolute w-3 h-3 border-2 border-white rounded-full shadow-md pointer-events-none"
+            className="absolute w-3 h-3 border-2 border-white rounded-full shadow-lg pointer-events-none transition-none"
             style={{
               left: `${saturation * 100}%`,
               top: `${(1 - value) * 100}%`,
-              transform: 'translate(-50%, -50%)'
+              transform: 'translate(-50%, -50%)',
+              boxShadow: '0 0 0 1px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2)'
             }}
           />
         </div>
@@ -142,17 +201,18 @@ export function ColorPicker() {
         {/* Hue slider */}
         <div
           ref={hueSliderRef}
-          className="relative w-full h-4 rounded-lg cursor-pointer"
+          className="relative w-full h-4 rounded-lg cursor-pointer select-none"
           style={{
             background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)'
           }}
-          onClick={handleHueSliderClick}
+          onClick={handleHueSliderInteraction}
         >
           <div
-            className="absolute w-4 h-4 bg-white border-2 border-gray-300 rounded-full shadow-md"
+            className="absolute w-4 h-4 bg-white border-2 border-gray-300 rounded-full shadow-lg transition-none"
             style={{
               left: `${(hue / 360) * 100}%`,
-              transform: 'translateX(-50%)'
+              transform: 'translateX(-50%)',
+              boxShadow: '0 0 0 1px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.2)'
             }}
           />
         </div>
@@ -180,7 +240,7 @@ export function ColorPicker() {
               variant="ghost"
               size="sm"
               onClick={() => handlePresetClick(color)}
-              className="h-7 w-7 p-0 rounded-full border-2 hover:scale-110 transition-transform"
+              className="h-7 w-7 p-0 rounded-full border-2 hover:scale-110 transition-transform duration-150"
               style={{ 
                 backgroundColor: color,
                 borderColor: customization.color === color ? '#ffffff' : 'transparent'
