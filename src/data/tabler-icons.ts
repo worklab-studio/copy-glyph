@@ -114,28 +114,83 @@ function createIconComponent(name: string, svgString: string) {
 }
 
 // Process all Tabler icons
-export const tablerIcons: IconItem[] = Object.entries(tablerIconMap).map(([name, svgString]: [string, string]) => {
-  const metadata = parseIconMetadata(svgString);
-  const category = mapCategory(metadata.category);
-  
-  // Determine style based on SVG content
-  const style = svgString.includes('fill="currentColor"') ? 'solid' : 'outline';
-  
-  // Create tags array
-  const tags = [
-    name.replace(/-/g, ' '),
-    ...(metadata.tags || []),
-    category,
-    'tabler',
-    style
-  ].filter((tag, index, arr) => arr.indexOf(tag) === index);
+console.log('🔍 Starting Tabler icon processing...');
+console.log(`📊 Initial tablerIconMap entries: ${Object.keys(tablerIconMap).length}`);
 
-  return {
-    id: `tabler-${name}`,
-    name: name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, ' '),
-    svg: createIconComponent(name, svgString),
-    tags,
-    style,
-    category
-  };
-});
+let successCount = 0;
+let errorCount = 0;
+const errors: Array<{ name: string; error: string }> = [];
+
+export const tablerIcons: IconItem[] = Object.entries(tablerIconMap)
+  .map(([name, svgString]: [string, string]) => {
+    try {
+      // Validate SVG string
+      if (!svgString || typeof svgString !== 'string') {
+        throw new Error(`Invalid SVG string for icon: ${name}`);
+      }
+
+      // Check for basic SVG structure
+      if (!svgString.includes('<svg') || !svgString.includes('</svg>')) {
+        throw new Error(`Malformed SVG for icon: ${name}`);
+      }
+
+      const metadata = parseIconMetadata(svgString);
+      const category = mapCategory(metadata.category);
+      
+      // Determine style based on SVG content
+      const style = svgString.includes('fill="currentColor"') ? 'solid' : 'outline';
+      
+      // Create tags array
+      const tags = [
+        name.replace(/-/g, ' '),
+        ...(metadata.tags || []),
+        category,
+        'tabler',
+        style
+      ].filter((tag, index, arr) => arr.indexOf(tag) === index);
+
+      // Validate component creation
+      const component = createIconComponent(name, svgString);
+      if (!component) {
+        throw new Error(`Failed to create component for icon: ${name}`);
+      }
+
+      successCount++;
+      return {
+        id: `tabler-${name}`,
+        name: name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, ' '),
+        svg: component as IconItem['svg'],
+        tags,
+        style,
+        category
+      } as IconItem;
+    } catch (error) {
+      errorCount++;
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      errors.push({ name, error: errorMsg });
+      console.warn(`⚠️ Failed to process icon "${name}": ${errorMsg}`);
+      return null;
+    }
+  })
+  .filter((icon): icon is NonNullable<IconItem> => icon !== null);
+
+// Log final results
+console.log(`✅ Successfully processed: ${successCount} icons`);
+console.log(`❌ Failed to process: ${errorCount} icons`);
+console.log(`📋 Final tablerIcons array length: ${tablerIcons.length}`);
+
+if (errorCount > 0) {
+  console.group('🚨 Processing Errors:');
+  errors.slice(0, 10).forEach(({ name, error }) => {
+    console.log(`  - ${name}: ${error}`);
+  });
+  if (errors.length > 10) {
+    console.log(`  ... and ${errors.length - 10} more errors`);
+  }
+  console.groupEnd();
+}
+
+// Performance check
+if (tablerIcons.length < Object.keys(tablerIconMap).length * 0.9) {
+  console.warn(`🔥 WARNING: Significant icon loss detected! Expected ~${Object.keys(tablerIconMap).length}, got ${tablerIcons.length}`);
+}
