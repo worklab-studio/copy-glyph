@@ -93,7 +93,7 @@ function IconGridPage() {
             onSearchChange={setSearchQuery}
           />
           
-          <main className="flex-1 overflow-hidden">{/* Fill available space */}
+          <main className="flex-1 overflow-auto">
             {/* Header with padding */}
             <div className="px-6 pt-6 pb-4 border-b border-border/30">
               <div className="space-y-1">
@@ -113,33 +113,31 @@ function IconGridPage() {
               </div>
             </div>
 
-            {/* Grid - fill remaining space */}
-            <div className="flex-1 overflow-auto">
-              {displayedIcons.length === 0 ? (
-                <div className="flex h-full items-center justify-center text-center px-6">
-                  <div className="space-y-2">
-                    <p className="text-lg text-muted-foreground">
-                      {selectedSet === "favorites" ? "No favorites yet" : "No icons found"}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedSet === "favorites" 
-                        ? "Star some icons to see them here"
-                        : "Try a different search term or select a different library"
-                      }
-                    </p>
-                  </div>
+            {/* Grid - edge to edge */}
+            {displayedIcons.length === 0 ? (
+              <div className="flex h-64 items-center justify-center text-center px-6">
+                <div className="space-y-2">
+                  <p className="text-lg text-muted-foreground">
+                    {selectedSet === "favorites" ? "No favorites yet" : "No icons found"}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedSet === "favorites" 
+                      ? "Star some icons to see them here"
+                      : "Try a different search term or select a different library"
+                    }
+                  </p>
                 </div>
-              ) : (
-                  <IconGrid
-                    items={displayedIcons}
-                    selectedId={selectedId}
-                    onCopy={handleCopy}
-                    onIconClick={handleIconClick}
-                    color={customization.color}
-                    strokeWidth={customization.strokeWidth}
-                  />
-              )}
-            </div>
+              </div>
+            ) : (
+                <IconGrid
+                  items={displayedIcons}
+                  selectedId={selectedId}
+                  onCopy={handleCopy}
+                  onIconClick={handleIconClick}
+                  color={customization.color}
+                  strokeWidth={customization.strokeWidth}
+                />
+            )}
           </main>
           
           <footer className="border-t p-4 text-center text-xs text-muted-foreground">
