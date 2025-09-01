@@ -81,26 +81,24 @@ function IconGridPage() {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen w-full overflow-hidden">
+      <div className="flex min-h-screen w-full">
         <AppSidebar 
           selectedSet={selectedSet}
           onSetChange={setSelectedSet}
         />
         
-        {/* Fixed Header */}
-        <div className="fixed top-0 left-0 right-0 z-40 bg-background border-b">
-          <div className="ml-64"> {/* Account for sidebar width */}
+        <div className="flex-1 flex flex-col">
+          {/* Fixed Header */}
+          <div className="sticky top-0 z-50 bg-background border-b">
             <Header 
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
             />
           </div>
-        </div>
-
-        {/* Main content with margins for fixed elements */}
-        <div className="ml-64 mr-80 mt-16 mb-16"> {/* ml-64 for sidebar, mr-80 for control panel, mt-16 for header, mb-16 for footer */}
-          <main className="h-[calc(100vh-8rem)]"> {/* Full height minus header and footer */}
-            {/* Header with padding - fixed height section */}
+          
+          {/* Main Content Area */}
+          <div className="flex-1 flex flex-col min-h-0">
+            {/* Page Header - fixed height section */}
             <div className="flex-shrink-0 px-6 pt-6 pb-4 border-b border-border/30">
               <div className="space-y-1">
                 <h2 className="text-2xl font-semibold">
@@ -119,8 +117,8 @@ function IconGridPage() {
               </div>
             </div>
 
-            {/* Grid container - takes remaining space */}
-            <div className="h-[calc(100%-6rem)] overflow-auto"> {/* Subtract header section height */}
+            {/* Scrollable Icon Grid */}
+            <div className="flex-1 min-h-0 overflow-auto">
               {displayedIcons.length === 0 ? (
                 <div className="flex h-64 items-center justify-center text-center px-6">
                   <div className="space-y-2">
@@ -136,26 +134,26 @@ function IconGridPage() {
                   </div>
                 </div>
               ) : (
-                  <IconGrid
-                    items={displayedIcons}
-                    selectedId={selectedId}
-                    onCopy={handleCopy}
-                    onIconClick={handleIconClick}
-                    color={customization.color}
-                    strokeWidth={customization.strokeWidth}
-                  />
+                <IconGrid
+                  items={displayedIcons}
+                  selectedId={selectedId}
+                  onCopy={handleCopy}
+                  onIconClick={handleIconClick}
+                  color={customization.color}
+                  strokeWidth={customization.strokeWidth}
+                />
               )}
             </div>
-          </main>
+          </div>
+          
+          {/* Fixed Footer */}
+          <footer className="flex-shrink-0 border-t p-4 text-center text-xs text-muted-foreground bg-background">
+            <p>Built with ❤️ • <a href="mailto:support@notionicons.so" className="hover:text-primary">Support</a></p>
+          </footer>
         </div>
-
-        {/* Fixed Footer */}
-        <footer className="fixed bottom-0 left-64 right-80 z-40 bg-background border-t p-4 text-center text-xs text-muted-foreground">
-          <p>Built with ❤️ • <a href="mailto:support@notionicons.so" className="hover:text-primary">Support</a></p>
-        </footer>
         
         {/* Fixed Control Panel */}
-        <div className="fixed top-0 right-0 bottom-0 z-30">
+        <div className="w-80 flex-shrink-0 border-l">
           <ControlPanel selectedIcon={selectedIcon} />
         </div>
       </div>
