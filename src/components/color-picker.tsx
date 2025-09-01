@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
+import { useTheme } from "next-themes";
 
 const presetColors = [
   // Row 1 - Grayscale
@@ -83,6 +84,7 @@ const rgbToHex = (r: number, g: number, b: number) => {
 
 export function ColorPicker() {
   const { customization, updateColor } = useIconCustomization();
+  const { theme } = useTheme();
   const [hexInput, setHexInput] = useState(customization.color);
   
   // Initialize HSV values based on the current customization color
@@ -319,7 +321,7 @@ export function ColorPicker() {
               className="h-7 w-7 p-0 rounded-full border-2 hover:scale-110 transition-transform duration-150"
               style={{ 
                 backgroundColor: color,
-                borderColor: customization.color === color ? '#ffffff' : (color === '#FFFFFF' ? 'rgba(128, 128, 128, 0.5)' : 'transparent'),
+                borderColor: customization.color === color ? '#ffffff' : (color === '#FFFFFF' && theme !== 'dark' ? 'rgba(128, 128, 128, 0.5)' : 'transparent'),
                 boxShadow: customization.color === color ? '0 0 0 2px rgba(0,0,0,0.2)' : 'none'
               }}
             />

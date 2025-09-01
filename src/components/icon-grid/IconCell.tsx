@@ -45,15 +45,23 @@ export function IconCell({
   
   // Special case: light mode + white color should use gray hover
   const isLightModeWhite = theme === 'light' && selectedColor.toLowerCase() === '#ffffff';
+  // Special case: dark mode + black color should use whitish grey hover
+  const isDarkModeBlack = theme === 'dark' && selectedColor.toLowerCase() === '#000000';
   
   const backgroundStyle = isLightModeWhite 
     ? 'rgba(128, 128, 128, 0.1)' // slight gray for white icons in light mode
+    : isDarkModeBlack
+    ? 'rgba(200, 200, 200, 0.1)' // whitish grey for black icons in dark mode
     : `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)`;
   const borderStyle = isLightModeWhite
     ? 'rgba(128, 128, 128, 0.2)' // slight gray border for white icons in light mode
+    : isDarkModeBlack
+    ? 'rgba(200, 200, 200, 0.2)' // whitish grey border for black icons in dark mode
     : `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`;
   const cornerStyle = isLightModeWhite
     ? 'rgba(128, 128, 128, 0.4)' // slight gray corners for white icons in light mode
+    : isDarkModeBlack
+    ? 'rgba(200, 200, 200, 0.4)' // whitish grey corners for black icons in dark mode
     : `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.4)`;
 
   // Create dynamic corner gradients using the selected color
