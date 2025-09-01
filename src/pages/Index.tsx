@@ -91,6 +91,7 @@ function IconGridPage() {
           <Header 
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
+            onSearchClear={() => setSearchQuery("")}
           />
           
           <main className="flex-1 overflow-auto">

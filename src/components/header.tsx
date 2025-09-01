@@ -7,12 +7,13 @@ import { useRef, useEffect } from "react";
 interface HeaderProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
+  onSearchClear?: () => void;
 }
 
-export function Header({ searchQuery, onSearchChange }: HeaderProps) {
+export function Header({ searchQuery, onSearchChange, onSearchClear }: HeaderProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Add keyboard shortcut for Cmd+K / Ctrl+K
+  // Add keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
@@ -20,15 +21,22 @@ export function Header({ searchQuery, onSearchChange }: HeaderProps) {
         searchInputRef.current?.focus();
         searchInputRef.current?.select();
       }
+      
+      // Clear search on Escape key
+      if (event.key === 'Escape' && searchQuery) {
+        event.preventDefault();
+        onSearchClear?.();
+        searchInputRef.current?.blur();
+      }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [searchQuery, onSearchClear]);
 
   // Detect if user is on Mac for the right key indicator
   const isMac = typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-  const shortcutKey = isMac ? '⌘K' : 'Ctrl+K';
+  const shortcutKey = searchQuery ? 'Esc' : (isMac ? '⌘K' : 'Ctrl+K');
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
