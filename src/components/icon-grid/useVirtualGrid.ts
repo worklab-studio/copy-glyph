@@ -14,7 +14,7 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
   // Calculate columns based on container width (80px per icon)
   const columnsCount = Math.floor(Math.max(containerWidth, 320) / 80) || 4;
 
-  // Group items into rows with fixed column count
+  // Group items into rows with calculated column count
   const rows = useMemo(() => {
     const result: IconItem[][] = [];
     for (let i = 0; i < items.length; i += columnsCount) {

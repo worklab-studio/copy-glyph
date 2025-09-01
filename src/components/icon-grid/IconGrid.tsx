@@ -58,7 +58,7 @@ export function IconGrid({
                   transform: `translateY(${virtualItem.start}px)`,
                   display: 'grid',
                   gridTemplateColumns: `repeat(${columnsCount}, 80px)`,
-                  justifyContent: 'center',
+                  justifyContent: 'start',
                   gap: 0,
                 }}
               >
@@ -83,7 +83,7 @@ export function IconGrid({
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, 80px)',
-            justifyContent: 'center',
+            justifyContent: 'start',
             gap: 0,
           }}
         >
