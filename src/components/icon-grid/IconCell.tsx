@@ -42,6 +42,19 @@ export function IconCell({
   const rgb = hexToRgb(selectedColor);
   const backgroundStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)`;
   const borderStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`;
+  const cornerStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.4)`;
+
+  // Create dynamic corner gradients using the selected color
+  const cornerGradients = [
+    `linear-gradient(to right, ${cornerStyle} 0 12px, transparent 12px)`,
+    `linear-gradient(to left, ${cornerStyle} 0 12px, transparent 12px)`,
+    `linear-gradient(to right, ${cornerStyle} 0 12px, transparent 12px)`,
+    `linear-gradient(to left, ${cornerStyle} 0 12px, transparent 12px)`,
+    `linear-gradient(to bottom, ${cornerStyle} 0 12px, transparent 12px)`,
+    `linear-gradient(to bottom, ${cornerStyle} 0 12px, transparent 12px)`,
+    `linear-gradient(to top, ${cornerStyle} 0 12px, transparent 12px)`,
+    `linear-gradient(to top, ${cornerStyle} 0 12px, transparent 12px)`
+  ].join(', ');
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -110,13 +123,7 @@ export function IconCell({
         className={cn(
           "group relative aspect-square flex items-center justify-center transition-all duration-200",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-          "p-3",
-          // Corner highlights on hover - all four corners
-          "before:absolute before:inset-0 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-200",
-          "before:[background-image:linear-gradient(to_right,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_left,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_right,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_left,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_bottom,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_bottom,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_top,rgba(0,0,0,0.4)_0_12px,transparent_12px),linear-gradient(to_top,rgba(0,0,0,0.4)_0_12px,transparent_12px)]",
-          "before:[background-position:left_top,right_top,left_bottom,right_bottom,left_top,right_top,left_bottom,right_bottom]",
-          "before:[background-size:12px_2px,12px_2px,12px_2px,12px_2px,2px_12px,2px_12px,2px_12px,2px_12px]",
-          "before:[background-repeat:no-repeat]"
+          "p-3"
         )}
         style={{
           willChange: 'transform, opacity',
@@ -124,9 +131,23 @@ export function IconCell({
           backgroundColor: (isHovered || isSelected) ? backgroundStyle : 'transparent',
           borderColor: (isHovered || isSelected) ? borderStyle : 'transparent',
           borderWidth: (isHovered || isSelected) ? '1px' : '0px',
-          borderStyle: 'solid'
+          borderStyle: 'solid',
         }}
       >
+        {/* Dynamic corner highlights */}
+        <div 
+          className={cn(
+            "absolute inset-0 transition-opacity duration-200",
+            (isHovered || isSelected) ? "opacity-100" : "opacity-0"
+          )}
+          style={{
+            backgroundImage: cornerGradients,
+            backgroundPosition: 'left top, right top, left bottom, right bottom, left top, right top, left bottom, right bottom',
+            backgroundSize: '12px 2px, 12px 2px, 12px 2px, 12px 2px, 2px 12px, 2px 12px, 2px 12px, 2px 12px',
+            backgroundRepeat: 'no-repeat'
+          }}
+        />
+        
         {renderIcon()}
         
         {/* Copy badge - shows on hover only */}
