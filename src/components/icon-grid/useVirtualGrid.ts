@@ -9,8 +9,10 @@ interface UseVirtualGridProps {
 }
 
 export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtualGridProps) {
-  // Fixed columns count matching Lucide's layout
-  const columnsCount = 10;
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  // Calculate columns based on container width (80px per icon)
+  const columnsCount = Math.floor(Math.max(containerWidth, 320) / 80) || 4;
 
   // Group items into rows with fixed column count
   const rows = useMemo(() => {
@@ -20,6 +22,19 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
     }
     return result;
   }, [items, columnsCount]);
+
+  // Update container width on resize
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.clientWidth);
+      }
+    };
+
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, [containerRef]);
 
   const virtualizer = useVirtualizer({
     count: rows.length,

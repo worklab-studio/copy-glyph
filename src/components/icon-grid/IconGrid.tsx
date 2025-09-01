@@ -29,7 +29,7 @@ export function IconGrid({
   return (
     <div 
       ref={containerRef}
-      className="w-[800px] h-[600px] overflow-auto mx-auto"
+      className="w-full h-[600px] overflow-auto"
       role="grid"
       aria-label={computedAriaLabel}
     >
@@ -57,7 +57,7 @@ export function IconGrid({
                   height: `${virtualItem.size}px`,
                   transform: `translateY(${virtualItem.start}px)`,
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(10, 80px)',
+                  gridTemplateColumns: `repeat(${columnsCount}, 80px)`,
                   justifyContent: 'center',
                   gap: 0,
                 }}
@@ -82,9 +82,9 @@ export function IconGrid({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(10, 80px)',
+            gridTemplateColumns: 'repeat(auto-fit, 80px)',
             justifyContent: 'center',
-            gap: '0',
+            gap: 0,
           }}
         >
           {items.map((icon) => (
