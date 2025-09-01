@@ -173,9 +173,23 @@ export function IconCell({
     const isHeroIcon = icon.id.startsWith('heroicons-');
     
     if (typeof icon.svg === 'string') {
+      // For SVG strings, we need to modify the stroke-width attribute
+      let modifiedSvg = icon.svg;
+      
+      // Apply stroke width to SVG string
+      if (!isHeroIcon) {
+        // Replace existing stroke-width attribute or add it if it doesn't exist
+        if (modifiedSvg.includes('stroke-width=')) {
+          modifiedSvg = modifiedSvg.replace(/stroke-width="[^"]*"/g, `stroke-width="${iconStrokeWidth}"`);
+        } else {
+          // Add stroke-width attribute to the svg tag
+          modifiedSvg = modifiedSvg.replace(/<svg([^>]*)>/, `<svg$1 stroke-width="${iconStrokeWidth}">`);
+        }
+      }
+      
       return (
         <div 
-          dangerouslySetInnerHTML={{ __html: icon.svg }}
+          dangerouslySetInnerHTML={{ __html: modifiedSvg }}
           className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors"
           style={{ color: iconColor }}
         />
