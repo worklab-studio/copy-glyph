@@ -215,7 +215,8 @@ export function IconCell({
         data-selected={isSelected}
         className={cn(
           "group relative aspect-square flex items-center justify-center transition-all duration-200",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+          "m-0 w-[80px] h-[80px]"
         )}
         style={{
           willChange: 'transform, opacity',

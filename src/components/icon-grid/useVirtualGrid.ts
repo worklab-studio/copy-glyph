@@ -24,7 +24,7 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => containerRef.current,
-    estimateSize: () => 100, // Fixed row height for consistency
+    estimateSize: () => 80, // Match cell width for no spacing
     overscan: 5,
     enabled,
   });
