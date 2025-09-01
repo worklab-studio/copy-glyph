@@ -229,7 +229,7 @@ export function AppSidebar({
                       <div className="relative">
                         <SidebarMenuButton 
                           className={cn(
-                            "relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
+                            "group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
                             hasActiveVariant 
                               ? 'bg-accent/30 text-accent-foreground' 
                               : 'text-muted-foreground hover:text-foreground'
