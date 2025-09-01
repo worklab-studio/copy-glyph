@@ -31,8 +31,8 @@ export function Header({ searchQuery, onSearchChange }: HeaderProps) {
   const shortcutKey = isMac ? '⌘K' : 'Ctrl+K';
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between px-4 border-b">
+    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center justify-between px-4">
         <div className="flex items-center">
           <SidebarTrigger className="mr-2" />
         </div>
