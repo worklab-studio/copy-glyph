@@ -25,10 +25,25 @@ export const phosphorIcons: IconItem[] = phosphorIconNames.map(name => {
     ...(name.includes('Calendar') || name.includes('Clock') ? ['time', 'schedule'] : []),
   ];
 
+  const category = 
+    name.includes('Arrow') ? 'navigation' :
+    name.includes('Warning') || name.includes('Prohibit') ? 'status' :
+    name.includes('Gear') || name.includes('Wrench') ? 'system' :
+    name.includes('User') || name.includes('Person') ? 'user' :
+    name.includes('Envelope') || name.includes('Chat') ? 'communication' :
+    name.includes('File') || name.includes('Folder') ? 'files' :
+    name.includes('Play') || name.includes('Pause') || name.includes('Music') ? 'media' :
+    name.includes('Heart') || name.includes('Star') ? 'social' :
+    name.includes('Lock') || name.includes('Shield') ? 'security' :
+    name.includes('Calendar') || name.includes('Clock') ? 'time' :
+    'actions';
+
   return {
     id: `phosphor-${name.toLowerCase()}`,
     name: displayName,
     svg: IconComponent,
-    tags: [...new Set(tags)]
+    tags: [...new Set(tags)],
+    style: 'regular' as const,
+    category
   };
 });

@@ -8,15 +8,19 @@ import { IconCustomizationProvider, useIconCustomization } from "@/contexts/Icon
 import { type IconItem } from "@/types/icon";
 import { toast } from "@/hooks/use-toast";
 import { featherIcons } from "@/data/feather-icons";
-import { heroiconsV2 } from "@/data/heroicons-v2";
+import { heroiconsOutline } from "@/data/heroicons-outline";
+import { heroiconsSolid } from "@/data/heroicons-solid";
 import { phosphorIcons } from "@/data/phosphor-icons";
 import { lucideIcons } from "@/data/lucide-icons";
+import { CategoryHeader } from "@/components/CategoryHeader";
+import { useScrollCategory } from "@/hooks/useScrollCategory";
 
 // Combine all icon libraries
 const allIcons: IconItem[] = [
   ...lucideIcons,
   ...featherIcons,
-  ...heroiconsV2,
+  ...heroiconsOutline,
+  ...heroiconsSolid,
   ...phosphorIcons
 ];
 
@@ -25,6 +29,7 @@ function IconGridPage() {
   const [selectedSet, setSelectedSet] = useState("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { customization } = useIconCustomization();
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   // Get the selected icon object
   const selectedIcon = useMemo(() => {
@@ -43,27 +48,37 @@ function IconGridPage() {
     );
   }, [searchQuery]);
 
-  // Filter by selected set
+  // Filter by selected set and group by category
   const displayedIcons = useMemo(() => {
+    let icons: IconItem[] = [];
+    
     if (selectedSet === "favorites") {
-      return []; // Empty for now - would load from localStorage
+      icons = []; // Empty for now - would load from localStorage
+    } else if (selectedSet === "all") {
+      icons = filteredIcons;
+    } else if (selectedSet === "lucide") {
+      icons = filteredIcons.filter(icon => icon.id.startsWith('lucide-'));
+    } else if (selectedSet === "feather") {
+      icons = filteredIcons.filter(icon => icon.id.startsWith('feather-'));
+    } else if (selectedSet === "heroicons-outline") {
+      icons = filteredIcons.filter(icon => icon.id.startsWith('heroicons-outline-'));
+    } else if (selectedSet === "heroicons-solid") {
+      icons = filteredIcons.filter(icon => icon.id.startsWith('heroicons-solid-'));
+    } else if (selectedSet === "phosphor") {
+      icons = filteredIcons.filter(icon => icon.id.startsWith('phosphor-'));
     }
-    if (selectedSet === "all") {
-      return filteredIcons;
-    }
-    if (selectedSet === "lucide") {
-      return filteredIcons.filter(icon => icon.id.startsWith('lucide-'));
-    }
-    if (selectedSet === "feather") {
-      return filteredIcons.filter(icon => icon.id.startsWith('feather-'));
-    }
-    if (selectedSet === "heroicons") {
-      return filteredIcons.filter(icon => icon.id.startsWith('heroicons-'));
-    }
-    if (selectedSet === "phosphor") {
-      return filteredIcons.filter(icon => icon.id.startsWith('phosphor-'));
-    }
-    return []; // Other sets not implemented yet
+    
+    // Group icons by category and then flatten in category order
+    const categoryOrder = ['navigation', 'communication', 'media', 'files', 'system', 'user', 'security', 'time', 'finance', 'social', 'status', 'actions', 'shopping', 'other'];
+    const groupedByCategory = icons.reduce((acc, icon) => {
+      const category = icon.category || 'other';
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(icon);
+      return acc;
+    }, {} as Record<string, IconItem[]>);
+    
+    // Return icons in category order
+    return categoryOrder.flatMap(category => groupedByCategory[category] || []);
   }, [selectedSet, filteredIcons]);
 
   const handleCopy = (icon: IconItem) => {
@@ -78,6 +93,12 @@ function IconGridPage() {
     // Toggle selection - if already selected, deselect; otherwise select
     setSelectedId(prevId => prevId === icon.id ? null : icon.id);
   };
+
+  // Get current category for the header
+  const currentCategory = useScrollCategory({ 
+    icons: displayedIcons, 
+    containerRef
+  });
 
   return (
     <SidebarProvider>
@@ -94,7 +115,11 @@ function IconGridPage() {
             onSearchClear={() => setSearchQuery("")}
           />
           
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto relative" ref={containerRef}>
+            {/* Category header */}
+            {displayedIcons.length > 0 && currentCategory && (
+              <CategoryHeader currentCategory={currentCategory} />
+            )}
             {/* Header with padding */}
             <div className="px-6 pt-6 pb-4 border-b border-border/30">
               <div className="space-y-1">
@@ -103,7 +128,8 @@ function IconGridPage() {
                    selectedSet === "favorites" ? "Favorites" : 
                    selectedSet === "lucide" ? "Lucide Icons" :
                    selectedSet === "feather" ? "Feather Icons" :
-                   selectedSet === "heroicons" ? "Heroicons" :
+                   selectedSet === "heroicons-outline" ? "Heroicons Outline" :
+                   selectedSet === "heroicons-solid" ? "Heroicons Solid" :
                    selectedSet === "phosphor" ? "Phosphor Icons" :
                    selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
                 </h2>
