@@ -116,7 +116,7 @@ export function AppSidebar({
       <SidebarHeader className="border-b border-border/50 p-4">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground shadow-lg">
-            <span className="text-lg font-bold text-background">N</span>
+            <span className="text-lg font-bold text-background">I</span>
           </div>
           {sidebarOpen && <div className="flex flex-col">
               <h1 className="text-lg font-semibold tracking-tight">Icons</h1>
