@@ -232,10 +232,10 @@ export function IconCell({
         {/* Tooltip - shows after 0.5s hover, positioned exactly like Radix tooltip */}
         {showTooltip && (
           <div 
-            className="absolute left-1/2 transform -translate-x-1/2 bg-foreground text-background text-xs py-1 px-2 rounded whitespace-nowrap pointer-events-none"
+            className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-foreground text-background text-xs py-1 px-2 rounded whitespace-nowrap pointer-events-none"
             style={{ 
               zIndex: 1000,
-              top: 'calc(-100% - 4px)'
+              bottom: 'calc(100% + 4px)'
             }}
           >
             Double click to copy icon
