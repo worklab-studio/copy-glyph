@@ -5,26 +5,10 @@ import { Button } from "@/components/ui/button";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 
 const presetColors = [
-  // Reds
-  "#FF0000", "#FF4444", "#DC2626", "#EF4444",
-  // Oranges  
-  "#FF8800", "#FB923C", "#EA580C", "#F97316",
-  // Yellows
-  "#FFDD00", "#FDE047", "#EAB308", "#F59E0B",
-  // Greens
-  "#00FF00", "#4ADE80", "#16A34A", "#22C55E",
-  // Teals
-  "#00FFAA", "#2DD4BF", "#14B8A6", "#06B6D4",
-  // Blues
-  "#0088FF", "#60A5FA", "#3B82F6", "#2563EB",
-  // Indigos
-  "#4400FF", "#818CF8", "#6366F1", "#4F46E5",
-  // Purples
-  "#8800FF", "#A78BFA", "#8B5CF6", "#7C3AED",
-  // Pinks
-  "#FF00AA", "#F472B6", "#EC4899", "#DB2777",
-  // Grays
-  "#000000", "#374151", "#6B7280", "#9CA3AF"
+  // Row 1 - Vibrant colors
+  "#FF0000", "#FF8800", "#FFDD00", "#00FF00", "#00FFAA", "#0088FF", "#4400FF", "#FF00AA",
+  // Row 2 - Muted colors
+  "#DC2626", "#EA580C", "#EAB308", "#16A34A", "#14B8A6", "#3B82F6", "#8B5CF6", "#EC4899"
 ];
 
 // Convert Hex to HSV
@@ -269,15 +253,23 @@ export function ColorPicker() {
         </div>
       </div>
 
-      {/* Selected color display */}
-      <div className="flex items-center gap-3">
-        <div 
-          className="w-10 h-10 rounded-md border border-border shadow-sm"
-          style={{ backgroundColor: customization.color }}
-        />
-        <div className="flex flex-col">
-          <span className="text-xs text-muted-foreground">Selected</span>
-          <span className="text-sm font-mono">{hexInput}</span>
+      {/* Selected color display and hex input */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-3">
+          <div 
+            className="w-10 h-10 rounded-md border border-border shadow-sm flex-shrink-0"
+            style={{ backgroundColor: customization.color }}
+          />
+          <div className="flex flex-col flex-1">
+            <span className="text-xs text-muted-foreground">Selected</span>
+            <Input
+              type="text"
+              value={hexInput}
+              onChange={(e) => handleHexChange(e.target.value)}
+              placeholder="#4F46E5"
+              className="text-sm font-mono h-8 mt-1"
+            />
+          </div>
         </div>
       </div>
       
