@@ -131,7 +131,7 @@ export function ColorPicker() {
       const hexColor = rgbToHex(r, g, b);
       setHexInput(hexColor);
       updateColor(hexColor);
-    }, 16); // ~60fps
+    }, 8); // Reduced from 16ms to 8ms for smoother updates
   }, [updateColor]);
 
   const handleCanvasInteraction = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -148,10 +148,8 @@ export function ColorPicker() {
     setSaturation(newSaturation);
     setValue(newValue);
     
-    if (!isDragging) {
-      debouncedUpdateColor(hue, newSaturation, newValue);
-    }
-  }, [hue, isDragging, debouncedUpdateColor]);
+    debouncedUpdateColor(hue, newSaturation, newValue);
+  }, [hue, debouncedUpdateColor]);
 
   const handleHueSliderInteraction = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const slider = hueSliderRef.current;
@@ -171,6 +169,21 @@ export function ColorPicker() {
       if (!isDragging) return;
       
       const colorArea = document.querySelector('[data-color-area]') as HTMLDivElement;
+      const hueSlider = hueSliderRef.current;
+      
+      // Check if we're dragging on the hue slider
+      if (hueSlider) {
+        const hueRect = hueSlider.getBoundingClientRect();
+        if (e.clientY >= hueRect.top && e.clientY <= hueRect.bottom) {
+          const x = e.clientX - hueRect.left;
+          const newHue = Math.max(0, Math.min(360, (x / hueRect.width) * 360));
+          setHue(newHue);
+          debouncedUpdateColor(newHue, saturation, value);
+          return;
+        }
+      }
+      
+      // Otherwise handle color area dragging
       if (!colorArea) return;
       
       const rect = colorArea.getBoundingClientRect();
@@ -190,7 +203,7 @@ export function ColorPicker() {
     };
 
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mousemove', handleMouseMove, { passive: false });
       document.addEventListener('mouseup', handleMouseUp);
     }
 
@@ -198,7 +211,7 @@ export function ColorPicker() {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, hue, debouncedUpdateColor]);
+  }, [isDragging, hue, saturation, value, debouncedUpdateColor]);
 
   // Sync HSV values when customization color changes externally
   useEffect(() => {
@@ -255,6 +268,10 @@ export function ColorPicker() {
           className="relative w-full h-4 rounded-lg cursor-pointer select-none"
           style={{
             background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)'
+          }}
+          onMouseDown={(e) => {
+            setIsDragging(true);
+            handleHueSliderInteraction(e);
           }}
           onClick={handleHueSliderInteraction}
         >
