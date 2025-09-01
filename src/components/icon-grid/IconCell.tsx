@@ -61,25 +61,36 @@ export function IconCell({
       return (
         <div 
           dangerouslySetInnerHTML={{ __html: icon.svg }}
-          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors"
+          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors [&_svg]:stroke-current"
           style={{ 
             color,
             '--icon-stroke': strokeWidth,
-          } as React.CSSProperties}
+            '--stroke-width': strokeWidth,
+            strokeWidth,
+          } as React.CSSProperties & { '--icon-stroke': number; '--stroke-width': number }}
         />
       );
     } else {
       const IconComponent = icon.svg as React.ComponentType<any>;
       return (
-        <IconComponent
-          className="transition-colors"
+        <div
+          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors [&_svg]:stroke-current"
           style={{
-            width: 'clamp(24px,32%,40px)',
-            height: 'clamp(24px,32%,40px)',
             color,
+            '--stroke-width': strokeWidth,
             strokeWidth,
-          }}
-        />
+          } as React.CSSProperties & { '--stroke-width': number }}
+        >
+          <IconComponent
+            className="w-full h-full"
+            style={{
+              color,
+              strokeWidth,
+            }}
+            strokeWidth={strokeWidth}
+            size="100%"
+          />
+        </div>
       );
     }
   };
