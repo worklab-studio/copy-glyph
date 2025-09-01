@@ -220,31 +220,41 @@ export function AppSidebar({
                 return (
                   <SidebarMenuItem key={library.id}>
                     <Collapsible open={isExpanded} onOpenChange={() => toggleLibrary(library.id)}>
-                      <CollapsibleTrigger asChild>
+                      <div className="group relative">
                         <SidebarMenuButton 
                           className={cn(
-                            "group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50",
+                            "relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-200 hover:bg-accent/50",
                             hasActiveVariant 
                               ? 'bg-accent/30 text-accent-foreground' 
                               : 'text-muted-foreground hover:text-foreground'
                           )}
                         >
-                          <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
+                          {/* Icon area with hover trigger */}
+                          <div className="relative mr-3 h-4 w-4 flex-shrink-0">
+                            <library.icon className="h-4 w-4" />
+                            {/* Dropdown indicator on hover */}
+                            <div className="absolute -left-1 -top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                              <CollapsibleTrigger asChild>
+                                <button className="flex h-3 w-3 items-center justify-center rounded-full bg-accent/80 text-accent-foreground hover:bg-accent">
+                                  {isExpanded ? (
+                                    <ChevronDown className="h-2 w-2" />
+                                  ) : (
+                                    <ChevronRight className="h-2 w-2" />
+                                  )}
+                                </button>
+                              </CollapsibleTrigger>
+                            </div>
+                          </div>
                           {sidebarOpen && (
                             <>
                               <span className="flex-1 truncate text-left">{library.name}</span>
                               <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
                                 {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
                               </span>
-                              {isExpanded ? (
-                                <ChevronDown className="ml-2 h-3 w-3" />
-                              ) : (
-                                <ChevronRight className="ml-2 h-3 w-3" />
-                              )}
                             </>
                           )}
                         </SidebarMenuButton>
-                      </CollapsibleTrigger>
+                      </div>
                       <CollapsibleContent className="pl-6">
                         {library.variants?.map(variant => (
                           <SidebarMenuButton
