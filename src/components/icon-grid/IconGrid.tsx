@@ -25,13 +25,17 @@ export function IconGrid({
     return ariaLabel || getGridAriaLabel(items.length);
   }, [ariaLabel, items.length]);
 
-  // Always use fixed height container with consistent layout
+  // Always use fixed size container - consistent like Lucide
   return (
     <div 
       ref={containerRef}
-      className="h-[calc(100vh-200px)] overflow-auto w-full"
+      className="h-[600px] overflow-auto w-full"
       role="grid"
       aria-label={computedAriaLabel}
+      style={{
+        minHeight: '600px',
+        maxHeight: '600px'
+      }}
     >
       {items.length > 100 ? (
         // Virtualized rendering for large lists
@@ -80,17 +84,18 @@ export function IconGrid({
           })}
         </div>
       ) : (
-        // Simple grid for smaller lists
+        // Simple grid for smaller lists - still in fixed container
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
             gap: '0',
+            minHeight: '100%',
             backgroundImage: `
               repeating-linear-gradient(to right, rgba(0,0,0,0.1) 0 0.5px, transparent 0.5px 100%),
               repeating-linear-gradient(to bottom, rgba(0,0,0,0.1) 0 0.5px, transparent 0.5px 100%)
             `,
-            backgroundSize: '1fr 1fr'
+            backgroundSize: '80px 100px'
           }}
         >
           {items.map((icon) => (
