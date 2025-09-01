@@ -253,21 +253,20 @@ export function ColorPicker() {
         </div>
       </div>
 
-      {/* Selected color display and hex input */}
+      {/* Color display and hex input */}
       <div className="space-y-3">
         <div className="flex items-center gap-3">
           <div 
             className="w-10 h-10 rounded-md border border-border shadow-sm flex-shrink-0"
             style={{ backgroundColor: customization.color }}
           />
-          <div className="flex flex-col flex-1">
-            <span className="text-xs text-muted-foreground">Selected</span>
+          <div className="flex-1">
             <Input
               type="text"
               value={hexInput}
               onChange={(e) => handleHexChange(e.target.value)}
               placeholder="#4F46E5"
-              className="text-sm font-mono h-8 mt-1"
+              className="text-sm font-mono h-8"
             />
           </div>
         </div>
