@@ -229,7 +229,7 @@ export function AppSidebar({
                       <div className="relative">
                         <SidebarMenuButton 
                           className={cn(
-                            "group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
+                            "heroicons-dropdown-group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50",
                             hasActiveVariant 
                               ? 'bg-accent/30 text-accent-foreground' 
                               : 'text-muted-foreground hover:text-foreground'
@@ -238,9 +238,9 @@ export function AppSidebar({
                           {/* Icon area with hover replacement */}
                           <div className="relative mr-3 h-4 w-4 flex-shrink-0 flex items-center justify-center">
                             {/* Normal library icon - hidden on group hover */}
-                            <library.icon className="h-4 w-4 transition-opacity duration-200 group-hover:opacity-0" />
+                            <library.icon className="h-4 w-4 transition-opacity duration-200 heroicons-dropdown-group-hover:opacity-0" />
                             {/* Dropdown chevron - shown on group hover */}
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                            <div className="absolute inset-0 opacity-0 heroicons-dropdown-group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
                               <CollapsibleTrigger asChild>
                                 <button className="flex h-4 w-4 items-center justify-center text-current">
                                   {isExpanded ? (

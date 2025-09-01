@@ -111,5 +111,10 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		function({ addVariant }: any) {
+			addVariant('heroicons-dropdown-group-hover', '.heroicons-dropdown-group:hover &')
+		}
+	],
 } satisfies Config;
