@@ -93,9 +93,9 @@ function IconGridPage() {
             onSearchChange={setSearchQuery}
           />
           
-          <main className="flex-1 overflow-auto">
-            {/* Header with padding */}
-            <div className="px-6 pt-6 pb-4 border-b border-border/30">
+          <main className="flex-1 flex flex-col overflow-hidden">
+            {/* Header with padding - fixed height section */}
+            <div className="flex-shrink-0 px-6 pt-6 pb-4 border-b border-border/30">
               <div className="space-y-1">
                 <h2 className="text-2xl font-semibold">
                   {selectedSet === "all" ? "All Icons" : 
@@ -113,31 +113,33 @@ function IconGridPage() {
               </div>
             </div>
 
-            {/* Grid - edge to edge */}
-            {displayedIcons.length === 0 ? (
-              <div className="flex h-64 items-center justify-center text-center px-6">
-                <div className="space-y-2">
-                  <p className="text-lg text-muted-foreground">
-                    {selectedSet === "favorites" ? "No favorites yet" : "No icons found"}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedSet === "favorites" 
-                      ? "Star some icons to see them here"
-                      : "Try a different search term or select a different library"
-                    }
-                  </p>
+            {/* Grid container - takes remaining space */}
+            <div className="flex-1 min-h-0 overflow-auto">
+              {displayedIcons.length === 0 ? (
+                <div className="flex h-64 items-center justify-center text-center px-6">
+                  <div className="space-y-2">
+                    <p className="text-lg text-muted-foreground">
+                      {selectedSet === "favorites" ? "No favorites yet" : "No icons found"}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedSet === "favorites" 
+                        ? "Star some icons to see them here"
+                        : "Try a different search term or select a different library"
+                      }
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ) : (
-                <IconGrid
-                  items={displayedIcons}
-                  selectedId={selectedId}
-                  onCopy={handleCopy}
-                  onIconClick={handleIconClick}
-                  color={customization.color}
-                  strokeWidth={customization.strokeWidth}
-                />
-            )}
+              ) : (
+                  <IconGrid
+                    items={displayedIcons}
+                    selectedId={selectedId}
+                    onCopy={handleCopy}
+                    onIconClick={handleIconClick}
+                    color={customization.color}
+                    strokeWidth={customization.strokeWidth}
+                  />
+              )}
+            </div>
           </main>
           
           <footer className="border-t p-4 text-center text-xs text-muted-foreground">
