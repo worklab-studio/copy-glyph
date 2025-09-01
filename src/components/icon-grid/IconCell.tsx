@@ -6,6 +6,7 @@ import { getIconAriaLabel } from "@/lib/a11y";
 import { CopyTooltip } from "@/components/ui/copy-tooltip";
 import { cn } from "@/lib/utils";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
+import { useTheme } from "next-themes";
 
 interface IconCellProps {
   icon: IconItem;
@@ -27,6 +28,7 @@ export function IconCell({
   const [isHovered, setIsHovered] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
   const { customization } = useIconCustomization();
+  const { theme } = useTheme();
 
   // Convert hex color to RGB for background opacity
   const hexToRgb = (hex: string) => {
@@ -40,9 +42,19 @@ export function IconCell({
 
   const selectedColor = customization.color;
   const rgb = hexToRgb(selectedColor);
-  const backgroundStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)`;
-  const borderStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`;
-  const cornerStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.4)`;
+  
+  // Special case: light mode + white color should use gray hover
+  const isLightModeWhite = theme === 'light' && selectedColor.toLowerCase() === '#ffffff';
+  
+  const backgroundStyle = isLightModeWhite 
+    ? 'rgba(128, 128, 128, 0.1)' // slight gray for white icons in light mode
+    : `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)`;
+  const borderStyle = isLightModeWhite
+    ? 'rgba(128, 128, 128, 0.2)' // slight gray border for white icons in light mode
+    : `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`;
+  const cornerStyle = isLightModeWhite
+    ? 'rgba(128, 128, 128, 0.4)' // slight gray corners for white icons in light mode
+    : `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.4)`;
 
   // Create dynamic corner gradients using the selected color
   const cornerGradients = [
