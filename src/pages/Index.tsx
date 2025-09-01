@@ -12,7 +12,6 @@ import { heroiconsOutline } from "@/data/heroicons-outline";
 import { heroiconsSolid } from "@/data/heroicons-solid";
 import { phosphorIcons } from "@/data/phosphor-icons";
 import { lucideIcons } from "@/data/lucide-icons";
-import { tablerIcons } from "@/data/tabler-icons";
 
 // Combine all icon libraries
 const allIcons: IconItem[] = [
@@ -20,8 +19,7 @@ const allIcons: IconItem[] = [
   ...featherIcons,
   ...heroiconsOutline,
   ...heroiconsSolid,
-  ...phosphorIcons,
-  ...tablerIcons
+  ...phosphorIcons
 ];
 
 function IconGridPage() {
@@ -70,9 +68,6 @@ function IconGridPage() {
     if (selectedSet === "phosphor") {
       return filteredIcons.filter(icon => icon.id.startsWith('phosphor-'));
     }
-    if (selectedSet === "tabler") {
-      return filteredIcons.filter(icon => icon.id.startsWith('tabler-'));
-    }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
 
@@ -108,17 +103,16 @@ function IconGridPage() {
             {/* Header with padding */}
             <div className="px-6 pt-6 pb-4 border-b border-border/30">
               <div className="space-y-1">
-                 <h2 className="text-2xl font-semibold">
-                   {selectedSet === "all" ? "All Icons" : 
+                <h2 className="text-2xl font-semibold">
+                  {selectedSet === "all" ? "All Icons" : 
                    selectedSet === "favorites" ? "Favorites" : 
                    selectedSet === "lucide" ? "Lucide Icons" :
                    selectedSet === "feather" ? "Feather Icons" :
                    selectedSet === "heroicons-outline" ? "Heroicons Outline" :
                    selectedSet === "heroicons-solid" ? "Heroicons Solid" :
                    selectedSet === "phosphor" ? "Phosphor Icons" :
-                   selectedSet === "tabler" ? "Tabler Icons" :
                    selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
-                 </h2>
+                </h2>
                 <p className="text-sm text-muted-foreground">
                   {displayedIcons.length.toLocaleString()} icons
                   {searchQuery && ` matching "${searchQuery}"`}
