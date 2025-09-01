@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Check, Copy01 as Copy } from "@untitled-ui/icons-react";
+import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { toast } from "@/hooks/use-toast";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
@@ -54,49 +55,46 @@ export function IconCard({ icon: Icon, name, set }: IconCardProps) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div
+          <Button
+            variant="ghost"
             onClick={handleCopy}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group relative aspect-square w-full cursor-pointer rounded-md border border-border/20 bg-background/50 p-3 transition-all duration-200 hover:border-border hover:bg-accent/10 hover:shadow-sm"
+            className="relative h-20 w-full flex-col gap-2 rounded-lg border border-transparent p-4 transition-all duration-200 hover:border-border hover:bg-hover-bg hover:shadow-sm"
           >
-            {/* Copy indicator */}
-            <div className={`absolute right-1 top-1 z-10 transition-opacity duration-200 ${
-              isHovered || copied ? 'opacity-100' : 'opacity-0'
-            }`}>
-              {copied ? (
-                <div className="rounded-sm bg-green-500/10 p-0.5">
-                  <Check className="h-2.5 w-2.5 text-green-500" />
-                </div>
-              ) : (
-                <div className="rounded-sm bg-background/80 p-0.5">
-                  <Copy className="h-2.5 w-2.5 text-muted-foreground" />
-                </div>
-              )}
-            </div>
-            
-            {/* Icon centered in the card */}
-            <div className="flex h-full w-full items-center justify-center">
+            <div className="flex h-8 w-8 items-center justify-center">
               {isValidIcon ? (
                 <Icon 
-                  size={24} 
+                  size={customization.size} 
                   color={customization.color}
                   strokeWidth={customization.strokeWidth}
-                  className="transition-all duration-200 group-hover:scale-110" 
+                  className="transition-colors" 
                 />
               ) : (
-                <div className="flex h-6 w-6 items-center justify-center rounded bg-muted text-xs text-muted-foreground">
+                <div className="w-6 h-6 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">
                   ?
                 </div>
               )}
             </div>
-          </div>
+            
+            {/* Copy indicator */}
+            <div className={`absolute right-2 top-2 transition-opacity duration-200 ${
+              isHovered || copied ? 'opacity-100' : 'opacity-0'
+            }`}>
+              {copied ? (
+                <Check className="h-3 w-3 text-green-500" />
+              ) : (
+                <Copy className="h-3 w-3 text-muted-foreground" />
+              )}
+            </div>
+            
+            <span className="text-xs text-muted-foreground truncate w-full text-center">
+              {name}
+            </span>
+          </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="animate-fade-in">
-          <div className="text-xs">
-            <div className="font-medium">{name}</div>
-            <div className="text-muted-foreground">{copied ? "Copied!" : "Click to copy"}</div>
-          </div>
+          <p>{copied ? "Copied!" : "Click to copy"}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
