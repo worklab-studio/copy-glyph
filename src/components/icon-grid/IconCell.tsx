@@ -207,7 +207,6 @@ export function IconCell({
         )}
         style={{
           willChange: 'transform, opacity',
-          contain: 'content',
           backgroundColor: (isHovered || isSelected) ? backgroundStyle : 'transparent',
           borderColor: (isHovered || isSelected) ? borderStyle : 'transparent',
           borderWidth: (isHovered || isSelected) ? '1px' : '0px',
@@ -233,7 +232,8 @@ export function IconCell({
         {/* Tooltip - shows after 0.5s hover, positioned like copied tooltip */}
         {showTooltip && (
           <div 
-            className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs bg-foreground text-background rounded whitespace-nowrap pointer-events-none z-50"
+            className="absolute -top-9 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs bg-foreground text-background rounded whitespace-nowrap pointer-events-none"
+            style={{ zIndex: 1000 }}
           >
             Double click to copy icon
           </div>
