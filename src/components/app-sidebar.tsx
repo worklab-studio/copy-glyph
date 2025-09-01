@@ -19,6 +19,12 @@ const topNavItems = [{
 
 // Active icon libraries (actually implemented)
 const activeLibraries = [{
+  name: "Tabler",
+  id: "tabler",
+  count: 4968,
+  icon: Table,
+  hasVariants: false
+}, {
   name: "Lucide",
   id: "lucide", 
   count: 37,
@@ -45,12 +51,6 @@ const activeLibraries = [{
   id: "phosphor",
   count: 6000,
   icon: Atom,
-  hasVariants: false
-}, {
-  name: "Tabler",
-  id: "tabler",
-  count: 4968,
-  icon: Table,
   hasVariants: false
 }];
 
