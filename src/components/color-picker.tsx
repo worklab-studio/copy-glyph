@@ -5,11 +5,56 @@ import { Button } from "@/components/ui/button";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 
 const presetColors = [
-  "#DC2626", "#EA580C", "#D97706", "#16A34A", 
-  "#059669", "#0891B2", "#0284C7", "#2563EB",
-  "#E91E63", "#C2185B", "#9C27B0", "#673AB7",
-  "#3F51B5", "#009688", "#4CAF50", "#8BC34A"
+  // Reds
+  "#FF0000", "#FF4444", "#DC2626", "#EF4444",
+  // Oranges  
+  "#FF8800", "#FB923C", "#EA580C", "#F97316",
+  // Yellows
+  "#FFDD00", "#FDE047", "#EAB308", "#F59E0B",
+  // Greens
+  "#00FF00", "#4ADE80", "#16A34A", "#22C55E",
+  // Teals
+  "#00FFAA", "#2DD4BF", "#14B8A6", "#06B6D4",
+  // Blues
+  "#0088FF", "#60A5FA", "#3B82F6", "#2563EB",
+  // Indigos
+  "#4400FF", "#818CF8", "#6366F1", "#4F46E5",
+  // Purples
+  "#8800FF", "#A78BFA", "#8B5CF6", "#7C3AED",
+  // Pinks
+  "#FF00AA", "#F472B6", "#EC4899", "#DB2777",
+  // Grays
+  "#000000", "#374151", "#6B7280", "#9CA3AF"
 ];
+
+// Convert Hex to HSV
+const hexToHsv = (hex: string): [number, number, number] => {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const diff = max - min;
+
+  let h = 0;
+  if (diff !== 0) {
+    if (max === r) {
+      h = ((g - b) / diff) % 6;
+    } else if (max === g) {
+      h = (b - r) / diff + 2;
+    } else {
+      h = (r - g) / diff + 4;
+    }
+  }
+  h = Math.round(h * 60);
+  if (h < 0) h += 360;
+
+  const s = max === 0 ? 0 : diff / max;
+  const v = max;
+
+  return [h, s, v];
+};
 
 // Convert HSV to RGB
 const hsvToRgb = (h: number, s: number, v: number) => {
@@ -76,6 +121,12 @@ export function ColorPicker() {
   const handlePresetClick = (color: string) => {
     setHexInput(color);
     updateColor(color);
+    
+    // Convert hex to HSV and update the picker position
+    const [h, s, v] = hexToHsv(color);
+    setHue(h);
+    setSaturation(s);
+    setValue(v);
   };
 
   // Debounced color update
@@ -218,16 +269,16 @@ export function ColorPicker() {
         </div>
       </div>
 
-      {/* Hex input */}
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-muted-foreground w-8">Hex</span>
-        <Input
-          type="text"
-          value={hexInput}
-          onChange={(e) => handleHexChange(e.target.value)}
-          placeholder="#4F46E5"
-          className="text-xs font-mono"
+      {/* Selected color display */}
+      <div className="flex items-center gap-3">
+        <div 
+          className="w-10 h-10 rounded-md border border-border shadow-sm"
+          style={{ backgroundColor: customization.color }}
         />
+        <div className="flex flex-col">
+          <span className="text-xs text-muted-foreground">Selected</span>
+          <span className="text-sm font-mono">{hexInput}</span>
+        </div>
       </div>
       
       {/* Presets */}
@@ -243,7 +294,8 @@ export function ColorPicker() {
               className="h-7 w-7 p-0 rounded-full border-2 hover:scale-110 transition-transform duration-150"
               style={{ 
                 backgroundColor: color,
-                borderColor: customization.color === color ? '#ffffff' : 'transparent'
+                borderColor: customization.color === color ? '#ffffff' : 'transparent',
+                boxShadow: customization.color === color ? '0 0 0 2px rgba(0,0,0,0.2)' : 'none'
               }}
             />
           ))}
