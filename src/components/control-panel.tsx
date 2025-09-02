@@ -79,6 +79,69 @@ export function ControlPanel({
       });
     }
   };
+
+  const handleDownloadPNG = async () => {
+    if (!selectedIcon) return;
+    
+    try {
+      const customizedSVG = getCustomizedSVG();
+      
+      // Create a canvas element
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Could not get canvas context');
+      
+      // Set canvas size to 100x100
+      canvas.width = 100;
+      canvas.height = 100;
+      
+      // Create an image from the SVG
+      const img = new Image();
+      const svgBlob = new Blob([customizedSVG], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
+      
+      img.onload = () => {
+        // Clear canvas with transparent background
+        ctx.clearRect(0, 0, 100, 100);
+        
+        // Draw the image centered on the canvas
+        ctx.drawImage(img, 0, 0, 100, 100);
+        
+        // Convert canvas to PNG blob
+        canvas.toBlob((blob) => {
+          if (!blob) return;
+          
+          const downloadUrl = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.download = `${selectedIcon.name}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(downloadUrl);
+          URL.revokeObjectURL(url);
+          
+          toast({
+            description: `${selectedIcon.name}.png downloaded successfully!`,
+            duration: 2000
+          });
+        }, 'image/png');
+      };
+      
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        throw new Error('Failed to load SVG image');
+      };
+      
+      img.src = url;
+    } catch (error) {
+      toast({
+        description: "Failed to download PNG",
+        variant: "destructive",
+        duration: 2000
+      });
+    }
+  };
   const getCustomizedSVG = () => {
     if (!selectedIcon) return '';
     
@@ -199,6 +262,10 @@ export function ControlPanel({
             <Button variant="default" size="sm" onClick={handleDownloadSVG} disabled={!selectedIcon} className="w-full text-xs">
               <Download className="h-3 w-3 mr-1" />
               Download svg icon
+            </Button>
+            <Button variant="default" size="sm" onClick={handleDownloadPNG} disabled={!selectedIcon} className="w-full text-xs">
+              <Download className="h-3 w-3 mr-1" />
+              Download png icon
             </Button>
           </div>
           
