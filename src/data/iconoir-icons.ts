@@ -1,95 +1,17 @@
+import * as IconoirIcons from 'iconoir-react';
 import { type IconItem } from '@/types/icon';
+import { type ComponentType } from 'react';
 
-// Import confirmed working Iconoir icons (using exact names from their library)
-import { 
-  Home, User, Settings, Search, Calendar,
-  Archive, ArrowDown, ArrowLeft, ArrowRight, ArrowUp,
-  Bell, Book, Building, Camera, Check, Copy,
-  Download, Edit, Eye, Filter, Folder, Globe, Heart, 
-  Link, Lock, LogOut, Map, Menu, Minus, Phone, Plus,
-  Refresh, Star, Upload, Wifi, Activity, Alarm,
-  Apple, Bluetooth, Cloud, Code, Compass, Database, 
-  Dollar, Fingerprint, Flash, Gift, Github, Google,
-  Language, Laptop, Mail, Microphone, Network,
-  Pause, Play, QrCode, Reply, Rocket, Ruler, Shield,
-  Terminal, ThumbsDown, ThumbsUp, Timer, Trash,
-  Trophy, Truck, Tv, Umbrella, Undo
-} from 'iconoir-react';
-
-// Create the icon list with confirmed working icons
-const iconComponents = [
-  { name: 'Home', component: Home },
-  { name: 'User', component: User },
-  { name: 'Settings', component: Settings },
-  { name: 'Search', component: Search },
-  { name: 'Calendar', component: Calendar },
-  { name: 'Archive', component: Archive },
-  { name: 'Arrow Down', component: ArrowDown },
-  { name: 'Arrow Left', component: ArrowLeft },
-  { name: 'Arrow Right', component: ArrowRight },
-  { name: 'Arrow Up', component: ArrowUp },
-  { name: 'Bell', component: Bell },
-  { name: 'Book', component: Book },
-  { name: 'Building', component: Building },
-  { name: 'Camera', component: Camera },
-  { name: 'Check', component: Check },
-  { name: 'Copy', component: Copy },
-  { name: 'Download', component: Download },
-  { name: 'Edit', component: Edit },
-  { name: 'Eye', component: Eye },
-  { name: 'Filter', component: Filter },
-  { name: 'Folder', component: Folder },
-  { name: 'Globe', component: Globe },
-  { name: 'Heart', component: Heart },
-  { name: 'Link', component: Link },
-  { name: 'Lock', component: Lock },
-  { name: 'Log Out', component: LogOut },
-  { name: 'Map', component: Map },
-  { name: 'Menu', component: Menu },
-  { name: 'Minus', component: Minus },
-  { name: 'Phone', component: Phone },
-  { name: 'Plus', component: Plus },
-  { name: 'Refresh', component: Refresh },
-  { name: 'Star', component: Star },
-  { name: 'Upload', component: Upload },
-  { name: 'Wifi', component: Wifi },
-  { name: 'Activity', component: Activity },
-  { name: 'Alarm', component: Alarm },
-  { name: 'Apple', component: Apple },
-  { name: 'Bluetooth', component: Bluetooth },
-  { name: 'Cloud', component: Cloud },
-  { name: 'Code', component: Code },
-  { name: 'Compass', component: Compass },
-  { name: 'Database', component: Database },
-  { name: 'Dollar', component: Dollar },
-  { name: 'Fingerprint', component: Fingerprint },
-  { name: 'Flash', component: Flash },
-  { name: 'Gift', component: Gift },
-  { name: 'Github', component: Github },
-  { name: 'Google', component: Google },
-  { name: 'Language', component: Language },
-  { name: 'Laptop', component: Laptop },
-  { name: 'Mail', component: Mail },
-  { name: 'Microphone', component: Microphone },
-  { name: 'Network', component: Network },
-  { name: 'Pause', component: Pause },
-  { name: 'Play', component: Play },
-  { name: 'QR Code', component: QrCode },
-  { name: 'Reply', component: Reply },
-  { name: 'Rocket', component: Rocket },
-  { name: 'Ruler', component: Ruler },
-  { name: 'Shield', component: Shield },
-  { name: 'Terminal', component: Terminal },
-  { name: 'Thumbs Down', component: ThumbsDown },
-  { name: 'Thumbs Up', component: ThumbsUp },
-  { name: 'Timer', component: Timer },
-  { name: 'Trash', component: Trash },
-  { name: 'Trophy', component: Trophy },
-  { name: 'Truck', component: Truck },
-  { name: 'TV', component: Tv },
-  { name: 'Umbrella', component: Umbrella },
-  { name: 'Undo', component: Undo }
-];
+// Get all function exports that start with a capital letter (React components)
+const iconoirIconNames = Object.keys(IconoirIcons).filter(name => {
+  const exportedItem = IconoirIcons[name as keyof typeof IconoirIcons];
+  
+  // Filter for React components - functions that start with capital letter
+  return typeof exportedItem === 'function' && 
+         /^[A-Z]/.test(name) &&
+         name !== 'IconoirProvider' && 
+         name !== 'IconoirContext';
+});
 
 // Category mapping for Iconoir icons
 const getCategoryFromName = (name: string): string => {
@@ -116,38 +38,28 @@ const getCategoryFromName = (name: string): string => {
   return 'general';
 };
 
-export const iconoirIcons: IconItem[] = iconComponents.map(({ name, component }) => {
+export const iconoirIcons: IconItem[] = iconoirIconNames.map(name => {
+  const IconComponent = IconoirIcons[name as keyof typeof IconoirIcons] as ComponentType<any>;
   const category = getCategoryFromName(name);
   
-  // Add tags based on icon name patterns
-  const tags = [
-    name.toLowerCase(),
-    category,
-    'outline',
-    ...(category === 'navigation' ? ['arrow', 'menu', 'direction'] : []),
-    ...(category === 'communication' ? ['mail', 'message', 'contact'] : []),
-    ...(category === 'media' ? ['audio', 'video', 'entertainment'] : []),
-    ...(category === 'files' ? ['document', 'storage', 'data'] : []),
-    ...(category === 'system' ? ['settings', 'configuration', 'tools'] : []),
-    ...(category === 'social' ? ['like', 'favorite', 'sharing'] : []),
-    ...(category === 'users' ? ['profile', 'account', 'people'] : []),
-    ...(category === 'security' ? ['privacy', 'protection', 'auth'] : []),
-    ...(category === 'time' ? ['schedule', 'date', 'timer'] : []),
-    ...(category === 'weather' ? ['climate', 'temperature', 'forecast'] : []),
-    ...(category === 'location' ? ['maps', 'places', 'geography'] : []),
-    ...(category === 'actions' ? ['buttons', 'controls', 'interface'] : []),
-    ...(category === 'view' ? ['visibility', 'display', 'show'] : []),
-    ...(category === 'alerts' ? ['notifications', 'warnings', 'info'] : []),
-    ...(category === 'commerce' ? ['shopping', 'ecommerce', 'retail'] : []),
-    ...(category === 'transport' ? ['vehicles', 'travel', 'mobility'] : []),
-  ];
-
+  // Convert PascalCase to readable name
+  const displayName = name
+    .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+    .trim() // Remove leading space
+    .replace(/^\w/, (c) => c.toUpperCase()); // Capitalize first letter
+  
   return {
-    id: `iconoir-${name.toLowerCase().replace(/\s+/g, '-')}`,
-    name,
-    svg: component,
+    id: `iconoir-${name.toLowerCase().replace(/([A-Z])/g, '-$1').toLowerCase()}`,
+    name: displayName,
+    svg: IconComponent,
     style: 'outline',
     category,
-    tags: [...new Set(tags)]
+    tags: [
+      name.toLowerCase(),
+      displayName.toLowerCase(),
+      category,
+      'outline',
+      'iconoir'
+    ]
   };
 }).sort((a, b) => a.name.localeCompare(b.name));
