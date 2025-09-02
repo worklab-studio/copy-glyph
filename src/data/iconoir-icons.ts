@@ -1,18 +1,37 @@
-// Simplest iconoir import - only functions with type casting
-import * as IconoirIcons from 'iconoir-react';
+// Ultra simple iconoir - NO LOGIC AT ALL
 import { type IconItem } from '@/types/icon';
 import { type ComponentType } from 'react';
 
-// Get only function exports (potential components) and cast them
-const allExports = Object.entries(IconoirIcons).filter(([_, component]) => typeof component === 'function');
+console.log('🟢 ICONOIR: Starting ultra-simple import...');
 
-export const iconoirIcons: IconItem[] = allExports.map(([key, component], index) => ({
-  id: `iconoir-${index}`,
-  name: key,
-  svg: component as ComponentType<any>,
-  style: 'outline' as const,
-  category: 'general',  
-  tags: ['iconoir']
-}));
+// Just hardcode a few test icons to avoid ALL logic
+const testIcons = [
+  'Home',
+  'Search', 
+  'Settings',
+  'User',
+  'Mail',
+  'Bell',
+  'Calendar',
+  'Heart',
+  'Star',
+  'Lock'
+];
+
+export const iconoirIcons: IconItem[] = testIcons.map((iconName, index) => {
+  console.log(`🟢 ICONOIR: Creating test icon ${iconName}`);
+  
+  return {
+    id: `iconoir-test-${index}-${iconName.toLowerCase()}`,
+    name: `Iconoir ${iconName}`,
+    svg: (() => null) as ComponentType<any>, // Dummy component for now
+    style: 'outline' as const,
+    category: 'test',
+    tags: ['iconoir', 'test']
+  };
+});
+
+console.log('🟢 ICONOIR: Created', iconoirIcons.length, 'test icons');
+console.log('🟢 ICONOIR: Icon IDs:', iconoirIcons.map(i => i.id));
 
 export const iconoirIconCount = iconoirIcons.length;
