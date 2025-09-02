@@ -16,6 +16,7 @@ import { lucideIcons } from "@/data/lucide-icons";
 import { tablerIcons } from "@/data/tabler-icons";
 import { remixIcons } from "@/data/remix-icons";
 import { bootstrapIcons } from "@/data/bootstrap-icons";
+import { iconoirIcons } from "@/data/iconoir-icons";
 
 // Combine all icon libraries
 const allIcons: IconItem[] = [
@@ -26,7 +27,8 @@ const allIcons: IconItem[] = [
   ...phosphorIcons,
   ...tablerIcons,
   ...bootstrapIcons,
-  ...remixIcons
+  ...remixIcons,
+  ...iconoirIcons
 ];
 
 function IconGridPage() {
@@ -84,6 +86,9 @@ function IconGridPage() {
     }
     if (selectedSet === "bootstrap") {
       return filteredIcons.filter(icon => icon.id.startsWith('bootstrap-'));
+    }
+    if (selectedSet === "iconoir") {
+      return filteredIcons.filter(icon => icon.id.startsWith('iconoir-'));
     }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
@@ -154,6 +159,7 @@ function IconGridPage() {
                      selectedSet === "tabler" ? "Tabler Icons" :
                      selectedSet === "bootstrap" ? "Bootstrap Icons" :
                      selectedSet === "remix" ? "Remix Icons" :
+                     selectedSet === "iconoir" ? "Iconoir Icons" :
                      selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
                   </h2>
                   <p className="text-sm text-muted-foreground">
