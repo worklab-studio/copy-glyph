@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Package2, Home, Star, Layers, Map, Grid3X3, Box, Code2, Feather, Shield, Paintbrush, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, ChevronDown, ChevronRight, Sparkles } from "lucide-react";
+import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Shield, Paintbrush, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, ChevronDown, ChevronRight, Sparkles } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator, useSidebar } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
@@ -26,11 +26,6 @@ const topNavItems = [{
   id: "all",
   count: totalIconsCount,
   icon: Home
-}, {
-  name: "Favorites",
-  id: "favorites",
-  count: 0,
-  icon: Star
 }];
 
 // Active icon libraries (actually implemented)
