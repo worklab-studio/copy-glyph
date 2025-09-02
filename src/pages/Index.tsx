@@ -183,7 +183,7 @@ function IconGridPage() {
               <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div className="space-y-1">
                   <h2 className="text-2xl font-semibold">
-                    {selectedSet === "all" ? "All Icons" : 
+                    {selectedSet === "all" ? "All icons" : 
                      selectedSet === "favorites" ? "Favorites" : 
                      selectedSet === "lucide" ? "Lucide Icons" :
                      selectedSet === "feather" ? "Feather Icons" :
