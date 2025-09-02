@@ -2202,9 +2202,9 @@ export const animatedIcons: IconItem[] = [
     category: 'effects',
     tags: ['lightning', 'bolt', 'electric', 'power', 'effects', 'animated', 'glow']
   },
-  // Basic Line-MD icons for now
+  // Line-MD icons with consistent naming
   {
-    id: 'line-md-loading-loop',
+    id: 'animated-loading-loop',
     name: 'Loading Loop',
     svg: LoadingLoopIcon,
     style: 'animated',
@@ -2212,7 +2212,7 @@ export const animatedIcons: IconItem[] = [
     tags: ['loading', 'spinner', 'loop', 'progress', 'animated', 'rotate']
   },
   {
-    id: 'line-md-heart-twotone',
+    id: 'animated-heart-twotone',
     name: 'Heart Twotone',
     svg: HeartTwotoneIcon,
     style: 'animated',
