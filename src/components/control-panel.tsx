@@ -91,9 +91,9 @@ export function ControlPanel({
       const ctx = canvas.getContext('2d');
       if (!ctx) throw new Error('Could not get canvas context');
       
-      // Set canvas size to 100x100
-      canvas.width = 100;
-      canvas.height = 100;
+      // Set canvas size to 500x500
+      canvas.width = 500;
+      canvas.height = 500;
       
       // Create an image from the SVG
       const img = new Image();
@@ -102,10 +102,10 @@ export function ControlPanel({
       
       img.onload = () => {
         // Clear canvas with transparent background
-        ctx.clearRect(0, 0, 100, 100);
+        ctx.clearRect(0, 0, 500, 500);
         
         // Draw the image centered on the canvas
-        ctx.drawImage(img, 0, 0, 100, 100);
+        ctx.drawImage(img, 0, 0, 500, 500);
         
         // Convert canvas to PNG blob
         canvas.toBlob((blob) => {
@@ -263,9 +263,9 @@ export function ControlPanel({
               <Download className="h-3 w-3 mr-1" />
               Download svg icon
             </Button>
-            <Button variant="default" size="sm" onClick={handleDownloadPNG} disabled={!selectedIcon} className="w-full text-xs">
+            <Button variant="outline" size="sm" onClick={handleDownloadPNG} disabled={!selectedIcon} className="w-full text-xs">
               <Download className="h-3 w-3 mr-1" />
-              Download png icon
+              Download PNG icon
             </Button>
           </div>
           
