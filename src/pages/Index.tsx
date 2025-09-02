@@ -15,20 +15,16 @@ import { phosphorIcons } from "@/data/phosphor-icons";
 import { lucideIcons } from "@/data/lucide-icons";
 import { tablerIcons } from "@/data/tabler-icons";
 import { remixIcons } from "@/data/remix-icons";
-import { iconoirIcons } from "@/data/iconoir-icons";
-import { bootstrapIcons } from "@/data/bootstrap-icons";
 
-// Combine all icon libraries (outline icons first, then solid)
+// Combine all icon libraries
 const allIcons: IconItem[] = [
   ...lucideIcons,
   ...featherIcons,
   ...heroiconsOutline,
+  ...heroiconsSolid,
   ...phosphorIcons,
   ...tablerIcons,
-  ...iconoirIcons,
-  ...bootstrapIcons,
-  ...remixIcons,
-  ...heroiconsSolid
+  ...remixIcons
 ];
 
 function IconGridPage() {
@@ -81,15 +77,9 @@ function IconGridPage() {
     if (selectedSet === "tabler") {
       return filteredIcons.filter(icon => icon.id.startsWith('tabler-'));
     }
-  if (selectedSet === "remix") {
-    return filteredIcons.filter(icon => icon.id.startsWith('remix-'));
-  }
-  if (selectedSet === "iconoir") {
-    return filteredIcons.filter(icon => icon.id.startsWith('iconoir-'));
-  }
-  if (selectedSet === "bootstrap") {
-    return filteredIcons.filter(icon => icon.id.startsWith('bootstrap-'));
-  }
+    if (selectedSet === "remix") {
+      return filteredIcons.filter(icon => icon.id.startsWith('remix-'));
+    }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
 
@@ -158,8 +148,6 @@ function IconGridPage() {
                      selectedSet === "phosphor" ? "Phosphor Icons" :
                      selectedSet === "tabler" ? "Tabler Icons" :
                      selectedSet === "remix" ? "Remix Icons" :
-                     selectedSet === "iconoir" ? "Iconoir Icons" :
-                     selectedSet === "bootstrap" ? "Bootstrap Icons" :
                      selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
                   </h2>
                   <p className="text-sm text-muted-foreground">

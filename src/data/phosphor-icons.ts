@@ -58,4 +58,4 @@ export const phosphorIcons: IconItem[] = phosphorIconNames.map(name => {
     category,
     tags: [...new Set(tags)]
   };
-}).sort((a, b) => a.name.localeCompare(b.name));
+});

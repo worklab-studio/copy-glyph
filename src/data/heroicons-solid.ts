@@ -57,4 +57,4 @@ export const heroiconsSolid: IconItem[] = heroIconNames.map(name => {
     category,
     tags: [...new Set(tags)]
   };
-}).sort((a, b) => a.name.localeCompare(b.name));
+});
