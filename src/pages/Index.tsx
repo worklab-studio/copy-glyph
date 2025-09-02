@@ -198,7 +198,7 @@ function IconGridPage() {
                      selectedSet === "css-gg" ? "CSS.GG Icons" :
                      selectedSet === "animated" ? "Animated Icons" :
                      selectedSet === "simple" ? "Simple Icons" :
-                     selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
+                     selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)}
                   </h2>
                   <p className="text-sm text-muted-foreground">
                     {displayedIcons.length.toLocaleString()} icons
