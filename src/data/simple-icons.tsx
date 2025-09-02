@@ -39,25 +39,101 @@ import xIcon from '@/assets/simple-icons/x.svg';
 import openjdkIcon from '@/assets/simple-icons/openjdk.svg';
 import nodedotjsIcon from '@/assets/simple-icons/nodedotjs.svg';
 
+// Helper function to convert hex color to CSS filter
+const hexToFilter = (hex: string): string => {
+  // Remove # if present
+  const cleanHex = hex.replace('#', '');
+  
+  // Convert hex to RGB
+  const r = parseInt(cleanHex.substr(0, 2), 16);
+  const g = parseInt(cleanHex.substr(2, 2), 16);
+  const b = parseInt(cleanHex.substr(4, 2), 16);
+  
+  // Convert RGB to HSL
+  const rNorm = r / 255;
+  const gNorm = g / 255;
+  const bNorm = b / 255;
+  
+  const max = Math.max(rNorm, gNorm, bNorm);
+  const min = Math.min(rNorm, gNorm, bNorm);
+  const diff = max - min;
+  
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+  
+  if (diff !== 0) {
+    s = l > 0.5 ? diff / (2 - max - min) : diff / (max + min);
+    
+    switch (max) {
+      case rNorm:
+        h = ((gNorm - bNorm) / diff + (gNorm < bNorm ? 6 : 0)) / 6;
+        break;
+      case gNorm:
+        h = ((bNorm - rNorm) / diff + 2) / 6;
+        break;
+      case bNorm:
+        h = ((rNorm - gNorm) / diff + 4) / 6;
+        break;
+    }
+  }
+  
+  // Convert to degrees and percentages
+  const hue = Math.round(h * 360);
+  const saturation = Math.round(s * 100);
+  const lightness = Math.round(l * 100);
+  
+  // Create CSS filter to achieve target color
+  // Start with making the image black, then apply hue and saturation
+  return `brightness(0) saturate(100%) invert(${lightness > 50 ? 1 : 0}) sepia(1) saturate(${saturation > 0 ? saturation : 100}%) hue-rotate(${hue}deg) brightness(${lightness}%)`;
+};
+
 // Create React components from SVG imports
 const createSimpleIconComponent = (svgUrl: string, name: string) => {
   const Component: React.FC<{ size?: number; color?: string; className?: string }> = ({ 
     size = 24, 
     color = 'currentColor', 
     className = '' 
-  }) => (
-    <img 
-      src={svgUrl}
-      alt={name}
-      width={size}
-      height={size}
-      className={className}
-      style={{ 
-        filter: color !== 'currentColor' ? `brightness(0) saturate(100%) invert(1)` : undefined,
-        color: color
-      }}
-    />
-  );
+  }) => {
+    const getColorFilter = (targetColor: string): string | undefined => {
+      if (targetColor === 'currentColor') return undefined;
+      
+      // Handle common color names
+      const colorMap: Record<string, string> = {
+        'white': '#ffffff',
+        'black': '#000000',
+        'red': '#ff0000',
+        'green': '#00ff00',
+        'blue': '#0000ff',
+        'yellow': '#ffff00',
+        'cyan': '#00ffff',
+        'magenta': '#ff00ff'
+      };
+      
+      const hexColor = colorMap[targetColor.toLowerCase()] || targetColor;
+      
+      // Validate hex color format
+      if (!/^#[0-9A-Fa-f]{6}$/.test(hexColor)) {
+        return 'brightness(0) saturate(100%) invert(1)'; // Default to white
+      }
+      
+      return hexToFilter(hexColor);
+    };
+
+    return (
+      <img 
+        src={svgUrl}
+        alt={name}
+        width={size}
+        height={size}
+        className={className}
+        style={{ 
+          filter: getColorFilter(color),
+          transition: 'filter 0.2s ease'
+        }}
+      />
+    );
+  };
   
   Component.displayName = `SimpleIcon${name}`;
   return Component;
