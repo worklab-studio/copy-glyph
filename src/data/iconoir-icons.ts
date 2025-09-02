@@ -2,17 +2,32 @@ import * as IconoirIcons from 'iconoir-react';
 import { type IconItem } from '@/types/icon';
 import { type ComponentType } from 'react';
 
-// Get all Iconoir icons by filtering the exported names
-const iconoirIconNames = Object.keys(IconoirIcons).filter(name => {
+// Test with specific known Iconoir icons first
+import { Home, User, Settings, Search, Calendar } from 'iconoir-react';
+
+// Fallback icons if automatic filtering fails
+const fallbackIcons = [
+  { name: 'Home', component: Home },
+  { name: 'User', component: User },
+  { name: 'Settings', component: Settings },
+  { name: 'Search', component: Search },
+  { name: 'Calendar', component: Calendar }
+];
+
+// Get all Iconoir icons by filtering the exported names more permissively
+let iconoirIconNames = Object.keys(IconoirIcons).filter(name => {
   const exportedItem = IconoirIcons[name as keyof typeof IconoirIcons];
-  // Simple filtering for React components
   return typeof exportedItem === 'function' && 
          name !== 'IconoirProvider' && 
-         !name.includes('Context') &&
-         !name.includes('Provider') &&
-         // Icon names start with uppercase and are not special exports
-         /^[A-Z][a-zA-Z0-9]*$/.test(name);
-}).slice(0, 100); // Limit to first 100 for now
+         name !== 'IconoirContext' &&
+         // Remove the strict regex - just check if it's a function component
+         name.length > 1;
+}).slice(0, 200);
+
+// If no icons found, use fallback
+if (iconoirIconNames.length === 0) {
+  console.log('Using fallback Iconoir icons');
+}
 
 // Category mapping for Iconoir icons
 const getCategoryFromName = (name: string): string => {
@@ -41,49 +56,73 @@ const getCategoryFromName = (name: string): string => {
   return 'general';
 };
 
-export const iconoirIcons: IconItem[] = iconoirIconNames.map(name => {
-  const IconComponent = IconoirIcons[name as keyof typeof IconoirIcons] as ComponentType<any>;
-  const category = getCategoryFromName(name);
-  
-  // Convert PascalCase to readable name
-  const displayName = name
-    .replace(/([A-Z])/g, ' $1') // Add space before capital letters
-    .trim() // Remove leading space
-    .replace(/^\w/, (c) => c.toUpperCase()); // Capitalize first letter
-  
-  // Add tags based on icon name patterns
-  const tags = [
-    name.toLowerCase(),
-    displayName.toLowerCase(),
-    category,
-    'outline',
-    // Add category-specific tags
-    ...(category === 'navigation' ? ['arrow', 'menu', 'direction'] : []),
-    ...(category === 'communication' ? ['mail', 'message', 'contact'] : []),
-    ...(category === 'media' ? ['audio', 'video', 'entertainment'] : []),
-    ...(category === 'files' ? ['document', 'storage', 'data'] : []),
-    ...(category === 'system' ? ['settings', 'configuration', 'tools'] : []),
-    ...(category === 'social' ? ['like', 'favorite', 'sharing'] : []),
-    ...(category === 'users' ? ['profile', 'account', 'people'] : []),
-    ...(category === 'security' ? ['privacy', 'protection', 'auth'] : []),
-    ...(category === 'time' ? ['schedule', 'date', 'timer'] : []),
-    ...(category === 'weather' ? ['climate', 'temperature', 'forecast'] : []),
-    ...(category === 'location' ? ['maps', 'places', 'geography'] : []),
-    ...(category === 'actions' ? ['buttons', 'controls', 'interface'] : []),
-    ...(category === 'view' ? ['visibility', 'display', 'show'] : []),
-    ...(category === 'alerts' ? ['notifications', 'warnings', 'info'] : []),
-    ...(category === 'commerce' ? ['shopping', 'ecommerce', 'retail'] : []),
-    ...(category === 'transport' ? ['vehicles', 'travel', 'mobility'] : []),
-    ...(category === 'text' ? ['typography', 'formatting', 'writing'] : []),
-    ...(category === 'design' ? ['creative', 'artistic', 'visual'] : []),
-  ];
+export const iconoirIcons: IconItem[] = (() => {
+  // Try automatic filtering first
+  if (iconoirIconNames.length > 0) {
+    return iconoirIconNames.map(name => {
+      const IconComponent = IconoirIcons[name as keyof typeof IconoirIcons] as ComponentType<any>;
+      const category = getCategoryFromName(name);
+      
+      // Convert PascalCase to readable name
+      const displayName = name
+        .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+        .trim() // Remove leading space
+        .replace(/^\w/, (c) => c.toUpperCase()); // Capitalize first letter
+      
+      // Add tags based on icon name patterns
+      const tags = [
+        name.toLowerCase(),
+        displayName.toLowerCase(),
+        category,
+        'outline',
+        // Add category-specific tags
+        ...(category === 'navigation' ? ['arrow', 'menu', 'direction'] : []),
+        ...(category === 'communication' ? ['mail', 'message', 'contact'] : []),
+        ...(category === 'media' ? ['audio', 'video', 'entertainment'] : []),
+        ...(category === 'files' ? ['document', 'storage', 'data'] : []),
+        ...(category === 'system' ? ['settings', 'configuration', 'tools'] : []),
+        ...(category === 'social' ? ['like', 'favorite', 'sharing'] : []),
+        ...(category === 'users' ? ['profile', 'account', 'people'] : []),
+        ...(category === 'security' ? ['privacy', 'protection', 'auth'] : []),
+        ...(category === 'time' ? ['schedule', 'date', 'timer'] : []),
+        ...(category === 'weather' ? ['climate', 'temperature', 'forecast'] : []),
+        ...(category === 'location' ? ['maps', 'places', 'geography'] : []),
+        ...(category === 'actions' ? ['buttons', 'controls', 'interface'] : []),
+        ...(category === 'view' ? ['visibility', 'display', 'show'] : []),
+        ...(category === 'alerts' ? ['notifications', 'warnings', 'info'] : []),
+        ...(category === 'commerce' ? ['shopping', 'ecommerce', 'retail'] : []),
+        ...(category === 'transport' ? ['vehicles', 'travel', 'mobility'] : []),
+        ...(category === 'text' ? ['typography', 'formatting', 'writing'] : []),
+        ...(category === 'design' ? ['creative', 'artistic', 'visual'] : []),
+      ];
 
-  return {
-    id: `iconoir-${name.toLowerCase()}`,
-    name: displayName,
-    svg: IconComponent,
-    style: 'outline',
-    category,
-    tags: [...new Set(tags)]
-  };
-}).sort((a, b) => a.name.localeCompare(b.name));
+      return {
+        id: `iconoir-${name.toLowerCase()}`,
+        name: displayName,
+        svg: IconComponent,
+        style: 'outline',
+        category,
+        tags: [...new Set(tags)]
+      };
+    }).sort((a, b) => a.name.localeCompare(b.name));
+  }
+  
+  // Fallback to manually imported icons
+  return fallbackIcons.map(({ name, component }) => {
+    const category = getCategoryFromName(name);
+    const tags = [
+      name.toLowerCase(),
+      category,
+      'outline'
+    ];
+
+    return {
+      id: `iconoir-${name.toLowerCase()}`,
+      name: name,
+      svg: component,
+      style: 'outline',
+      category,
+      tags: [...new Set(tags)]
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name));
+})();
