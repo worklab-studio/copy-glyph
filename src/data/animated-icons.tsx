@@ -1683,6 +1683,82 @@ const LightningIcon: ComponentType<AnimatedIconProps> = ({
   );
 };
 
+// Line-MD Loading Loop
+const LoadingLoopIcon: React.FC<AnimatedIconProps> = ({ 
+  size = 24, 
+  color = 'currentColor', 
+  strokeWidth = 2, 
+  isHovered = false, 
+  className = '' 
+}) => {
+  return (
+    <motion.svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <motion.path
+        d="M12 3c4.97 0 9 4.03 9 9"
+        strokeDasharray="16"
+        initial={{ strokeDashoffset: 16, rotate: 0 }}
+        animate={{ 
+          strokeDashoffset: isHovered ? 0 : 16,
+          rotate: isHovered ? 360 : 0
+        }}
+        transition={{ 
+          strokeDashoffset: { duration: 0.2 },
+          rotate: { duration: 1.5, repeat: isHovered ? Infinity : 0, ease: "linear" }
+        }}
+        style={{ transformOrigin: '12px 12px' }}
+      />
+    </motion.svg>
+  );
+};
+
+// Line-MD Heart Twotone
+const HeartTwotoneIcon: React.FC<AnimatedIconProps> = ({ 
+  size = 24, 
+  color = 'currentColor', 
+  strokeWidth = 2, 
+  isHovered = false, 
+  className = '' 
+}) => {
+  return (
+    <motion.svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill={color}
+      className={className}
+    >
+      <motion.path
+        d="M12 8c0 0 0 0 0.76 -1c0.88 -1.16 2.18 -2 3.74 -2c2.49 0 4.5 2.01 4.5 4.5c0 0.93 -0.28 1.79 -0.76 2.5c-0.81 1.21 -8.24 9 -8.24 9c0 0 -7.43 -7.79 -8.24 -9c-0.48 -0.71 -0.76 -1.57 -0.76 -2.5c0 -2.49 2.01 -4.5 4.5 -4.5c1.56 0 2.87 0.84 3.74 2c0.76 1 0.76 1 0.76 1Z"
+        initial={{ fillOpacity: 0 }}
+        animate={{ fillOpacity: isHovered ? 0.3 : 0 }}
+        transition={{ duration: 0.15, delay: isHovered ? 0.7 : 0 }}
+      />
+      <motion.path
+        d="M12 8c0 0 0 0 -0.76 -1c-0.88 -1.16 -2.18 -2 -3.74 -2c-2.49 0 -4.5 2.01 -4.5 4.5c0 0.93 0.28 1.79 0.76 2.5c0.81 1.21 8.24 9 8.24 9M12 8c0 0 0 0 0.76 -1c0.88 -1.16 2.18 -2 3.74 -2c2.49 0 4.5 2.01 4.5 4.5c0 0.93 -0.28 1.79 -0.76 2.5c-0.81 1.21 -8.24 9 -8.24 9"
+        fill="none"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeDasharray="32"
+        initial={{ strokeDashoffset: 32 }}
+        animate={{ strokeDashoffset: isHovered ? 0 : 32 }}
+        transition={{ duration: 0.7 }}
+      />
+    </motion.svg>
+  );
+};
+
 // Category mapping for animated icons
 const getCategoryFromName = (name: string): string => {
   const lowerName = name.toLowerCase();
