@@ -158,7 +158,7 @@ export function AppSidebar({
   } = useSidebar();
 
   const [expandedLibraries, setExpandedLibraries] = useState<Set<string>>(
-    new Set(['heroicons']) // Keep heroicons expanded by default
+    new Set() // Start with all libraries collapsed by default
   );
 
   const toggleLibrary = (libraryId: string) => {

@@ -122,12 +122,26 @@ function IconGridPage() {
     return Array.from(categories).sort();
   }, [libraryFilteredIcons]);
 
-  // Filter by category
+  // Filter by category and sort to show outline icons first
   const displayedIcons = useMemo(() => {
-    if (!selectedCategory) {
-      return libraryFilteredIcons;
+    let filtered = libraryFilteredIcons;
+    
+    if (selectedCategory) {
+      filtered = filtered.filter(icon => icon.category === selectedCategory);
     }
-    return libraryFilteredIcons.filter(icon => icon.category === selectedCategory);
+    
+    // Sort to show outline icons first, then others
+    return filtered.sort((a, b) => {
+      // Prioritize outline icons
+      const aIsOutline = a.style === 'outline' || a.id.includes('outline');
+      const bIsOutline = b.style === 'outline' || b.id.includes('outline');
+      
+      if (aIsOutline && !bIsOutline) return -1;
+      if (!aIsOutline && bIsOutline) return 1;
+      
+      // Then sort alphabetically by name
+      return a.name.localeCompare(b.name);
+    });
   }, [libraryFilteredIcons, selectedCategory]);
 
   // Reset category when library changes

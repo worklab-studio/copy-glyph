@@ -176,8 +176,8 @@ export function ControlPanel({
           
           <Separator />
           
-          {/* Only show stroke slider for outline icons */}
-          {selectedIcon && selectedIcon.style !== 'solid' && (
+          {/* Always show stroke slider, but hide when solid icon is selected */}
+          {(!selectedIcon || selectedIcon.style !== 'solid') && (
             <>
               <StrokeSlider />
               <Separator />
