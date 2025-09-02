@@ -15,6 +15,7 @@ import { phosphorIcons } from "@/data/phosphor-icons";
 import { lucideIcons } from "@/data/lucide-icons";
 import { tablerIcons } from "@/data/tabler-icons";
 import { remixIcons } from "@/data/remix-icons";
+import { bootstrapIcons } from "@/data/bootstrap-icons";
 
 // Combine all icon libraries
 const allIcons: IconItem[] = [
@@ -24,6 +25,7 @@ const allIcons: IconItem[] = [
   ...heroiconsSolid,
   ...phosphorIcons,
   ...tablerIcons,
+  ...bootstrapIcons,
   ...remixIcons
 ];
 
@@ -79,6 +81,9 @@ function IconGridPage() {
     }
     if (selectedSet === "remix") {
       return filteredIcons.filter(icon => icon.id.startsWith('remix-'));
+    }
+    if (selectedSet === "bootstrap") {
+      return filteredIcons.filter(icon => icon.id.startsWith('bootstrap-'));
     }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
@@ -147,6 +152,7 @@ function IconGridPage() {
                      selectedSet === "heroicons-solid" ? "Heroicons Solid" :
                      selectedSet === "phosphor" ? "Phosphor Icons" :
                      selectedSet === "tabler" ? "Tabler Icons" :
+                     selectedSet === "bootstrap" ? "Bootstrap Icons" :
                      selectedSet === "remix" ? "Remix Icons" :
                      selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
                   </h2>
