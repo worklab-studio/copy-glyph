@@ -14,11 +14,25 @@ const convertPascalToReadable = (name: string): string => {
 const getAllIconoirIcons = () => {
   const iconComponents: Array<{ name: string; component: any }> = [];
   
+  console.log('🔍 Debugging Iconoir imports...');
+  console.log('🔍 Total exports from iconoir-react:', Object.keys(IconoirIcons).length);
+  console.log('🔍 First 10 exports:', Object.keys(IconoirIcons).slice(0, 10));
+  
   // Filter exports to get only icon components (React components)
   Object.entries(IconoirIcons).forEach(([key, value]) => {
-    // Skip non-component exports
-    if (typeof value !== 'function' || key.startsWith('use') || key === 'default') {
+    // More inclusive filtering - check if it's a function and has typical React component characteristics
+    if (typeof value !== 'function') {
       return;
+    }
+    
+    // Skip obvious non-icon exports
+    if (key.startsWith('use') || key === 'default' || key.includes('Context') || key.includes('Provider')) {
+      return;
+    }
+    
+    // Log a few examples to debug
+    if (iconComponents.length < 5) {
+      console.log(`🔍 Adding icon: ${key}, type:`, typeof value, value.name);
     }
     
     // Convert PascalCase to readable name
@@ -30,6 +44,7 @@ const getAllIconoirIcons = () => {
     });
   });
   
+  console.log('🔍 Total icon components found:', iconComponents.length);
   return iconComponents.sort((a, b) => a.name.localeCompare(b.name));
 };
 
