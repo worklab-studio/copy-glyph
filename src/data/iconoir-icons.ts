@@ -14,15 +14,20 @@ const fallbackIcons = [
   { name: 'Calendar', component: Calendar }
 ];
 
-// Get all Iconoir icons by filtering the exported names more permissively
+// Get all Iconoir icons by filtering the exported names - be more permissive
 let iconoirIconNames = Object.keys(IconoirIcons).filter(name => {
   const exportedItem = IconoirIcons[name as keyof typeof IconoirIcons];
+  // More permissive filtering - just exclude known non-icon exports
   return typeof exportedItem === 'function' && 
          name !== 'IconoirProvider' && 
          name !== 'IconoirContext' &&
-         // Remove the strict regex - just check if it's a function component
-         name.length > 1;
-}).slice(0, 200);
+         name !== 'default' &&
+         // Accept any function that looks like an icon (starts with capital letter)
+         /^[A-Z]/.test(name);
+});
+
+// Log for debugging
+console.log(`Found ${iconoirIconNames.length} Iconoir icons:`, iconoirIconNames.slice(0, 10));
 
 // If no icons found, use fallback
 if (iconoirIconNames.length === 0) {
