@@ -2125,5 +2125,22 @@ export const animatedIcons: IconItem[] = [
     style: 'animated',
     category: 'effects',
     tags: ['lightning', 'bolt', 'electric', 'power', 'effects', 'animated', 'glow']
+  },
+  // Basic Line-MD icons for now
+  {
+    id: 'line-md-loading-loop',
+    name: 'Loading Loop',
+    svg: LoadingLoopIcon,
+    style: 'animated',
+    category: 'status',
+    tags: ['loading', 'spinner', 'loop', 'progress', 'animated', 'rotate']
+  },
+  {
+    id: 'line-md-heart-twotone',
+    name: 'Heart Twotone',
+    svg: HeartTwotoneIcon,
+    style: 'animated',
+    category: 'social',
+    tags: ['heart', 'love', 'like', 'favorite', 'animated', 'fill']
   }
 ];
