@@ -118,4 +118,15 @@ export const remixIcons: IconItem[] = Object.entries(RemixIcons)
       tags
     };
   })
-  .sort((a, b) => a.name.localeCompare(b.name));
+  .sort((a, b) => {
+    // Sort by style first (outline, then solid, then regular)
+    const styleOrder = { outline: 0, solid: 1, regular: 2 };
+    const styleComparison = styleOrder[a.style as keyof typeof styleOrder] - styleOrder[b.style as keyof typeof styleOrder];
+    
+    if (styleComparison !== 0) {
+      return styleComparison;
+    }
+    
+    // Then sort by name
+    return a.name.localeCompare(b.name);
+  });
