@@ -1706,13 +1706,12 @@ const LoadingLoopIcon: React.FC<AnimatedIconProps> = ({
       <motion.path
         d="M12 3c4.97 0 9 4.03 9 9"
         strokeDasharray="16"
-        initial={{ strokeDashoffset: 16, rotate: 0 }}
+        initial={{ strokeDashoffset: 0, rotate: 0 }}
         animate={{ 
-          strokeDashoffset: isHovered ? 0 : 16,
+          strokeDashoffset: 0,
           rotate: isHovered ? 360 : 0
         }}
         transition={{ 
-          strokeDashoffset: { duration: 0.2 },
           rotate: { duration: 1.5, repeat: isHovered ? Infinity : 0, ease: "linear" }
         }}
         style={{ transformOrigin: '12px 12px' }}
@@ -1751,9 +1750,9 @@ const HeartTwotoneIcon: React.FC<AnimatedIconProps> = ({
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeDasharray="32"
-        initial={{ strokeDashoffset: 32 }}
-        animate={{ strokeDashoffset: isHovered ? 0 : 32 }}
-        transition={{ duration: 0.7 }}
+        initial={{ strokeDashoffset: 0 }}
+        animate={{ strokeDashoffset: isHovered ? -5 : 0 }}
+        transition={{ duration: 0.3 }}
       />
     </motion.svg>
   );
