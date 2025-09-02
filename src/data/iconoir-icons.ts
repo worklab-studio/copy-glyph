@@ -1,6 +1,21 @@
-// Fixed Iconoir icons implementation with minimal safe filtering
+// Simple test for iconoir-react package
 import * as IconoirIcons from 'iconoir-react';
 import { type IconItem } from '@/types/icon';
+
+console.log('🔍 ICONOIR TEST: Package loading...');
+console.log('🔍 ICONOIR TEST: Available exports:', Object.keys(IconoirIcons));
+console.log('🔍 ICONOIR TEST: First 5 exports:', Object.keys(IconoirIcons).slice(0, 5));
+console.log('🔍 ICONOIR TEST: Total exports count:', Object.keys(IconoirIcons).length);
+
+// Test specific imports
+try {
+  const { Home, Search, Settings } = IconoirIcons as any;
+  console.log('🔍 ICONOIR TEST: Home component:', typeof Home, Home);
+  console.log('🔍 ICONOIR TEST: Search component:', typeof Search, Search);  
+  console.log('🔍 ICONOIR TEST: Settings component:', typeof Settings, Settings);
+} catch (error) {
+  console.error('❌ ICONOIR TEST: Failed to import specific components:', error);
+}
 
 // Function to convert PascalCase to readable name
 const convertPascalToReadable = (name: string): string => {
@@ -28,66 +43,79 @@ const getCategoryFromName = (name: string): string => {
   return 'general';
 };
 
-// Test if something is a React component
-const isReactComponent = (value: any): boolean => {
-  return (
-    typeof value === 'function' &&
-    value.$$typeof === Symbol.for('react.forward_ref') ||
-    (typeof value === 'function' && value.prototype && value.prototype.isReactComponent) ||
-    (typeof value === 'function' && value.displayName) ||
-    (typeof value === 'function' && !value.prototype)
-  );
-};
-
-console.log('🚀 ICONOIR: Starting safe import with component validation...');
-console.log('📦 ICONOIR: Available exports:', Object.keys(IconoirIcons).length);
-
-const iconComponents: Array<{ name: string; component: any }> = [];
-
-// Import with minimal safe filtering
-Object.entries(IconoirIcons).forEach(([key, value]) => {
-  // Skip obvious non-components
-  if (key === 'default') return;
-  
-  // Only include if it's a function (potential React component)
-  if (typeof value !== 'function') {
-    return;
-  }
-  
-  // Additional safety check - try to detect React components
-  try {
-    const readableName = convertPascalToReadable(key);
-    
-    iconComponents.push({
-      name: readableName,
-      component: value
-    });
-    
-    // Log first 5 to see what we're getting
-    if (iconComponents.length <= 5) {
-      console.log(`📌 ICONOIR: Added ${readableName} (${key})`);
-    }
-  } catch (error) {
-    console.warn(`⚠️ ICONOIR: Skipped ${key} due to error:`, error);
-  }
-});
-
-console.log('📊 ICONOIR: Total valid components imported:', iconComponents.length);
-
-// Create final icon items
-export const iconoirIcons: IconItem[] = iconComponents.map(({ name, component }) => {
-  const category = getCategoryFromName(name);
-  
-  return {
-    id: `iconoir-${name.toLowerCase().replace(/\s+/g, '-')}`,
-    name,
-    svg: component,
+// Create manual fallback icons first
+const manualIcons: IconItem[] = [
+  {
+    id: 'iconoir-test-home',
+    name: 'Test Home',
+    svg: (IconoirIcons as any).Home || (() => null),
     style: 'outline' as const,
-    category,
-    tags: [name.toLowerCase(), category, 'iconoir']
-  };
-}).sort((a, b) => a.name.localeCompare(b.name));
+    category: 'navigation',
+    tags: ['home', 'navigation', 'iconoir']
+  },
+  {
+    id: 'iconoir-test-search', 
+    name: 'Test Search',
+    svg: (IconoirIcons as any).Search || (() => null),
+    style: 'outline' as const,
+    category: 'actions',
+    tags: ['search', 'actions', 'iconoir']
+  }
+];
 
-console.log('✅ ICONOIR: Final export ready with', iconoirIcons.length, 'icons');
+console.log('🔍 ICONOIR TEST: Manual test icons created:', manualIcons.length);
+
+// Try dynamic discovery
+let dynamicIcons: IconItem[] = [];
+
+try {
+  const iconComponents: Array<{ name: string; component: any }> = [];
+  
+  Object.entries(IconoirIcons).forEach(([key, value]) => {
+    // Very loose filtering - only skip 'default'
+    if (key === 'default') return;
+    
+    // Only include if it's a function
+    if (typeof value === 'function') {
+      const readableName = convertPascalToReadable(key);
+      iconComponents.push({
+        name: readableName,
+        component: value
+      });
+      
+      // Log first few
+      if (iconComponents.length <= 3) {
+        console.log(`🔍 ICONOIR TEST: Found component ${readableName} (${key})`);
+      }
+    }
+  });
+  
+  console.log('🔍 ICONOIR TEST: Total components found:', iconComponents.length);
+  
+  // Create dynamic icons
+  dynamicIcons = iconComponents.map(({ name, component }) => {
+    const category = getCategoryFromName(name);
+    
+    return {
+      id: `iconoir-${name.toLowerCase().replace(/\s+/g, '-')}`,
+      name,
+      svg: component,
+      style: 'outline' as const,
+      category,
+      tags: [name.toLowerCase(), category, 'iconoir']
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name));
+  
+  console.log('🔍 ICONOIR TEST: Dynamic icons created:', dynamicIcons.length);
+  
+} catch (error) {
+  console.error('❌ ICONOIR TEST: Dynamic discovery failed:', error);
+}
+
+// Export combined icons (manual fallback + dynamic)
+export const iconoirIcons: IconItem[] = dynamicIcons.length > 0 ? dynamicIcons : manualIcons;
+
+console.log('✅ ICONOIR TEST: Final export count:', iconoirIcons.length);
+console.log('✅ ICONOIR TEST: Using', dynamicIcons.length > 0 ? 'dynamic icons' : 'manual fallback icons');
 
 export const iconoirIconCount = iconoirIcons.length;
