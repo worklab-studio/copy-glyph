@@ -34,4 +34,4 @@ export const tablerIcons: IconItem[] = Object.entries(tablerIconMap).map(([iconN
     style: 'outline',
     category: metadata.category || 'General'
   };
-});
+}).sort((a, b) => a.name.localeCompare(b.name));

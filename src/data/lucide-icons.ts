@@ -52,4 +52,4 @@ export const lucideIcons: IconItem[] = Object.entries(icons).map(([name, IconCom
     category,
     tags: [...new Set(tags)]
   };
-});
+}).sort((a, b) => a.name.localeCompare(b.name));

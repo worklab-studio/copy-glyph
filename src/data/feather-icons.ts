@@ -57,4 +57,4 @@ export const featherIcons: IconItem[] = featherIconNames.map(name => {
     category,
     tags: [...new Set(tags)] // Remove duplicates
   };
-});
+}).sort((a, b) => a.name.localeCompare(b.name));
