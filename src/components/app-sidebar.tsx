@@ -145,9 +145,6 @@ export function AppSidebar({
   selectedSet,
   onSetChange
 }: AppSidebarProps) {
-  const {
-    open: sidebarOpen
-  } = useSidebar();
   const [expandedLibraries, setExpandedLibraries] = useState<Set<string>>(new Set() // Start with all libraries collapsed by default
   );
   const toggleLibrary = (libraryId: string) => {
@@ -167,10 +164,10 @@ export function AppSidebar({
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground shadow-lg">
             <span className="text-lg font-bold text-background">I</span>
           </div>
-          {sidebarOpen && <div className="flex flex-col">
+          <div className="flex flex-col">
               <h1 className="text-lg font-semibold tracking-tight">Icono</h1>
               <p className="text-xs text-muted-foreground">50,000+ Free Icons</p>
-            </div>}
+            </div>
         </div>
       </SidebarHeader>
       
@@ -182,12 +179,10 @@ export function AppSidebar({
               {topNavItems.map(item => <SidebarMenuItem key={item.id}>
                     <SidebarMenuButton onClick={() => onSetChange(item.id)} isActive={selectedSet === item.id} className={cn("group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50", selectedSet === item.id ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground')}>
                     <item.icon className="mr-3 h-4 w-4 flex-shrink-0" />
-                    {sidebarOpen && <>
-                        <span className="flex-1 truncate text-left">{item.name}</span>
-                        <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
-                          {item.count > 1000 ? `${Math.floor(item.count / 1000)}k` : item.count.toLocaleString()}
-                        </span>
-                      </>}
+                    <span className="flex-1 truncate text-left">{item.name}</span>
+                    <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+                      {item.count > 1000 ? `${Math.floor(item.count / 1000)}k` : item.count.toLocaleString()}
+                    </span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>)}
             </SidebarMenu>
@@ -208,12 +203,10 @@ export function AppSidebar({
                 return <SidebarMenuItem key={library.id}>
                       <SidebarMenuButton onClick={() => onSetChange(library.id)} isActive={selectedSet === library.id} className={cn("group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50", selectedSet === library.id ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground')}>
                         <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
-                        {sidebarOpen && <>
-                            <span className="flex-1 truncate text-left">{library.name}</span>
-                            <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
-                              {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
-                            </span>
-                          </>}
+                        <span className="flex-1 truncate text-left">{library.name}</span>
+                        <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+                          {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
+                        </span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>;
               }
@@ -238,22 +231,18 @@ export function AppSidebar({
                               </CollapsibleTrigger>
                             </div>
                           </div>
-                          {sidebarOpen && <>
-                              <span className="flex-1 truncate text-left">{library.name}</span>
-                              <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
-                                {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
-                              </span>
-                            </>}
+                          <span className="flex-1 truncate text-left">{library.name}</span>
+                          <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+                            {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
+                          </span>
                         </SidebarMenuButton>
                       </div>
                       <CollapsibleContent className="pl-10">
                         {library.variants?.map(variant => <SidebarMenuButton key={variant.id} onClick={() => onSetChange(variant.id)} isActive={selectedSet === variant.id} className={cn("group relative flex h-8 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50 mb-0.5", selectedSet === variant.id ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground')}>
-                            {sidebarOpen && <>
-                                <span className="flex-1 truncate text-left">{variant.name}</span>
-                                <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
-                                  {variant.count.toLocaleString()}
-                                </span>
-                              </>}
+                            <span className="flex-1 truncate text-left">{variant.name}</span>
+                            <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+                              {variant.count.toLocaleString()}
+                            </span>
                           </SidebarMenuButton>)}
                       </CollapsibleContent>
                     </Collapsible>
@@ -275,12 +264,10 @@ export function AppSidebar({
               {placeholderLibraries.map(library => <SidebarMenuItem key={library.id}>
                   <SidebarMenuButton disabled className="group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium text-muted-foreground/50 cursor-not-allowed">
                     <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
-                    {sidebarOpen && <>
-                        <span className="flex-1 truncate text-left">{library.name}</span>
-                        <span className="ml-2 rounded-full bg-muted/50 px-2 py-0.5 text-xs tabular-nums text-muted-foreground/50">
-                          {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
-                        </span>
-                      </>}
+                    <span className="flex-1 truncate text-left">{library.name}</span>
+                    <span className="ml-2 rounded-full bg-muted/50 px-2 py-0.5 text-xs tabular-nums text-muted-foreground/50">
+                      {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
+                    </span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>)}
             </SidebarMenu>
