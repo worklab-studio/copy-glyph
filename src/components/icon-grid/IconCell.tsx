@@ -98,8 +98,8 @@ export function IconCell({
       hoverTimeoutRef.current = null;
     }
     
-    // Check if this is a hero icon (filled icons don't use stroke width)
-    const isHeroIcon = icon.id.startsWith('heroicons-');
+    // Check if this is a solid icon (solid icons don't use stroke width)
+    const isSolidIcon = icon.style === 'solid';
     
     try {
       let svgString: string;
@@ -114,8 +114,8 @@ export function IconCell({
           color: customization.color
         };
         
-        // Only add strokeWidth for non-hero icons
-        if (!isHeroIcon) {
+        // Only add strokeWidth for outline icons
+        if (!isSolidIcon) {
           iconProps.strokeWidth = customization.strokeWidth;
         }
         
@@ -123,10 +123,10 @@ export function IconCell({
         svgString = renderToStaticMarkup(element);
       }
 
-      // Apply current customizations to the SVG (skip stroke-width for hero icons)
+      // Apply current customizations to the SVG (skip stroke-width for solid icons)
       let customizedSVG = svgString.replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`);
       
-      if (!isHeroIcon) {
+      if (!isSolidIcon) {
         customizedSVG = customizedSVG.replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
       }
 
@@ -169,15 +169,15 @@ export function IconCell({
     const iconColor = customization.color;
     const iconStrokeWidth = customization.strokeWidth;
     
-    // Check if this is a hero icon (filled icons don't use stroke width)
-    const isHeroIcon = icon.id.startsWith('heroicons-');
+    // Check if this is a solid icon (solid icons don't use stroke width)
+    const isSolidIcon = icon.style === 'solid';
     
     if (typeof icon.svg === 'string') {
       // For SVG strings, we need to modify the stroke-width attribute
       let modifiedSvg = icon.svg;
       
-      // Apply stroke width to SVG string
-      if (!isHeroIcon) {
+      // Apply stroke width to SVG string only for outline icons
+      if (!isSolidIcon) {
         // Replace existing stroke-width attribute or add it if it doesn't exist
         if (modifiedSvg.includes('stroke-width=')) {
           modifiedSvg = modifiedSvg.replace(/stroke-width="[^"]*"/g, `stroke-width="${iconStrokeWidth}"`);
@@ -206,8 +206,8 @@ export function IconCell({
       // Apply size as number (32px equivalent for consistent sizing)
       iconProps.size = 32;
       
-      // Apply strokeWidth for libraries that support it (exclude hero icons)
-      if (!isHeroIcon) {
+      // Apply strokeWidth only for outline icons
+      if (!isSolidIcon) {
         iconProps.strokeWidth = iconStrokeWidth;
       }
       

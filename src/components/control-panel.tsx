@@ -13,6 +13,7 @@ interface ControlPanelProps {
     id: string;
     name: string;
     svg: string | React.ComponentType<any>;
+    style?: string;
   } | null;
 }
 export function ControlPanel({
@@ -23,6 +24,9 @@ export function ControlPanel({
   } = useIconCustomization();
   const handleDownloadSVG = async () => {
     if (!selectedIcon) return;
+    
+    const isSolidIcon = selectedIcon.style === 'solid';
+    
     try {
       let svgContent = '';
       if (typeof selectedIcon.svg === 'string') {
@@ -30,16 +34,26 @@ export function ControlPanel({
       } else {
         // Render the React component to SVG string
         const IconComponent = selectedIcon.svg as React.ComponentType<any>;
-        const element = React.createElement(IconComponent, {
+        const iconProps: any = {
           size: 24,
-          strokeWidth: customization.strokeWidth,
           color: customization.color
-        });
+        };
+        
+        // Only add strokeWidth for outline icons
+        if (!isSolidIcon) {
+          iconProps.strokeWidth = customization.strokeWidth;
+        }
+        
+        const element = React.createElement(IconComponent, iconProps);
         svgContent = renderToStaticMarkup(element);
       }
 
-      // Apply current customizations to the SVG
-      const customizedSVG = svgContent.replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`).replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+      // Apply current customizations to the SVG (skip stroke-width for solid icons)
+      let customizedSVG = svgContent.replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`);
+      
+      if (!isSolidIcon) {
+        customizedSVG = customizedSVG.replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+      }
 
       // Create and download the file
       const blob = new Blob([customizedSVG], {
@@ -67,22 +81,37 @@ export function ControlPanel({
   };
   const getCustomizedSVG = () => {
     if (!selectedIcon) return '';
+    
+    const isSolidIcon = selectedIcon.style === 'solid';
+    
     let svgContent = '';
     if (typeof selectedIcon.svg === 'string') {
       svgContent = selectedIcon.svg;
     } else {
       // Render the React component to SVG string
       const IconComponent = selectedIcon.svg as React.ComponentType<any>;
-      const element = React.createElement(IconComponent, {
+      const iconProps: any = {
         size: 24,
-        strokeWidth: customization.strokeWidth,
         color: customization.color
-      });
+      };
+      
+      // Only add strokeWidth for outline icons
+      if (!isSolidIcon) {
+        iconProps.strokeWidth = customization.strokeWidth;
+      }
+      
+      const element = React.createElement(IconComponent, iconProps);
       svgContent = renderToStaticMarkup(element);
     }
 
-    // Apply current customizations to the SVG
-    return svgContent.replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`).replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+    // Apply current customizations to the SVG (skip stroke-width for solid icons)
+    let customizedSVG = svgContent.replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`);
+    
+    if (!isSolidIcon) {
+      customizedSVG = customizedSVG.replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+    }
+    
+    return customizedSVG;
   };
   const handleCopySVG = async () => {
     if (!selectedIcon) {
@@ -147,9 +176,13 @@ export function ControlPanel({
           
           <Separator />
           
-          <StrokeSlider />
-          
-          <Separator />
+          {/* Only show stroke slider for outline icons */}
+          {selectedIcon && selectedIcon.style !== 'solid' && (
+            <>
+              <StrokeSlider />
+              <Separator />
+            </>
+          )}
           
           <div className="space-y-3">
             <h4 className="text-sm font-medium">Export</h4>
