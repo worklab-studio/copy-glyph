@@ -20,6 +20,7 @@ import { iconoirIcons } from "@/data/iconoir-icons";
 import { boxicons } from "@/data/boxicons";
 import { animatedIcons } from "@/data/animated-icons";
 import cssGgIcons from "@/data/css-gg-icons";
+import { simpleIcons } from "@/data/simple-icons";
 
 // Combine all icon libraries
 const allIcons: IconItem[] = [
@@ -34,7 +35,8 @@ const allIcons: IconItem[] = [
   ...iconoirIcons,
   ...boxicons,
   ...cssGgIcons,
-  ...animatedIcons
+  ...animatedIcons,
+  ...simpleIcons
 ];
 
 function IconGridPage() {
@@ -104,6 +106,9 @@ function IconGridPage() {
     }
     if (selectedSet === "animated") {
       return filteredIcons.filter(icon => icon.id.startsWith('animated-'));
+    }
+    if (selectedSet === "simple") {
+      return filteredIcons.filter(icon => icon.id.startsWith('simple-'));
     }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
@@ -178,6 +183,7 @@ function IconGridPage() {
                      selectedSet === "boxicons" ? "Boxicons" :
                      selectedSet === "css-gg" ? "CSS.GG Icons" :
                      selectedSet === "animated" ? "Animated Icons" :
+                     selectedSet === "simple" ? "Simple Icons" :
                      selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
                   </h2>
                   <p className="text-sm text-muted-foreground">

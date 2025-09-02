@@ -15,9 +15,10 @@ import { iconoirIcons } from "@/data/iconoir-icons";
 import { boxicons } from "@/data/boxicons";
 import { animatedIcons } from "@/data/animated-icons";
 import cssGgIcons from "@/data/css-gg-icons";
+import { simpleIcons } from "@/data/simple-icons";
 
 // Calculate total icons count
-const totalIconsCount = lucideIcons.length + featherIcons.length + heroiconsOutline.length + heroiconsSolid.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + iconoirIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length;
+const totalIconsCount = lucideIcons.length + featherIcons.length + heroiconsOutline.length + heroiconsSolid.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + iconoirIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length + simpleIcons.length;
 
 // Fixed top navigation items  
 const topNavItems = [{
@@ -103,6 +104,12 @@ const activeLibraries = [{
   count: cssGgIcons.length,
   icon: Code2,
   hasVariants: false
+}, {
+  name: "Simple Icons",
+  id: "simple",
+  count: simpleIcons.length, // Updated to use actual count
+  icon: Circle,
+  hasVariants: false
 }];
 
 // Placeholder icon library sets (not implemented yet)
@@ -136,11 +143,6 @@ const placeholderLibraries = [{
   id: "scarlab",
   count: 300,
   icon: TestTube
-}, {
-  name: "Simple Icons",
-  id: "simple",
-  count: 2700,
-  icon: Circle
 }];
 interface AppSidebarProps {
   selectedSet: string;
