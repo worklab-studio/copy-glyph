@@ -16,7 +16,7 @@ import { lucideIcons } from "@/data/lucide-icons";
 import { tablerIcons } from "@/data/tabler-icons";
 import { remixIcons } from "@/data/remix-icons";
 
-// Combine all icon libraries
+// Combine all icon libraries and sort by style (outline first, then solid)
 const allIcons: IconItem[] = [
   ...lucideIcons,
   ...featherIcons,
@@ -25,7 +25,18 @@ const allIcons: IconItem[] = [
   ...phosphorIcons,
   ...tablerIcons,
   ...remixIcons
-];
+].sort((a, b) => {
+  // Sort by style first (outline, then solid, then regular)
+  const styleOrder = { outline: 0, solid: 1, regular: 2 };
+  const styleComparison = (styleOrder[a.style as keyof typeof styleOrder] ?? 2) - (styleOrder[b.style as keyof typeof styleOrder] ?? 2);
+  
+  if (styleComparison !== 0) {
+    return styleComparison;
+  }
+  
+  // Then sort by name within same style
+  return a.name.localeCompare(b.name);
+});
 
 function IconGridPage() {
   const [searchQuery, setSearchQuery] = useState("");
