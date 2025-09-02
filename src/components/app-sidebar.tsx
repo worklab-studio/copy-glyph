@@ -3,12 +3,22 @@ import { Package2, Home, Star, Layers, Map, Grid3X3, Box, Code2, Feather, Shield
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator, useSidebar } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { featherIcons } from "@/data/feather-icons";
+import { heroiconsOutline } from "@/data/heroicons-outline";
+import { heroiconsSolid } from "@/data/heroicons-solid";
+import { phosphorIcons } from "@/data/phosphor-icons";
+import { lucideIcons } from "@/data/lucide-icons";
+import { tablerIcons } from "@/data/tabler-icons";
+import { remixIcons } from "@/data/remix-icons";
+
+// Calculate total icons count
+const totalIconsCount = lucideIcons.length + featherIcons.length + heroiconsOutline.length + heroiconsSolid.length + phosphorIcons.length + tablerIcons.length + remixIcons.length;
 
 // Fixed top navigation items  
 const topNavItems = [{
   name: "All Icons",
   id: "all",
-  count: 10000, // Approximate total from all libraries
+  count: totalIconsCount,
   icon: Home
 }, {
   name: "Favorites", 
@@ -21,41 +31,41 @@ const topNavItems = [{
 const activeLibraries = [{
   name: "Tabler",
   id: "tabler",
-  count: 4968,
+  count: tablerIcons.length,
   icon: Table,
   hasVariants: false
 }, {
   name: "Lucide",
   id: "lucide", 
-  count: 37,
+  count: lucideIcons.length,
   icon: Zap,
   hasVariants: false
 }, {
   name: "Feather",
   id: "feather",
-  count: 287,
+  count: featherIcons.length,
   icon: Feather,
   hasVariants: false
 }, {
   name: "Heroicons",
   id: "heroicons",
-  count: 584,
+  count: heroiconsOutline.length + heroiconsSolid.length,
   icon: Shield,
   hasVariants: true,
   variants: [
-    { name: "Outline", id: "heroicons-outline", count: 292 },
-    { name: "Solid", id: "heroicons-solid", count: 292 }
+    { name: "Outline", id: "heroicons-outline", count: heroiconsOutline.length },
+    { name: "Solid", id: "heroicons-solid", count: heroiconsSolid.length }
   ]
 }, {
   name: "Phosphor",
   id: "phosphor",
-  count: 6000,
+  count: phosphorIcons.length,
   icon: Atom,
   hasVariants: false
 }, {
   name: "Remix",
   id: "remix",
-  count: 2800,
+  count: remixIcons.length,
   icon: Music,
   hasVariants: false
 }];
