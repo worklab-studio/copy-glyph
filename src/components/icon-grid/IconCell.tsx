@@ -171,6 +171,8 @@ export function IconCell({
     
     // Check if this is a solid icon (solid icons don't use stroke width)
     const isSolidIcon = icon.style === 'solid';
+    // Check if this is an animated icon
+    const isAnimatedIcon = icon.style === 'animated';
     
     if (typeof icon.svg === 'string') {
       // For SVG strings, we need to modify the stroke-width attribute
@@ -213,6 +215,11 @@ export function IconCell({
       
       // Apply color prop (most libraries support this)
       iconProps.color = iconColor;
+      
+      // Pass hover state to animated icons
+      if (isAnimatedIcon) {
+        iconProps.isHovered = isHovered;
+      }
       
       return <IconComponent {...iconProps} />;
     }
