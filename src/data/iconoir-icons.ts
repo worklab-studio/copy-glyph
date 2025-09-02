@@ -1,8 +1,17 @@
 import { type IconItem } from "@/types/icon";
 import * as Iconoir from "iconoir-react";
 
-// Cast the imported icons to the correct type
-const IconoirIcons = Iconoir as any;
+// Cast the imported icons to the correct type, filtering out undefined components
+const IconoirIcons = new Proxy(Iconoir as any, {
+  get(target, prop) {
+    const component = target[prop];
+    if (typeof component === 'function') {
+      return component;
+    }
+    // Return a fallback component for undefined icons
+    return target.QuestionMarkCircle || (() => null);
+  }
+});
 
 export const iconoirIcons: IconItem[] = [
   // Navigation (expanded)
