@@ -1,4 +1,4 @@
-// Dynamic import of all Iconoir icons
+// Comprehensive Iconoir icons implementation using dynamic discovery
 import * as IconoirIcons from 'iconoir-react';
 import { type IconItem } from '@/types/icon';
 
@@ -8,44 +8,6 @@ const convertPascalToReadable = (name: string): string => {
     .replace(/([A-Z])/g, ' $1')
     .replace(/^./, str => str.toUpperCase())
     .trim();
-};
-
-// Get all icon components from iconoir-react
-const getAllIconoirIcons = () => {
-  const iconComponents: Array<{ name: string; component: any }> = [];
-  
-  console.log('🔍 Debugging Iconoir imports...');
-  console.log('🔍 Total exports from iconoir-react:', Object.keys(IconoirIcons).length);
-  console.log('🔍 First 10 exports:', Object.keys(IconoirIcons).slice(0, 10));
-  
-  // Filter exports to get only icon components (React components)
-  Object.entries(IconoirIcons).forEach(([key, value]) => {
-    // More inclusive filtering - check if it's a function and has typical React component characteristics
-    if (typeof value !== 'function') {
-      return;
-    }
-    
-    // Skip obvious non-icon exports
-    if (key.startsWith('use') || key === 'default' || key.includes('Context') || key.includes('Provider')) {
-      return;
-    }
-    
-    // Log a few examples to debug
-    if (iconComponents.length < 5) {
-      console.log(`🔍 Adding icon: ${key}, type:`, typeof value, value.name);
-    }
-    
-    // Convert PascalCase to readable name
-    const readableName = convertPascalToReadable(key);
-    
-    iconComponents.push({
-      name: readableName,
-      component: value
-    });
-  });
-  
-  console.log('🔍 Total icon components found:', iconComponents.length);
-  return iconComponents.sort((a, b) => a.name.localeCompare(b.name));
 };
 
 // Category mapping for better organization
@@ -69,13 +31,78 @@ const getCategoryFromName = (name: string): string => {
   return 'general';
 };
 
-// Get all icon components
+// Dynamic discovery of all available Iconoir icons
+const getAllIconoirIcons = () => {
+  console.log('🚀 Starting Iconoir dynamic discovery...');
+  
+  const iconComponents: Array<{ name: string; component: any }> = [];
+  
+  try {
+    console.log('📦 Iconoir package loaded successfully');
+    console.log('📊 Total exports from iconoir-react:', Object.keys(IconoirIcons).length);
+    console.log('🔍 Sample exports:', Object.keys(IconoirIcons).slice(0, 10));
+    
+    // Get all exports and filter for icon components
+    Object.entries(IconoirIcons).forEach(([key, value]) => {
+      // Check if it's a function (React component)
+      if (typeof value !== 'function') {
+        return;
+      }
+      
+      // Skip obvious non-icon exports
+      if (key.startsWith('use') || 
+          key === 'default' || 
+          key.includes('Context') || 
+          key.includes('Provider') ||
+          key.includes('Hook') ||
+          key.toLowerCase().includes('theme') ||
+          key.toLowerCase().includes('config') ||
+          key.startsWith('_') ||
+          key.endsWith('Context') ||
+          key.endsWith('Provider')) {
+        return;
+      }
+      
+      // Additional validation - check if it looks like an icon component
+      try {
+        const component = value as React.ComponentType<any>;
+        if (component && typeof component === 'function') {
+          // Convert to readable name
+          const readableName = convertPascalToReadable(key);
+          
+          iconComponents.push({
+            name: readableName,
+            component: component
+          });
+          
+          // Log progress for first few icons
+          if (iconComponents.length <= 5) {
+            console.log(`✅ Added icon: ${readableName} (${key})`);
+          } else if (iconComponents.length % 100 === 0) {
+            console.log(`📈 Progress: ${iconComponents.length} icons loaded...`);
+          }
+        }
+      } catch (error) {
+        console.warn(`⚠️ Skipped problematic component: ${key}`);
+      }
+    });
+    
+    console.log('🎉 Dynamic discovery complete!');
+    console.log('📊 Total icons found:', iconComponents.length);
+    
+    return iconComponents.sort((a, b) => a.name.localeCompare(b.name));
+    
+  } catch (error) {
+    console.error('❌ Failed to load Iconoir icons:', error);
+    console.log('🔄 Returning empty array - will show 0 icons');
+    return [];
+  }
+};
+
+// Get all available icons
 const iconComponents = getAllIconoirIcons();
 
-// Simple test - just log when this file loads
-console.log('✅ Iconoir module loaded - timestamp:', Date.now());
-console.log('✅ Total Iconoir icons found:', iconComponents.length);
-
+// Create IconItem array
 export const iconoirIcons: IconItem[] = iconComponents.map(({ name, component }) => {
   const category = getCategoryFromName(name);
   
@@ -87,7 +114,13 @@ export const iconoirIcons: IconItem[] = iconComponents.map(({ name, component })
     category,
     tags: [name.toLowerCase(), category, 'outline', 'iconoir']
   };
-}).sort((a, b) => a.name.localeCompare(b.name));
+});
 
-// Final verification log
-console.log('✅ Iconoir icons created:', iconoirIcons.length, 'icons');
+// Final status logs
+console.log('🏁 Iconoir icons export ready:');
+console.log('   📊 Total icons exported:', iconoirIcons.length);
+console.log('   🏷️ Categories found:', [...new Set(iconoirIcons.map(icon => icon.category))].join(', '));
+console.log('   ✨ Icons ready for use in grid');
+
+// Export count for debugging
+export const iconoirIconCount = iconoirIcons.length;
