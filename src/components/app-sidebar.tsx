@@ -13,9 +13,10 @@ import { remixIcons } from "@/data/remix-icons";
 import { bootstrapIcons } from "@/data/bootstrap-icons";
 import { iconoirIcons } from "@/data/iconoir-icons";
 import { boxicons } from "@/data/boxicons";
+import cssGgIcons from "@/data/css-gg-icons";
 
 // Calculate total icons count
-const totalIconsCount = lucideIcons.length + featherIcons.length + heroiconsOutline.length + heroiconsSolid.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + iconoirIcons.length + boxicons.length;
+const totalIconsCount = lucideIcons.length + featherIcons.length + heroiconsOutline.length + heroiconsSolid.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + iconoirIcons.length + boxicons.length + cssGgIcons.length;
 
 // Fixed top navigation items  
 const topNavItems = [{
@@ -89,6 +90,12 @@ const activeLibraries = [{
   count: boxicons.length,
   icon: Box,
   hasVariants: false
+}, {
+  name: "CSS.GG",
+  id: "css-gg",
+  count: cssGgIcons.length,
+  icon: Code2,
+  hasVariants: false
 }];
 
 // Placeholder icon library sets (not implemented yet)
@@ -102,11 +109,6 @@ const placeholderLibraries = [{
   id: "atlas",
   count: 1800,
   icon: Map
-}, {
-  name: "CSS.GG",
-  id: "css-gg",
-  count: 700,
-  icon: Code2
 }, {
   name: "Majesticons",
   id: "majesticons",

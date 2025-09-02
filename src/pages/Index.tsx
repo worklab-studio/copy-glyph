@@ -18,6 +18,7 @@ import { remixIcons } from "@/data/remix-icons";
 import { bootstrapIcons } from "@/data/bootstrap-icons";
 import { iconoirIcons } from "@/data/iconoir-icons";
 import { boxicons } from "@/data/boxicons";
+import cssGgIcons from "@/data/css-gg-icons";
 
 // Combine all icon libraries
 const allIcons: IconItem[] = [
@@ -30,7 +31,8 @@ const allIcons: IconItem[] = [
   ...bootstrapIcons,
   ...remixIcons,
   ...iconoirIcons,
-  ...boxicons
+  ...boxicons,
+  ...cssGgIcons
 ];
 
 function IconGridPage() {
@@ -94,6 +96,9 @@ function IconGridPage() {
     }
     if (selectedSet === "boxicons") {
       return filteredIcons.filter(icon => icon.id.startsWith('boxicons-'));
+    }
+    if (selectedSet === "css-gg") {
+      return filteredIcons.filter(icon => icon.id.startsWith('css-gg-'));
     }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
@@ -166,6 +171,7 @@ function IconGridPage() {
                      selectedSet === "remix" ? "Remix Icons" :
                      selectedSet === "iconoir" ? "Iconoir Icons" :
                      selectedSet === "boxicons" ? "Boxicons" :
+                     selectedSet === "css-gg" ? "CSS.GG Icons" :
                      selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
                   </h2>
                   <p className="text-sm text-muted-foreground">
