@@ -1,55 +1,37 @@
-// Direct imports for confirmed working Iconoir icons
-import { 
-  Home, User, Settings, Search, Calendar, Archive, ArrowDown, ArrowLeft, ArrowRight, ArrowUp,
-  Bell, Book, Building, Camera, Check, Copy, Download, Edit, Eye, Filter, Folder, Globe, Heart, 
-  Link, Lock, LogOut, Map, Menu, Minus, Phone, Plus, Refresh, Star, Upload, Wifi, Activity,
-  Alarm, Apple, Bluetooth, Cloud, Code, Compass, Database, Dollar, Fingerprint, Flash, Gift,
-  Github, Google, Language, Laptop, Mail, Microphone, Network, Pause, Play, QrCode, Reply,
-  Rocket, Ruler, Shield, Terminal, ThumbsDown, ThumbsUp, Timer, Trash, Trophy, Truck, Tv,
-  Umbrella, Undo, Circle, Square, CheckCircle, Drag, FastArrowDown,
-  FastArrowLeft, FastArrowRight, FastArrowUp, MoreHoriz, MoreVert, NavArrowDown, NavArrowLeft,
-  NavArrowRight, NavArrowUp, OpenBook, PageEdit, PageSearch, QuestionMark, SendMail,
-  SystemShut, TvFix, UserCircle, ViewGrid, Xmark
-} from 'iconoir-react';
-
+// Dynamic import of all Iconoir icons
+import * as IconoirIcons from 'iconoir-react';
 import { type IconItem } from '@/types/icon';
 
-// Create a comprehensive list of working Iconoir icons
-const iconComponents = [
-  { name: 'Home', component: Home }, { name: 'User', component: User }, { name: 'Settings', component: Settings },
-  { name: 'Search', component: Search }, { name: 'Calendar', component: Calendar }, { name: 'Archive', component: Archive },
-  { name: 'Arrow Down', component: ArrowDown }, { name: 'Arrow Left', component: ArrowLeft }, { name: 'Arrow Right', component: ArrowRight },
-  { name: 'Arrow Up', component: ArrowUp }, { name: 'Bell', component: Bell }, { name: 'Book', component: Book },
-  { name: 'Building', component: Building }, { name: 'Camera', component: Camera }, { name: 'Check', component: Check },
-  { name: 'Copy', component: Copy }, { name: 'Download', component: Download }, { name: 'Edit', component: Edit },
-  { name: 'Eye', component: Eye }, { name: 'Filter', component: Filter }, { name: 'Folder', component: Folder },
-  { name: 'Globe', component: Globe }, { name: 'Heart', component: Heart }, { name: 'Link', component: Link },
-  { name: 'Lock', component: Lock }, { name: 'Log Out', component: LogOut }, { name: 'Map', component: Map },
-  { name: 'Menu', component: Menu }, { name: 'Minus', component: Minus }, { name: 'Phone', component: Phone },
-  { name: 'Plus', component: Plus }, { name: 'Refresh', component: Refresh }, { name: 'Star', component: Star },
-  { name: 'Upload', component: Upload }, { name: 'Wifi', component: Wifi }, { name: 'Activity', component: Activity },
-  { name: 'Alarm', component: Alarm }, { name: 'Apple', component: Apple }, { name: 'Bluetooth', component: Bluetooth },
-  { name: 'Cloud', component: Cloud }, { name: 'Code', component: Code }, { name: 'Compass', component: Compass },
-  { name: 'Database', component: Database }, { name: 'Dollar', component: Dollar }, { name: 'Fingerprint', component: Fingerprint },
-  { name: 'Flash', component: Flash }, { name: 'Gift', component: Gift }, { name: 'Github', component: Github },
-  { name: 'Google', component: Google }, { name: 'Language', component: Language }, { name: 'Laptop', component: Laptop },
-  { name: 'Mail', component: Mail }, { name: 'Microphone', component: Microphone }, { name: 'Network', component: Network },
-  { name: 'Pause', component: Pause }, { name: 'Play', component: Play }, { name: 'QR Code', component: QrCode },
-  { name: 'Reply', component: Reply }, { name: 'Rocket', component: Rocket }, { name: 'Ruler', component: Ruler },
-  { name: 'Shield', component: Shield }, { name: 'Terminal', component: Terminal }, { name: 'Thumbs Down', component: ThumbsDown },
-  { name: 'Thumbs Up', component: ThumbsUp }, { name: 'Timer', component: Timer }, { name: 'Trash', component: Trash },
-  { name: 'Trophy', component: Trophy }, { name: 'Truck', component: Truck }, { name: 'TV', component: Tv },
-  { name: 'Umbrella', component: Umbrella }, { name: 'Undo', component: Undo }, { name: 'Circle', component: Circle },
-  { name: 'Square', component: Square }, { name: 'Check Circle', component: CheckCircle }, 
-  { name: 'Drag', component: Drag }, { name: 'Fast Arrow Down', component: FastArrowDown }, { name: 'Fast Arrow Left', component: FastArrowLeft },
-  { name: 'Fast Arrow Right', component: FastArrowRight }, { name: 'Fast Arrow Up', component: FastArrowUp }, { name: 'More Horizontal', component: MoreHoriz },
-  { name: 'More Vertical', component: MoreVert }, { name: 'Nav Arrow Down', component: NavArrowDown }, { name: 'Nav Arrow Left', component: NavArrowLeft },
-  { name: 'Nav Arrow Right', component: NavArrowRight }, { name: 'Nav Arrow Up', component: NavArrowUp }, { name: 'Open Book', component: OpenBook },
-  { name: 'Page Edit', component: PageEdit }, { name: 'Page Search', component: PageSearch }, { name: 'Question Mark', component: QuestionMark },
-  { name: 'Send Mail', component: SendMail }, { name: 'System Shut', component: SystemShut },
-  { name: 'TV Fix', component: TvFix }, { name: 'User Circle', component: UserCircle }, { name: 'View Grid', component: ViewGrid },
-  { name: 'X Mark', component: Xmark }
-];
+// Function to convert PascalCase to readable name
+const convertPascalToReadable = (name: string): string => {
+  return name
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, str => str.toUpperCase())
+    .trim();
+};
+
+// Get all icon components from iconoir-react
+const getAllIconoirIcons = () => {
+  const iconComponents: Array<{ name: string; component: any }> = [];
+  
+  // Filter exports to get only icon components (React components)
+  Object.entries(IconoirIcons).forEach(([key, value]) => {
+    // Skip non-component exports
+    if (typeof value !== 'function' || key.startsWith('use') || key === 'default') {
+      return;
+    }
+    
+    // Convert PascalCase to readable name
+    const readableName = convertPascalToReadable(key);
+    
+    iconComponents.push({
+      name: readableName,
+      component: value
+    });
+  });
+  
+  return iconComponents.sort((a, b) => a.name.localeCompare(b.name));
+};
 
 // Category mapping for better organization
 const getCategoryFromName = (name: string): string => {
@@ -72,8 +54,12 @@ const getCategoryFromName = (name: string): string => {
   return 'general';
 };
 
+// Get all icon components
+const iconComponents = getAllIconoirIcons();
+
 // Simple test - just log when this file loads
 console.log('✅ Iconoir module loaded - timestamp:', Date.now());
+console.log('✅ Total Iconoir icons found:', iconComponents.length);
 
 export const iconoirIcons: IconItem[] = iconComponents.map(({ name, component }) => {
   const category = getCategoryFromName(name);
