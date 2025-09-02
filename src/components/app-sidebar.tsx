@@ -1,23 +1,17 @@
-import { useState } from "react";
-import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Shield, Paintbrush, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, ChevronDown, ChevronRight, Sparkles } from "lucide-react";
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator, useSidebar } from "@/components/ui/sidebar";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table } from "lucide-react";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { featherIcons } from "@/data/feather-icons";
-import { heroiconsOutline } from "@/data/heroicons-outline";
-import { heroiconsSolid } from "@/data/heroicons-solid";
 import { phosphorIcons } from "@/data/phosphor-icons";
 import { lucideIcons } from "@/data/lucide-icons";
 import { tablerIcons } from "@/data/tabler-icons";
 import { remixIcons } from "@/data/remix-icons";
 import { bootstrapIcons } from "@/data/bootstrap-icons";
-import { iconoirIcons } from "@/data/iconoir-icons";
 import { boxicons } from "@/data/boxicons";
-import { animatedIcons } from "@/data/animated-icons";
 import cssGgIcons from "@/data/css-gg-icons";
 
 // Calculate total icons count
-const totalIconsCount = lucideIcons.length + featherIcons.length + heroiconsOutline.length + heroiconsSolid.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + iconoirIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length;
+const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length;
 
 // Fixed top navigation items  
 const topNavItems = [{
@@ -29,12 +23,6 @@ const topNavItems = [{
 
 // Active icon libraries (actually implemented)
 const activeLibraries = [{
-  name: "Animated",
-  id: "animated",
-  count: animatedIcons.length,
-  icon: Sparkles,
-  hasVariants: false
-}, {
   name: "Tabler",
   id: "tabler",
   count: tablerIcons.length,
@@ -53,21 +41,6 @@ const activeLibraries = [{
   icon: Feather,
   hasVariants: false
 }, {
-  name: "Heroicons",
-  id: "heroicons",
-  count: heroiconsOutline.length + heroiconsSolid.length,
-  icon: Shield,
-  hasVariants: true,
-  variants: [{
-    name: "Outline",
-    id: "heroicons-outline",
-    count: heroiconsOutline.length
-  }, {
-    name: "Solid",
-    id: "heroicons-solid",
-    count: heroiconsSolid.length
-  }]
-}, {
   name: "Phosphor",
   id: "phosphor",
   count: phosphorIcons.length,
@@ -84,12 +57,6 @@ const activeLibraries = [{
   id: "remix",
   count: remixIcons.length,
   icon: Music,
-  hasVariants: false
-}, {
-  name: "Iconoir",
-  id: "iconoir",
-  count: iconoirIcons.length,
-  icon: Paintbrush,
   hasVariants: false
 }, {
   name: "Boxicons",
@@ -145,19 +112,6 @@ export function AppSidebar({
   selectedSet,
   onSetChange
 }: AppSidebarProps) {
-  const [expandedLibraries, setExpandedLibraries] = useState<Set<string>>(new Set() // Start with all libraries collapsed by default
-  );
-  const toggleLibrary = (libraryId: string) => {
-    setExpandedLibraries(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(libraryId)) {
-        newSet.delete(libraryId);
-      } else {
-        newSet.add(libraryId);
-      }
-      return newSet;
-    });
-  };
   return <Sidebar className="w-64 border-r">
       <SidebarHeader className="border-b border-border/50 p-4">
         <div className="flex items-center gap-3">
@@ -199,7 +153,6 @@ export function AppSidebar({
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
               {activeLibraries.map(library => {
-              if (!library.hasVariants) {
                 return <SidebarMenuItem key={library.id}>
                       <SidebarMenuButton onClick={() => onSetChange(library.id)} isActive={selectedSet === library.id} className={cn("group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50", selectedSet === library.id ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground')}>
                         <library.icon className="mr-3 h-4 w-4 flex-shrink-0" />
@@ -209,44 +162,6 @@ export function AppSidebar({
                         </span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>;
-              }
-
-              // Handle libraries with variants (like Heroicons)
-              const isExpanded = expandedLibraries.has(library.id);
-              const hasActiveVariant = library.variants?.some(variant => selectedSet === variant.id);
-              return <SidebarMenuItem key={library.id}>
-                    <Collapsible open={isExpanded} onOpenChange={() => toggleLibrary(library.id)}>
-                      <div className="relative">
-                        <SidebarMenuButton className={cn("heroicons-dropdown-group relative flex h-9 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50", hasActiveVariant ? 'bg-accent/30 text-accent-foreground' : 'text-muted-foreground hover:text-foreground')}>
-                          {/* Icon area with hover replacement */}
-                          <div className="relative mr-3 h-4 w-4 flex-shrink-0 flex items-center justify-center">
-                            {/* Normal library icon - hidden on group hover */}
-                            <library.icon className="h-4 w-4 transition-opacity duration-200 heroicons-dropdown-group-hover:opacity-0" />
-                            {/* Dropdown chevron - shown on group hover */}
-                            <div className="absolute inset-0 opacity-0 heroicons-dropdown-group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                              <CollapsibleTrigger asChild>
-                                <button className="flex h-4 w-4 items-center justify-center text-current">
-                                  {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                                </button>
-                              </CollapsibleTrigger>
-                            </div>
-                          </div>
-                          <span className="flex-1 truncate text-left">{library.name}</span>
-                          <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
-                            {library.count > 1000 ? `${Math.floor(library.count / 1000)}k` : library.count.toLocaleString()}
-                          </span>
-                        </SidebarMenuButton>
-                      </div>
-                      <CollapsibleContent className="pl-10">
-                        {library.variants?.map(variant => <SidebarMenuButton key={variant.id} onClick={() => onSetChange(variant.id)} isActive={selectedSet === variant.id} className={cn("group relative flex h-8 w-full items-center justify-start rounded-lg px-3 text-sm font-medium transition-all duration-300 hover:bg-accent/50 mb-0.5", selectedSet === variant.id ? 'bg-accent text-accent-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground')}>
-                            <span className="flex-1 truncate text-left">{variant.name}</span>
-                            <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
-                              {variant.count.toLocaleString()}
-                            </span>
-                          </SidebarMenuButton>)}
-                      </CollapsibleContent>
-                    </Collapsible>
-                  </SidebarMenuItem>;
             })}
             </SidebarMenu>
           </SidebarGroupContent>

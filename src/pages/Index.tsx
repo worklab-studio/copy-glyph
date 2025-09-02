@@ -9,31 +9,23 @@ import { IconCustomizationProvider, useIconCustomization } from "@/contexts/Icon
 import { type IconItem } from "@/types/icon";
 import { toast } from "@/hooks/use-toast";
 import { featherIcons } from "@/data/feather-icons";
-import { heroiconsOutline } from "@/data/heroicons-outline";
-import { heroiconsSolid } from "@/data/heroicons-solid";
 import { phosphorIcons } from "@/data/phosphor-icons";
 import { lucideIcons } from "@/data/lucide-icons";
 import { tablerIcons } from "@/data/tabler-icons";
 import { remixIcons } from "@/data/remix-icons";
 import { bootstrapIcons } from "@/data/bootstrap-icons";
-import { iconoirIcons } from "@/data/iconoir-icons";
 import { boxicons } from "@/data/boxicons";
-import { animatedIcons } from "@/data/animated-icons";
 import cssGgIcons from "@/data/css-gg-icons";
 // Combine all icon libraries
 const allIcons: IconItem[] = [
   ...lucideIcons,
   ...featherIcons,
-  ...heroiconsOutline,
-  ...heroiconsSolid,
   ...phosphorIcons,
   ...tablerIcons,
   ...bootstrapIcons,
   ...remixIcons,
-  ...iconoirIcons,
   ...boxicons,
-  ...cssGgIcons,
-  ...animatedIcons
+  ...cssGgIcons
 ];
 
 function IconGridPage() {
@@ -74,12 +66,6 @@ function IconGridPage() {
     if (selectedSet === "feather") {
       return filteredIcons.filter(icon => icon.id.startsWith('feather-'));
     }
-    if (selectedSet === "heroicons-outline") {
-      return filteredIcons.filter(icon => icon.id.startsWith('heroicons-outline-'));
-    }
-    if (selectedSet === "heroicons-solid") {
-      return filteredIcons.filter(icon => icon.id.startsWith('heroicons-solid-'));
-    }
     if (selectedSet === "phosphor") {
       return filteredIcons.filter(icon => icon.id.startsWith('phosphor-'));
     }
@@ -92,17 +78,11 @@ function IconGridPage() {
     if (selectedSet === "bootstrap") {
       return filteredIcons.filter(icon => icon.id.startsWith('bootstrap-'));
     }
-    if (selectedSet === "iconoir") {
-      return filteredIcons.filter(icon => icon.id.startsWith('iconoir-'));
-    }
     if (selectedSet === "boxicons") {
       return filteredIcons.filter(icon => icon.id.startsWith('boxicons-'));
     }
     if (selectedSet === "css-gg") {
       return filteredIcons.filter(icon => icon.id.startsWith('css-gg-'));
-    }
-    if (selectedSet === "animated") {
-      return filteredIcons.filter(icon => icon.id.startsWith('animated-'));
     }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
@@ -181,17 +161,12 @@ function IconGridPage() {
                      selectedSet === "favorites" ? "Favorites" : 
                      selectedSet === "lucide" ? "Lucide Icons" :
                      selectedSet === "feather" ? "Feather Icons" :
-                     selectedSet === "heroicons-outline" ? "Heroicons Outline" :
-                     selectedSet === "heroicons-solid" ? "Heroicons Solid" :
                      selectedSet === "phosphor" ? "Phosphor Icons" :
                      selectedSet === "tabler" ? "Tabler Icons" :
                      selectedSet === "bootstrap" ? "Bootstrap Icons" :
                      selectedSet === "remix" ? "Remix Icons" :
-                     selectedSet === "iconoir" ? "Iconoir Icons" :
                      selectedSet === "boxicons" ? "Boxicons" :
                      selectedSet === "css-gg" ? "CSS.GG Icons" :
-                     selectedSet === "animated" ? "Animated Icons" :
-                     
                      selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)}
                   </h2>
                   <p className="text-sm text-muted-foreground">
