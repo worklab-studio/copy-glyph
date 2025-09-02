@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ColorPicker } from "./color-picker";
-import { ImageColorExtractor } from "./image-color-extractor";
 import { StrokeSlider } from "./stroke-slider";
 import { Button } from "@/components/ui/button";
 import { Copy, Download } from "lucide-react";
@@ -174,10 +173,6 @@ export function ControlPanel({
         
         <CardContent className="space-y-6">
           <ColorPicker />
-          
-          <Separator />
-          
-          <ImageColorExtractor />
           
           <Separator />
           
