@@ -1,6 +1,48 @@
 import { type ComponentType } from 'react';
 import { type IconItem } from '@/types/icon';
-import * as BootstrapIcons from 'react-bootstrap-icons';
+// Import some Bootstrap icons manually to test
+import { 
+  ArrowRight, ArrowLeft, ArrowUp, ArrowDown,
+  House, Heart, Star, Search, Plus, Dash,
+  X, Check, Gear, Bell, Envelope,
+  Calendar, Clock, Lock, Eye, Cart, File,
+  Folder, Person, People, Shield, Globe,
+  Camera, Play, Pause, Download
+} from 'react-bootstrap-icons';
+
+// Manual list of icons for now (we can expand this later)
+const manualBootstrapIcons = [
+  { name: 'ArrowRight', component: ArrowRight },
+  { name: 'ArrowLeft', component: ArrowLeft },
+  { name: 'ArrowUp', component: ArrowUp },
+  { name: 'ArrowDown', component: ArrowDown },
+  { name: 'House', component: House },
+  { name: 'Heart', component: Heart },
+  { name: 'Star', component: Star },
+  { name: 'Search', component: Search },
+  { name: 'Plus', component: Plus },
+  { name: 'Dash', component: Dash },
+  { name: 'X', component: X },
+  { name: 'Check', component: Check },
+  { name: 'Gear', component: Gear },
+  { name: 'Bell', component: Bell },
+  { name: 'Envelope', component: Envelope },
+  { name: 'Calendar', component: Calendar },
+  { name: 'Clock', component: Clock },
+  { name: 'Lock', component: Lock },
+  { name: 'Eye', component: Eye },
+  { name: 'Cart', component: Cart },
+  { name: 'File', component: File },
+  { name: 'Folder', component: Folder },
+  { name: 'Person', component: Person },
+  { name: 'People', component: People },
+  { name: 'Shield', component: Shield },
+  { name: 'Globe', component: Globe },
+  { name: 'Camera', component: Camera },
+  { name: 'Play', component: Play },
+  { name: 'Pause', component: Pause },
+  { name: 'Download', component: Download },
+];
 
 // Category mapping for Bootstrap icons
 const getCategoryFromName = (name: string): string => {
@@ -29,13 +71,7 @@ const getCategoryFromName = (name: string): string => {
   return 'general';
 };
 
-// Get all Bootstrap icon components
-const allBootstrapIcons = Object.entries(BootstrapIcons).filter(([name]) => 
-  // Filter out non-icon exports
-  name !== 'IconProps' && typeof BootstrapIcons[name as keyof typeof BootstrapIcons] === 'function'
-);
-
-export const bootstrapIcons: IconItem[] = allBootstrapIcons.map(([name, IconComponent]) => {
+export const bootstrapIcons: IconItem[] = manualBootstrapIcons.map(({ name, component }) => {
   const category = getCategoryFromName(name);
   
   // Add tags based on icon name patterns
@@ -69,7 +105,7 @@ export const bootstrapIcons: IconItem[] = allBootstrapIcons.map(([name, IconComp
   return {
     id: `bootstrap-${name.toLowerCase()}`,
     name,
-    svg: IconComponent as ComponentType<any>,
+    svg: component as ComponentType<any>,
     style: 'outline',
     category,
     tags: [...new Set(tags)]
