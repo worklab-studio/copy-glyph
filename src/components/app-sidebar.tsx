@@ -15,10 +15,9 @@ import { iconoirIcons } from "@/data/iconoir-icons";
 import { boxicons } from "@/data/boxicons";
 import { animatedIcons } from "@/data/animated-icons";
 import cssGgIcons from "@/data/css-gg-icons";
-import { simpleIcons } from "@/data/simple-icons";
 
 // Calculate total icons count
-const totalIconsCount = lucideIcons.length + featherIcons.length + heroiconsOutline.length + heroiconsSolid.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + iconoirIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length + simpleIcons.length;
+const totalIconsCount = lucideIcons.length + featherIcons.length + heroiconsOutline.length + heroiconsSolid.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + iconoirIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length;
 
 // Fixed top navigation items  
 const topNavItems = [{
@@ -103,13 +102,6 @@ const activeLibraries = [{
   id: "css-gg",
   count: cssGgIcons.length,
   icon: Code2,
-  hasVariants: false
-}, {
-  name: "Simple Icons",
-  id: "simple",
-  count: simpleIcons.length,
-  // Updated to use actual count
-  icon: Circle,
   hasVariants: false
 }];
 
