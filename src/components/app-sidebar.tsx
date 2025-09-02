@@ -52,6 +52,12 @@ const activeLibraries = [{
   count: 6000,
   icon: Atom,
   hasVariants: false
+}, {
+  name: "Remix",
+  id: "remix",
+  count: 2800,
+  icon: Music,
+  hasVariants: false
 }];
 
 // Placeholder icon library sets (not implemented yet)
@@ -100,11 +106,6 @@ const placeholderLibraries = [{
   id: "pixelart", 
   count: 460,
   icon: Gamepad2
-}, {
-  name: "Remix",
-  id: "remix",
-  count: 2800,
-  icon: Music
 }, {
   name: "Scarlab",
   id: "scarlab",

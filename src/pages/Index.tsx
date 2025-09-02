@@ -14,6 +14,7 @@ import { heroiconsSolid } from "@/data/heroicons-solid";
 import { phosphorIcons } from "@/data/phosphor-icons";
 import { lucideIcons } from "@/data/lucide-icons";
 import { tablerIcons } from "@/data/tabler-icons";
+import { remixIcons } from "@/data/remix-icons";
 
 // Combine all icon libraries
 const allIcons: IconItem[] = [
@@ -22,7 +23,8 @@ const allIcons: IconItem[] = [
   ...heroiconsOutline,
   ...heroiconsSolid,
   ...phosphorIcons,
-  ...tablerIcons
+  ...tablerIcons,
+  ...remixIcons
 ];
 
 function IconGridPage() {
@@ -74,6 +76,9 @@ function IconGridPage() {
     }
     if (selectedSet === "tabler") {
       return filteredIcons.filter(icon => icon.id.startsWith('tabler-'));
+    }
+    if (selectedSet === "remix") {
+      return filteredIcons.filter(icon => icon.id.startsWith('remix-'));
     }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
@@ -142,6 +147,7 @@ function IconGridPage() {
                      selectedSet === "heroicons-solid" ? "Heroicons Solid" :
                      selectedSet === "phosphor" ? "Phosphor Icons" :
                      selectedSet === "tabler" ? "Tabler Icons" :
+                     selectedSet === "remix" ? "Remix Icons" :
                      selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)} Icons
                   </h2>
                   <p className="text-sm text-muted-foreground">
