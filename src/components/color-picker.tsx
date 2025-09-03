@@ -137,13 +137,10 @@ export function ColorPicker() {
     }, 8); // Reduced from 16ms to 8ms for smoother updates
   }, [updateColor]);
 
-  const handleCanvasInteraction = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.currentTarget;
-    if (!target || isDragging) return; // Prevent interaction if already dragging something else
-    
+  const handleCanvasInteraction = useCallback((clientX: number, clientY: number, target: HTMLDivElement) => {
     const rect = target.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
     
     const newSaturation = Math.max(0, Math.min(1, x / rect.width));
     const newValue = Math.max(0, Math.min(1, 1 - (y / rect.height)));
@@ -152,32 +149,59 @@ export function ColorPicker() {
     setValue(newValue);
     
     debouncedUpdateColor(hue, newSaturation, newValue);
-  }, [hue, isDragging, debouncedUpdateColor]);
+  }, [hue, debouncedUpdateColor]);
 
-  const handleHueSliderInteraction = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const slider = hueSliderRef.current;
-    if (!slider || isDragging) return; // Prevent interaction if already dragging something else
-    
+  const handleHueSliderInteraction = useCallback((clientX: number, slider: HTMLDivElement) => {
     const rect = slider.getBoundingClientRect();
-    const x = e.clientX - rect.left;
+    const x = clientX - rect.left;
     const newHue = Math.max(0, Math.min(360, (x / rect.width) * 360));
     
     setHue(newHue);
     debouncedUpdateColor(newHue, saturation, value);
-  }, [saturation, value, isDragging, debouncedUpdateColor]);
+  }, [saturation, value, debouncedUpdateColor]);
 
-  // Handle mouse events for smooth dragging
+  // Mouse event handlers
+  const handleCanvasMouseInteraction = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (isDragging) return;
+    handleCanvasInteraction(e.clientX, e.clientY, e.currentTarget);
+  }, [isDragging, handleCanvasInteraction]);
+
+  const handleHueSliderMouseInteraction = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const slider = hueSliderRef.current;
+    if (!slider || isDragging) return;
+    handleHueSliderInteraction(e.clientX, slider);
+  }, [isDragging, handleHueSliderInteraction]);
+
+  // Touch event handlers
+  const handleCanvasTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    setIsDragging(true);
+    setDragTarget('color-area');
+    handleCanvasInteraction(touch.clientX, touch.clientY, e.currentTarget);
+  }, [handleCanvasInteraction]);
+
+  const handleHueTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const slider = hueSliderRef.current;
+    if (!slider) return;
+    const touch = e.touches[0];
+    setIsDragging(true);
+    setDragTarget('hue-slider');
+    handleHueSliderInteraction(touch.clientX, slider);
+  }, [handleHueSliderInteraction]);
+
+  // Handle mouse and touch events for smooth dragging
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMove = (clientX: number, clientY: number) => {
       if (!isDragging || !dragTarget) return;
       
-      // Only handle the specific drag target to prevent cross-interaction
       if (dragTarget === 'hue-slider') {
         const hueSlider = hueSliderRef.current;
         if (!hueSlider) return;
         
         const hueRect = hueSlider.getBoundingClientRect();
-        const x = e.clientX - hueRect.left;
+        const x = clientX - hueRect.left;
         const newHue = Math.max(0, Math.min(360, (x / hueRect.width) * 360));
         setHue(newHue);
         debouncedUpdateColor(newHue, saturation, value);
@@ -186,8 +210,8 @@ export function ColorPicker() {
         if (!colorArea) return;
         
         const rect = colorArea.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
         
         const newSaturation = Math.max(0, Math.min(1, x / rect.width));
         const newValue = Math.max(0, Math.min(1, 1 - (y / rect.height)));
@@ -198,19 +222,33 @@ export function ColorPicker() {
       }
     };
 
-    const handleMouseUp = () => {
+    const handleMouseMove = (e: MouseEvent) => {
+      handleMove(e.clientX, e.clientY);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      handleMove(touch.clientX, touch.clientY);
+    };
+
+    const handleEnd = () => {
       setIsDragging(false);
       setDragTarget(null);
     };
 
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove, { passive: false });
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mouseup', handleEnd);
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleEnd);
     }
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mouseup', handleEnd);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleEnd);
     };
   }, [isDragging, dragTarget, hue, saturation, value, debouncedUpdateColor]);
 
@@ -241,16 +279,17 @@ export function ColorPicker() {
         <div className="relative select-none">
           <div
             data-color-area
-            className="w-full h-40 rounded-lg cursor-crosshair transition-none"
+            className="w-full h-40 rounded-lg cursor-crosshair transition-none touch-none"
             style={{
               background: `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, ${hslColor})`
             }}
             onMouseDown={(e) => {
               setIsDragging(true);
               setDragTarget('color-area');
-              handleCanvasInteraction(e);
+              handleCanvasMouseInteraction(e);
             }}
-            onClick={handleCanvasInteraction}
+            onTouchStart={handleCanvasTouchStart}
+            onClick={handleCanvasMouseInteraction}
           />
           {/* Picker indicator */}
           <div
@@ -267,16 +306,17 @@ export function ColorPicker() {
         {/* Hue slider */}
         <div
           ref={hueSliderRef}
-          className="relative w-full h-4 rounded-lg cursor-pointer select-none"
+          className="relative w-full h-4 rounded-lg cursor-pointer select-none touch-none"
           style={{
             background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)'
           }}
           onMouseDown={(e) => {
             setIsDragging(true);
             setDragTarget('hue-slider');
-            handleHueSliderInteraction(e);
+            handleHueSliderMouseInteraction(e);
           }}
-          onClick={handleHueSliderInteraction}
+          onTouchStart={handleHueTouchStart}
+          onClick={handleHueSliderMouseInteraction}
         >
           <div
             className="absolute w-4 h-4 bg-white border-2 border-gray-300 rounded-full shadow-lg transition-none"
