@@ -57,7 +57,7 @@ export function IconGrid({
                   height: `${virtualItem.size}px`,
                   transform: `translateY(${virtualItem.start}px)`,
                   display: 'grid',
-                  gridTemplateColumns: `repeat(${columnsCount}, minmax(80px, 1fr))`,
+                  gridTemplateColumns: `repeat(${columnsCount}, 80px)`,
                   justifyContent: 'start',
                   gap: 0,
                 }}
@@ -82,7 +82,7 @@ export function IconGrid({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, 80px)',
             justifyContent: 'start',
             gap: 0,
           }}
