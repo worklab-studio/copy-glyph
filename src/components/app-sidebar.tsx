@@ -120,7 +120,7 @@ export function AppSidebar({
   onSetChange
 }: AppSidebarProps) {
   return <Sidebar className="w-64 border-r">
-      <SidebarHeader className="border-b border-border/50 p-4">
+      <SidebarHeader className="border-b border-border/50 h-16 flex items-center px-4">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground shadow-lg">
             <span className="text-lg font-bold text-background">I</span>
