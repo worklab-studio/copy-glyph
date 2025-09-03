@@ -6,13 +6,21 @@ import { iconMap } from "../../atlas";
 
 // Convert iconMap to IconItem format with proper theming
 export const atlasIcons: IconItem[] = Object.entries(iconMap).map(([key, svg]) => {
-  // Ensure svg is a string and convert hardcoded colors to currentColor for proper theming
+  // Ensure svg is a string and convert ALL hardcoded colors to currentColor for proper theming
   const svgString = String(svg);
   const themedSvg = svgString
+    // Replace all hex colors in fill attributes
+    .replace(/fill="#[0-9A-Fa-f]{6}"/g, 'fill="currentColor"')
+    .replace(/fill="#[0-9A-Fa-f]{3}"/g, 'fill="currentColor"')
+    // Replace all hex colors in stroke attributes  
+    .replace(/stroke="#[0-9A-Fa-f]{6}"/g, 'stroke="currentColor"')
+    .replace(/stroke="#[0-9A-Fa-f]{3}"/g, 'stroke="currentColor"')
+    // Replace specific known colors
     .replace(/fill="#020202"/g, 'fill="currentColor"')
     .replace(/fill="#292D32"/g, 'fill="currentColor"')
     .replace(/stroke="#292D32"/g, 'stroke="currentColor"')
-    .replace(/fill="none"/g, 'fill="none"');
+    // Keep fill="none" as is
+    .replace(/fill="currentColor" stroke="currentColor"/g, 'fill="none" stroke="currentColor"');
 
   // Determine category based on key prefix
   let category = 'general';
