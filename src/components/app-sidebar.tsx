@@ -67,7 +67,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
   return (
-    <Sidebar className="border-r w-60">
+    <Sidebar className="border-r">
       <SidebarHeader>
         <div className="px-3 py-2">
           <div className="flex items-center gap-2">
