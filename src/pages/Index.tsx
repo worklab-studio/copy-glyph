@@ -184,38 +184,40 @@ function IconGridPage() {
           />
           
           {/* Fixed header with padding */}
-          <div className="px-6 border-b border-border/30 bg-background h-16 flex items-center">
-            <div className="flex flex-1 items-center justify-between">
-              <div className="space-y-1">
-                <h2 className="text-xl font-semibold leading-none">
-                  {selectedSet === "all" ? "All icons" : 
-                   selectedSet === "favorites" ? "Favorites" : 
-                   selectedSet === "material" ? "Material Design Icons" :
-                   selectedSet === "animated" ? "Animated Icons" :
-                   selectedSet === "lucide" ? "Lucide Icons" :
-                   selectedSet === "feather" ? "Feather Icons" :
-                   selectedSet === "phosphor" ? "Phosphor Icons" :
-                   selectedSet === "tabler" ? "Tabler Icons" :
-                   selectedSet === "bootstrap" ? "Bootstrap Icons" :
-                   selectedSet === "remix" ? "Remix Icons" :
-                   selectedSet === "boxicons" ? "Boxicons" :
-                   selectedSet === "css-gg" ? "CSS.GG Icons" :
-                   selectedSet === "iconsax" ? "Iconsax Icons" :
-                    selectedSet === "atlas" ? "Atlas Icons" :
-                    selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)}
-                </h2>
-                <p className="text-xs text-muted-foreground leading-none">
-                  {displayedIcons.length.toLocaleString()} icons
-                  {searchQuery && ` matching "${searchQuery}"`}
-                  {selectedCategory && ` in ${selectedCategory}`}
-                </p>
+          <div className="px-6 pt-6 pb-4 border-b border-border/30 bg-background">
+            <div className="space-y-3">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-semibold">
+                    {selectedSet === "all" ? "All icons" : 
+                     selectedSet === "favorites" ? "Favorites" : 
+                     selectedSet === "material" ? "Material Design Icons" :
+                     selectedSet === "animated" ? "Animated Icons" :
+                     selectedSet === "lucide" ? "Lucide Icons" :
+                     selectedSet === "feather" ? "Feather Icons" :
+                     selectedSet === "phosphor" ? "Phosphor Icons" :
+                     selectedSet === "tabler" ? "Tabler Icons" :
+                     selectedSet === "bootstrap" ? "Bootstrap Icons" :
+                     selectedSet === "remix" ? "Remix Icons" :
+                     selectedSet === "boxicons" ? "Boxicons" :
+                     selectedSet === "css-gg" ? "CSS.GG Icons" :
+                     selectedSet === "iconsax" ? "Iconsax Icons" :
+                      selectedSet === "atlas" ? "Atlas Icons" :
+                      selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    {displayedIcons.length.toLocaleString()} icons
+                    {searchQuery && ` matching "${searchQuery}"`}
+                    {selectedCategory && ` in ${selectedCategory}`}
+                  </p>
+                </div>
+                
+                <CategoryFilter 
+                  categories={availableCategories}
+                  selectedCategory={selectedCategory}
+                  onCategoryChange={setSelectedCategory}
+                />
               </div>
-              
-              <CategoryFilter 
-                categories={availableCategories}
-                selectedCategory={selectedCategory}
-                onCategoryChange={setSelectedCategory}
-              />
             </div>
           </div>
 
