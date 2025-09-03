@@ -19,6 +19,15 @@ import cssGgIcons from "@/data/css-gg-icons";
 import { animatedIcons } from "@/data/animated-icons";
 import { iconsaxIcons } from "@/data/iconsax-icons";
 import { atlasIcons } from "@/data/atlas-icons";
+import { lineIcons } from "@/data/line-icons";
+import { pixelartIcons } from "@/data/pixelart-icons";
+import { teenyIcons } from "@/data/teeny-icons";
+import { antIcons } from "@/data/ant-icons";
+import { fluentIcons } from "@/data/fluent-icons";
+import { iconnoirIcons } from "@/data/iconnoir-icons";
+import { ikonateIcons } from "@/data/ikonate-icons";
+import { octiconsIcons } from "@/data/octicons-icons";
+import { radixIcons } from "@/data/radix-icons";
 // Combine all icon libraries
 const allIcons: IconItem[] = [
   ...atlasIcons,
@@ -31,7 +40,16 @@ const allIcons: IconItem[] = [
   ...remixIcons,
   ...boxicons,
   ...cssGgIcons,
-  ...iconsaxIcons
+  ...iconsaxIcons,
+  ...lineIcons,
+  ...pixelartIcons,
+  ...teenyIcons,
+  ...antIcons,
+  ...fluentIcons,
+  ...iconnoirIcons,
+  ...ikonateIcons,
+  ...octiconsIcons,
+  ...radixIcons,
 ];
 
 function IconGridPage() {
@@ -66,40 +84,36 @@ function IconGridPage() {
     if (selectedSet === "all") {
       return filteredIcons;
     }
-    if (selectedSet === "animated") {
-      return filteredIcons.filter(icon => icon.id.startsWith('animated-'));
+    
+    const setMappings: Record<string, string> = {
+      'animated': 'animated-',
+      'lucide': 'lucide-',
+      'feather': 'feather-',
+      'phosphor': 'phosphor-',
+      'tabler': 'tabler-',
+      'remix': 'remix-',
+      'bootstrap': 'bootstrap-',
+      'boxicons': 'boxicons-',
+      'css-gg': 'css-gg-',
+      'iconsax': 'iconsax-',
+      'atlas': 'atlas-',
+      'line': 'line-',
+      'pixelart': 'pixelart-',
+      'teeny': 'teeny-',
+      'ant': 'ant-',
+      'fluent': 'fluent-',
+      'iconnoir': 'iconnoir-',
+      'ikonate': 'ikonate-',
+      'octicons': 'octicons-',
+      'radix': 'radix-',
+    };
+    
+    const prefix = setMappings[selectedSet];
+    if (prefix) {
+      return filteredIcons.filter(icon => icon.id.startsWith(prefix));
     }
-    if (selectedSet === "lucide") {
-      return filteredIcons.filter(icon => icon.id.startsWith('lucide-'));
-    }
-    if (selectedSet === "feather") {
-      return filteredIcons.filter(icon => icon.id.startsWith('feather-'));
-    }
-    if (selectedSet === "phosphor") {
-      return filteredIcons.filter(icon => icon.id.startsWith('phosphor-'));
-    }
-    if (selectedSet === "tabler") {
-      return filteredIcons.filter(icon => icon.id.startsWith('tabler-'));
-    }
-    if (selectedSet === "remix") {
-      return filteredIcons.filter(icon => icon.id.startsWith('remix-'));
-    }
-    if (selectedSet === "bootstrap") {
-      return filteredIcons.filter(icon => icon.id.startsWith('bootstrap-'));
-    }
-    if (selectedSet === "boxicons") {
-      return filteredIcons.filter(icon => icon.id.startsWith('boxicons-'));
-    }
-    if (selectedSet === "css-gg") {
-      return filteredIcons.filter(icon => icon.id.startsWith('css-gg-'));
-    }
-    if (selectedSet === "iconsax") {
-      return filteredIcons.filter(icon => icon.id.startsWith('iconsax-'));
-    }
-    if (selectedSet === "atlas") {
-      return filteredIcons.filter(icon => icon.id.startsWith('atlas-'));
-    }
-    return []; // Other sets not implemented yet
+    
+    return [];
   }, [selectedSet, filteredIcons]);
 
   // Get available categories from current icon set
