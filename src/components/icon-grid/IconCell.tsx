@@ -130,14 +130,23 @@ export function IconCell({
         // Handle other common hardcoded colors
         .replace(/#2F2F2F/gi, customization.color)
         .replace(/#333333/gi, customization.color)
+        .replace(/#000000/gi, customization.color)
+        .replace(/#000/gi, customization.color)
         // Handle CSS style attributes
         .replace(/style="([^"]*?)fill:\s*#292D32([^"]*?)"/gi, `style="$1fill: ${customization.color}$2"`)
         .replace(/style="([^"]*?)stroke:\s*#292D32([^"]*?)"/gi, `style="$1stroke: ${customization.color}$2"`)
         // Handle stop-color in gradients
-        .replace(/stop-color="#292D32"/gi, `stop-color="${customization.color}"`);
+        .replace(/stop-color="#292D32"/gi, `stop-color="${customization.color}"`)
+        // Handle currentColor replacement for copy (Atlas icons)
+        .replace(/stroke="currentColor"/gi, `stroke="${customization.color}"`)
+        .replace(/fill="currentColor"/gi, `fill="${customization.color}"`);
       
       if (!isSolidIcon) {
-        customizedSVG = customizedSVG.replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+        // More comprehensive stroke-width replacement for all icon libraries
+        customizedSVG = customizedSVG
+          .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`)
+          .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${customization.strokeWidth}"`)
+          .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${customization.strokeWidth}`);
       }
 
       await navigator.clipboard.writeText(customizedSVG);
@@ -188,28 +197,33 @@ export function IconCell({
       // For SVG strings, we need to modify the stroke-width attribute and colors
       let modifiedSvg = icon.svg;
       
-      // Comprehensive color replacement for Iconsax icons
+      // Comprehensive color replacement for all icon libraries
       modifiedSvg = modifiedSvg
         // Replace all instances of #292D32 (main Iconsax color) with currentColor
         .replace(/#292D32/gi, 'currentColor')
         // Handle other common hardcoded colors that might exist
         .replace(/#2F2F2F/gi, 'currentColor')
         .replace(/#333333/gi, 'currentColor')
+        .replace(/#000000/gi, 'currentColor')
+        .replace(/#000/gi, 'currentColor')
         // Handle CSS style attributes
         .replace(/style="([^"]*?)fill:\s*#292D32([^"]*?)"/gi, 'style="$1fill: currentColor$2"')
         .replace(/style="([^"]*?)stroke:\s*#292D32([^"]*?)"/gi, 'style="$1stroke: currentColor$2"')
+        .replace(/style="([^"]*?)fill:\s*#000000([^"]*?)"/gi, 'style="$1fill: currentColor$2"')
+        .replace(/style="([^"]*?)stroke:\s*#000000([^"]*?)"/gi, 'style="$1stroke: currentColor$2"')
         // Handle stop-color in gradients
-        .replace(/stop-color="#292D32"/gi, 'stop-color="currentColor"');
+        .replace(/stop-color="#292D32"/gi, 'stop-color="currentColor"')
+        .replace(/stop-color="#000000"/gi, 'stop-color="currentColor"');
       
       // Apply stroke width to SVG string only for outline icons
       if (!isSolidIcon) {
-        // Replace existing stroke-width attribute or add it if it doesn't exist
-        if (modifiedSvg.includes('stroke-width=')) {
-          modifiedSvg = modifiedSvg.replace(/stroke-width="[^"]*"/g, `stroke-width="${iconStrokeWidth}"`);
-        } else {
-          // Add stroke-width attribute to the svg tag
-          modifiedSvg = modifiedSvg.replace(/<svg([^>]*)>/, `<svg$1 stroke-width="${iconStrokeWidth}">`);
-        }
+        // More comprehensive stroke-width replacement for all icon libraries
+        modifiedSvg = modifiedSvg
+          .replace(/stroke-width="[^"]*"/g, `stroke-width="${iconStrokeWidth}"`)
+          .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${iconStrokeWidth}"`)
+          .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${iconStrokeWidth}`)
+          // Handle cases where stroke-width doesn't exist - add it to svg tag
+          .replace(/<svg([^>]*?)(?<!stroke-width="[^"]*")>/g, `<svg$1 stroke-width="${iconStrokeWidth}">`);
       }
       
       return (
