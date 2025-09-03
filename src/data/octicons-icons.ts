@@ -157,9 +157,21 @@ function generateTags(iconName: string, category: string): string[] {
 
 // Helper function to ensure SVG uses currentColor for theming
 function ensureCurrentColor(svg: string): string {
-  return svg
+  // First, replace any existing color attributes
+  let processedSvg = svg
     .replace(/fill="(?!none)[^"]*"/g, 'fill="currentColor"')
     .replace(/stroke="(?!none)[^"]*"/g, 'stroke="currentColor"');
+    
+  // For SVGs without explicit fill/stroke attributes, add fill="currentColor" to path elements
+  // This handles Octicons and other SVGs that rely on default fill behavior
+  if (!processedSvg.includes('stroke=') && !processedSvg.includes('fill=')) {
+    // Add fill="currentColor" to all path elements that don't already have fill specified
+    processedSvg = processedSvg.replace(/<path(?![^>]*fill=)([^>]*)>/g, '<path$1 fill="currentColor">');
+    // Also handle other shape elements that might need coloring
+    processedSvg = processedSvg.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*fill=)(?![^>]*stroke=)([^>]*)>/g, '<$1$2 fill="currentColor">');
+  }
+  
+  return processedSvg;
 }
 
 // Processed Octicons icons with proper categorization and tagging

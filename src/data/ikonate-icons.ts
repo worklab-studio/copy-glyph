@@ -114,9 +114,24 @@ function generateTags(iconName: string, category: string): string[] {
 
 // Helper function to ensure SVG uses currentColor for theming
 function ensureCurrentColor(svg: string): string {
-  return svg
-    .replace(/stroke="[^"]*"/g, 'stroke="currentColor"')
+  // First, replace any existing color attributes
+  let processedSvg = svg
+    .replace(/stroke="(?!none)[^"]*"/g, 'stroke="currentColor"')
     .replace(/fill="(?!none)[^"]*"/g, 'fill="currentColor"');
+    
+  // For outline SVGs without explicit stroke attributes, add stroke="currentColor"
+  // This handles Ikonate icons which are pure outline SVGs
+  if (!processedSvg.includes('stroke=') && !processedSvg.includes('fill=')) {
+    // Check if this appears to be an outline icon (has path elements)
+    if (processedSvg.includes('<path')) {
+      // Add stroke="currentColor" and stroke-width to path elements for outline icons
+      processedSvg = processedSvg.replace(/<path(?![^>]*stroke=)([^>]*)>/g, '<path$1 stroke="currentColor" fill="none">');
+      // Also handle other shape elements for outline icons
+      processedSvg = processedSvg.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*stroke=)([^>]*)>/g, '<$1$2 stroke="currentColor" fill="none">');
+    }
+  }
+  
+  return processedSvg;
 }
 
 // Processed Ikonate icons with proper categorization and tagging
