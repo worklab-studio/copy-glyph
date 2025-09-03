@@ -51,11 +51,11 @@ const activeLibraries = [
   { name: "CSS.gg", id: "css-gg", count: cssGgIcons.length, icon: Code2 },
   { name: "Iconsax", id: "iconsax", count: iconsaxIcons.length, icon: Crown },
   { name: "Fluent UI", id: "fluent", count: fluentIcons.length, icon: Workflow },
+  { name: "IconNoir", id: "iconnoir", count: iconnoirIcons.length, icon: Palette },
 ];
 
 // Placeholder libraries (coming soon)
 const placeholderLibraries = [
-  { name: "IconNoir", id: "iconnoir", count: iconnoirIcons.length, icon: Palette },
   { name: "Ikonate", id: "ikonate", count: ikonateIcons.length, icon: Target },
   { name: "Octicons", id: "octicons", count: octiconsIcons.length, icon: GitBranch },
   { name: "Radix Icons", id: "radix", count: radixIcons.length, icon: Component },
