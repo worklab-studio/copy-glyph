@@ -238,12 +238,7 @@ export function ControlPanel({
   };
 
   return (
-    <div className="w-80 border-l bg-background h-screen flex flex-col">
-      {/* Fixed Header */}
-      <div className="h-16 border-b flex items-center px-6">
-        <h2 className="text-lg font-semibold">Customize</h2>
-      </div>
-      
+    <div className="w-80 border-l bg-background flex flex-col">
       {/* Scrollable Middle Section */}
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full scrollbar-none">
