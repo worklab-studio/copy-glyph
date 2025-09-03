@@ -1,4 +1,4 @@
-import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table } from "lucide-react";
+import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, Play } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { featherIcons } from "@/data/feather-icons";
@@ -9,9 +9,10 @@ import { remixIcons } from "@/data/remix-icons";
 import { bootstrapIcons } from "@/data/bootstrap-icons";
 import { boxicons } from "@/data/boxicons";
 import cssGgIcons from "@/data/css-gg-icons";
+import { animatedIcons } from "@/data/animated-icons";
 
 // Calculate total icons count
-const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length;
+const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length;
 
 // Fixed top navigation items  
 const topNavItems = [{
@@ -23,6 +24,12 @@ const topNavItems = [{
 
 // Active icon libraries (actually implemented)
 const activeLibraries = [{
+  name: "Animated",
+  id: "animated",
+  count: animatedIcons.length,
+  icon: Play,
+  hasVariants: false
+}, {
   name: "Tabler",
   id: "tabler",
   count: tablerIcons.length,

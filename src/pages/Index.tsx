@@ -16,8 +16,10 @@ import { remixIcons } from "@/data/remix-icons";
 import { bootstrapIcons } from "@/data/bootstrap-icons";
 import { boxicons } from "@/data/boxicons";
 import cssGgIcons from "@/data/css-gg-icons";
+import { animatedIcons } from "@/data/animated-icons";
 // Combine all icon libraries
 const allIcons: IconItem[] = [
+  ...animatedIcons,
   ...lucideIcons,
   ...featherIcons,
   ...phosphorIcons,
@@ -59,6 +61,9 @@ function IconGridPage() {
     }
     if (selectedSet === "all") {
       return filteredIcons;
+    }
+    if (selectedSet === "animated") {
+      return filteredIcons.filter(icon => icon.id.startsWith('animated-'));
     }
     if (selectedSet === "lucide") {
       return filteredIcons.filter(icon => icon.id.startsWith('lucide-'));
@@ -159,6 +164,7 @@ function IconGridPage() {
                   <h2 className="text-2xl font-semibold">
                     {selectedSet === "all" ? "All icons" : 
                      selectedSet === "favorites" ? "Favorites" : 
+                     selectedSet === "animated" ? "Animated Icons" :
                      selectedSet === "lucide" ? "Lucide Icons" :
                      selectedSet === "feather" ? "Feather Icons" :
                      selectedSet === "phosphor" ? "Phosphor Icons" :
