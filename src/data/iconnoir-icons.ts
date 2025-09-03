@@ -1,7 +1,8 @@
 import { IconItem } from '../types/icon';
+import { iconMap } from '../../IconNoir icons';
 
 // IconNoir Icons - Complete collection from https://iconoir.com/
-// All 1,383 professional icons imported and processed
+// All 1,671 professional icons imported and processed
 
 // Helper function to convert camelCase to Title Case
 function camelCaseToTitleCase(str: string): string {
@@ -226,42 +227,17 @@ function generateTags(iconName: string, category: string): string[] {
 }
 
 // Processed IconNoir icons with proper categorization and tagging
-export const iconnoirIcons: IconItem[] = [
-  {
-    id: 'iconnoir-accessibility',
-    name: 'Accessibility',
-    svg: `<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M7 9L12 10M17 9L12 10M12 10V13M12 13L10 18M12 13L14 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M12 7C11.7239 7 11.5 6.77614 11.5 6.5C11.5 6.22386 11.7239 6 12 6C12.2761 6 12.5 6.22386 12.5 6.5C12.5 6.77614 12.2761 7 12 7Z" fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>`,
-    tags: ['accessibility', 'person', 'help', 'support'],
+export const iconnoirIcons: IconItem[] = Object.entries(iconMap).map(([iconName, svg]) => {
+  const category = categorizeIcon(iconName);
+  const tags = generateTags(iconName, category);
+  const displayName = camelCaseToTitleCase(iconName);
+
+  return {
+    id: `iconnoir-${iconName}`,
+    name: displayName,
+    svg: svg,
+    tags: tags,
     style: 'outline',
-    category: 'accessibility',
-  },
-  // Due to the complexity of processing 1,383 icons, we'll need to implement a more efficient loading strategy
-  // For now, showing the structure with a few sample icons to demonstrate the format
-  {
-    id: 'iconnoir-activity',
-    name: 'Activity',
-    svg: `<svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M3 12H6L9 3L15 21L18 12H21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>`,
-    tags: ['activity', 'chart', 'analytics', 'pulse'],
-    style: 'outline',
-    category: 'media',
-  },
-  {
-    id: 'iconnoir-adobe-after-effects',
-    name: 'Adobe After Effects',
-    svg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M21.75 17C21.75 19.6234 19.6234 21.75 17 21.75H7C4.37665 21.75 2.25 19.6234 2.25 17V7C2.25 4.37665 4.37665 2.25 7 2.25H17C19.6234 2.25 21.75 4.37665 21.75 7V17ZM18.25 16C18.25 16.4142 17.9142 16.75 17.5 16.75H16C14.4812 16.75 13.25 15.5188 13.25 14V12C13.25 10.4812 14.4812 9.25 16 9.25C17.5188 9.25 18.75 10.4812 18.75 12V13C18.75 13.4142 18.4142 13.75 18 13.75H14.75V14C14.75 14.6904 15.3096 15.25 16 15.25H17.5C17.9142 15.25 18.25 15.5858 18.25 16ZM17.25 12.25V12C17.25 11.3096 16.6904 10.75 16 10.75C15.3096 10.75 14.75 11.3096 14.75 12V12.25H17.25ZM5.29796 15.7365C5.15252 16.1243 5.34902 16.5566 5.73686 16.702C6.1247 16.8475 6.55701 16.651 6.70245 16.2631L7.64495 13.7498H10.3555L11.298 16.2631C11.4434 16.651 11.8757 16.8475 12.2635 16.702C12.6514 16.5566 12.8479 16.1243 12.7024 15.7365L9.70245 7.73645C9.59268 7.44373 9.31284 7.2498 9.0002 7.2498C8.68757 7.2498 8.40773 7.44373 8.29796 7.73645L5.29796 15.7365ZM9.79295 12.2498H8.20745L9.0002 10.1358L9.79295 12.2498Z" fill="currentColor"/>
-</svg>`,
-    tags: ['adobe', 'after', 'effects', 'design', 'video'],
-    style: 'outline',
-    category: 'design',
-  },
-  // Note: This represents a small sample of the 1,383 IconNoir icons
-  // The full implementation would include all icons from the IconNoir collection
-  // Each icon would be properly processed with categorization, tagging, and theming support
-];
+    category: category,
+  };
+});
