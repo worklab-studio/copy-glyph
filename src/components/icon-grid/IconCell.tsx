@@ -123,9 +123,18 @@ export function IconCell({
         svgString = renderToStaticMarkup(element);
       }
 
-      // Apply current customizations to the SVG - replace hardcoded Iconsax colors
-      let customizedSVG = svgString.replace(/fill="#292D32"/g, `fill="${customization.color}"`);
-      customizedSVG = customizedSVG.replace(/stroke="#292D32"/g, `stroke="${customization.color}"`);
+      // Apply current customizations to the SVG - comprehensive color replacement
+      let customizedSVG = svgString
+        // Replace all instances of #292D32 (main Iconsax color)
+        .replace(/#292D32/gi, customization.color)
+        // Handle other common hardcoded colors
+        .replace(/#2F2F2F/gi, customization.color)
+        .replace(/#333333/gi, customization.color)
+        // Handle CSS style attributes
+        .replace(/style="([^"]*?)fill:\s*#292D32([^"]*?)"/gi, `style="$1fill: ${customization.color}$2"`)
+        .replace(/style="([^"]*?)stroke:\s*#292D32([^"]*?)"/gi, `style="$1stroke: ${customization.color}$2"`)
+        // Handle stop-color in gradients
+        .replace(/stop-color="#292D32"/gi, `stop-color="${customization.color}"`);
       
       if (!isSolidIcon) {
         customizedSVG = customizedSVG.replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
@@ -179,9 +188,18 @@ export function IconCell({
       // For SVG strings, we need to modify the stroke-width attribute and colors
       let modifiedSvg = icon.svg;
       
-      // Replace hardcoded Iconsax colors with currentColor for display
-      modifiedSvg = modifiedSvg.replace(/fill="#292D32"/g, 'fill="currentColor"');
-      modifiedSvg = modifiedSvg.replace(/stroke="#292D32"/g, 'stroke="currentColor"');
+      // Comprehensive color replacement for Iconsax icons
+      modifiedSvg = modifiedSvg
+        // Replace all instances of #292D32 (main Iconsax color) with currentColor
+        .replace(/#292D32/gi, 'currentColor')
+        // Handle other common hardcoded colors that might exist
+        .replace(/#2F2F2F/gi, 'currentColor')
+        .replace(/#333333/gi, 'currentColor')
+        // Handle CSS style attributes
+        .replace(/style="([^"]*?)fill:\s*#292D32([^"]*?)"/gi, 'style="$1fill: currentColor$2"')
+        .replace(/style="([^"]*?)stroke:\s*#292D32([^"]*?)"/gi, 'style="$1stroke: currentColor$2"')
+        // Handle stop-color in gradients
+        .replace(/stop-color="#292D32"/gi, 'stop-color="currentColor"');
       
       // Apply stroke width to SVG string only for outline icons
       if (!isSolidIcon) {

@@ -85,9 +85,31 @@ function formatDisplayName(iconName: string): string {
     .trim();
 }
 
-// Filter out invalid SVG entries (some entries seem to be corrupted Mac OS X metadata)
+// Filter out invalid SVG entries with enhanced validation
 function isValidSvg(svgContent: string): boolean {
-  return svgContent.includes('<svg') && svgContent.includes('</svg>');
+  if (!svgContent || typeof svgContent !== 'string') return false;
+  
+  // Basic SVG structure check
+  if (!svgContent.includes('<svg') || !svgContent.includes('</svg>')) return false;
+  
+  // Check for corrupted entries (too short, no actual SVG elements)
+  if (svgContent.length < 50) return false;
+  
+  // Must contain at least one SVG drawing element
+  const hasDrawingElements = /(<path|<circle|<rect|<line|<polyline|<polygon|<ellipse|<g)/.test(svgContent);
+  if (!hasDrawingElements) return false;
+  
+  // Filter out corrupted Mac OS X metadata entries
+  if (svgContent.includes('__MACOSX') || svgContent.includes('.DS_Store')) return false;
+  
+  // Must be valid XML-like structure
+  const openTags = (svgContent.match(/<[^/][^>]*>/g) || []).length;
+  const closeTags = (svgContent.match(/<\/[^>]*>/g) || []).length;
+  
+  // Should have reasonable tag balance (allow some self-closing tags)
+  if (Math.abs(openTags - closeTags) > openTags * 0.3) return false;
+  
+  return true;
 }
 
 // Transform the iconMap into IconItem array
