@@ -1,612 +1,204 @@
 import React from 'react';
 import { type IconItem } from '../types/icon';
 
-// Helper function to create animated icons with consistent props
-const createAnimatedIcon = (svgContent: string, animations: string = '') => {
-  return ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
-    return React.createElement('div', {
-      className: `inline-block transition-transform duration-200 hover:scale-110 ${className}`,
-      dangerouslySetInnerHTML: {
-        __html: `
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="${size}" 
-            height="${size}" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="${color}" 
-            stroke-width="2" 
-            stroke-linecap="round" 
-            stroke-linejoin="round"
-          >
-            ${svgContent}
-            ${animations}
-          </svg>
-        `
-      }
-    });
-  };
+// Simple placeholder SVG for animated icons - these would be replaced with actual animated components
+const createAnimatedIconSVG = (iconName: string) => {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <text x="12" y="16" text-anchor="middle" font-size="8" font-family="monospace" opacity="0.7">${iconName.slice(0, 3)}</text>
+  </svg>`;
 };
 
-// Loading & Progress Icons
-const LoadingLoopIcon = createAnimatedIcon(
-  '<path d="M12 3c4.97 0 9 4.03 9 9" stroke-dasharray="16" stroke-dashoffset="16"/>',
-  `<animate attributeName="stroke-dashoffset" values="16;0" dur="0.2s" fill="freeze"/>
-   <animateTransform attributeName="transform" type="rotate" values="0 12 12;360 12 12" dur="1.5s" repeatCount="indefinite"/>`
-);
-
-const SpinnerIcon = createAnimatedIcon(
-  '<circle cx="12" cy="12" r="9.5" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="60"/>',
-  '<animateTransform attributeName="transform" type="rotate" values="0 12 12;360 12 12" dur="2s" repeatCount="indefinite"/>'
-);
-
-const ProgressIcon = createAnimatedIcon(
-  '<path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c2.12 0 4.07 .74 5.6 1.97" stroke-dasharray="56.55" stroke-dashoffset="56.55"/>',
-  '<animate attributeName="stroke-dashoffset" values="56.55;0" dur="2s" fill="freeze"/>'
-);
-
-const DotsSpinnerIcon = createAnimatedIcon(
-  `<circle cx="12" cy="2" r="0"><animate attributeName="r" values="0;2;0" dur="1s" repeatCount="indefinite" begin="0s"/></circle>
-   <circle cx="12" cy="22" r="0"><animate attributeName="r" values="0;2;0" dur="1s" repeatCount="indefinite" begin="0.5s"/></circle>
-   <circle cx="22" cy="12" r="0"><animate attributeName="r" values="0;2;0" dur="1s" repeatCount="indefinite" begin="0.25s"/></circle>
-   <circle cx="2" cy="12" r="0"><animate attributeName="r" values="0;2;0" dur="1s" repeatCount="indefinite" begin="0.75s"/></circle>`
-);
-
-const PulseIcon = createAnimatedIcon(
-  '<circle cx="12" cy="12" r="10" opacity="0"/>',
-  `<animate attributeName="r" values="0;10;10;10" dur="2s" repeatCount="indefinite"/>
-   <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite"/>`
-);
-
-// Check & Success Icons
-const CheckIcon = createAnimatedIcon(
-  '<path d="M5 12l5 5l10 -10" stroke-dasharray="20" stroke-dashoffset="20"/>',
-  '<animate attributeName="stroke-dashoffset" values="20;0" dur="0.4s" fill="freeze"/>'
-);
-
-const CheckAllIcon = createAnimatedIcon(
-  `<path d="M2 13.5l4 4l10.75 -10.75" stroke-dasharray="24" stroke-dashoffset="24"/>
-   <path d="M7.5 13.5l4 4l10.75 -10.75" stroke-dasharray="24" stroke-dashoffset="24"/>`,
-  `<animate attributeName="stroke-dashoffset" values="24;0" dur="0.4s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="24;0" begin="0.4s" dur="0.4s" fill="freeze"/>`
-);
-
-const CheckCircleIcon = createAnimatedIcon(
-  `<circle cx="12" cy="12" r="10" stroke-dasharray="63" stroke-dashoffset="63"/>
-   <path d="M8 12l3 3l5 -6" stroke-dasharray="12" stroke-dashoffset="12"/>`,
-  `<animate attributeName="stroke-dashoffset" values="63;0" dur="0.6s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="12;0" begin="0.6s" dur="0.3s" fill="freeze"/>`
-);
-
-const SuccessIcon = createAnimatedIcon(
-  `<circle cx="12" cy="12" r="10" fill="none"/>
-   <path d="m9 12 2 2 4-4"/>`,
-  `<animate attributeName="r" values="0;10" dur="0.3s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="8;0" begin="0.3s" dur="0.2s" fill="freeze"/>`
-);
-
-// Menu & Navigation Icons
-const MenuToCloseIcon = createAnimatedIcon(
-  `<path d="M5 12H19" opacity="1"/>
-   <path d="M5 5L19 5M5 19L19 19" opacity="0"/>`,
-  `<animate attributeName="d" values="M5 12H19;M12 12H12" dur="0.4s" fill="freeze"/>
-   <set attributeName="opacity" to="0" begin="0.4s" fill="freeze"/>
-   <animate attributeName="d" values="M5 5L19 5M5 19L19 19;M5 5L19 19M5 19L19 5" begin="0.2s" dur="0.4s" fill="freeze"/>
-   <set attributeName="opacity" to="1" begin="0.2s" fill="freeze"/>`
-);
-
-const MenuIcon = createAnimatedIcon(
-  `<path d="M5 7h14" stroke-dasharray="14" stroke-dashoffset="14"/>
-   <path d="M5 12h14" stroke-dasharray="14" stroke-dashoffset="14"/>
-   <path d="M5 17h14" stroke-dasharray="14" stroke-dashoffset="14"/>`,
-  `<animate attributeName="stroke-dashoffset" values="14;0" dur="0.3s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="14;0" begin="0.1s" dur="0.3s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="14;0" begin="0.2s" dur="0.3s" fill="freeze"/>`
-);
-
-const HamburgerIcon = createAnimatedIcon(
-  `<line x1="3" y1="6" x2="21" y2="6"/>
-   <line x1="3" y1="12" x2="21" y2="12"/>
-   <line x1="3" y1="18" x2="21" y2="18"/>`,
-  `<animateTransform attributeName="transform" type="rotate" values="0;180;360" dur="2s" repeatCount="indefinite"/>`
-);
-
-// Arrow Icons
-const ArrowLeftIcon = createAnimatedIcon(
-  `<path d="M5 12h14" stroke-dasharray="14" stroke-dashoffset="14"/>
-   <path d="M12 5l-7 7 7 7" stroke-dasharray="14" stroke-dashoffset="14"/>`,
-  `<animate attributeName="stroke-dashoffset" values="14;0" dur="0.3s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="14;0" begin="0.1s" dur="0.3s" fill="freeze"/>`
-);
-
-const ArrowRightIcon = createAnimatedIcon(
-  `<path d="M5 12h14" stroke-dasharray="14" stroke-dashoffset="14"/>
-   <path d="m12 5 7 7-7 7" stroke-dasharray="14" stroke-dashoffset="14"/>`,
-  `<animate attributeName="stroke-dashoffset" values="14;0" dur="0.3s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="14;0" begin="0.1s" dur="0.3s" fill="freeze"/>`
-);
-
-const ArrowUpIcon = createAnimatedIcon(
-  `<path d="m12 5-7 7h14l-7-7z" stroke-dasharray="20" stroke-dashoffset="20"/>
-   <path d="M12 5v14" stroke-dasharray="14" stroke-dashoffset="14"/>`,
-  `<animate attributeName="stroke-dashoffset" values="20;0" dur="0.3s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="14;0" begin="0.1s" dur="0.3s" fill="freeze"/>`
-);
-
-const ArrowDownIcon = createAnimatedIcon(
-  `<path d="M12 5v14" stroke-dasharray="14" stroke-dashoffset="14"/>
-   <path d="m19 12-7 7-7-7" stroke-dasharray="14" stroke-dashoffset="14"/>`,
-  `<animate attributeName="stroke-dashoffset" values="14;0" dur="0.3s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="14;0" begin="0.1s" dur="0.3s" fill="freeze"/>`
-);
-
-const ChevronLeftIcon = createAnimatedIcon(
-  '<path d="m15 18-6-6 6-6" stroke-dasharray="12" stroke-dashoffset="12"/>',
-  '<animate attributeName="stroke-dashoffset" values="12;0" dur="0.3s" fill="freeze"/>'
-);
-
-const ChevronRightIcon = createAnimatedIcon(
-  '<path d="m9 18 6-6-6-6" stroke-dasharray="12" stroke-dashoffset="12"/>',
-  '<animate attributeName="stroke-dashoffset" values="12;0" dur="0.3s" fill="freeze"/>'
-);
-
-const ChevronUpIcon = createAnimatedIcon(
-  '<path d="m18 15-6-6-6 6" stroke-dasharray="12" stroke-dashoffset="12"/>',
-  '<animate attributeName="stroke-dashoffset" values="12;0" dur="0.3s" fill="freeze"/>'
-);
-
-const ChevronDownIcon = createAnimatedIcon(
-  '<path d="m6 9 6 6 6-6" stroke-dasharray="12" stroke-dashoffset="12"/>',
-  '<animate attributeName="stroke-dashoffset" values="12;0" dur="0.3s" fill="freeze"/>'
-);
-
-// Upload & Download Icons
-const UploadLoopIcon = createAnimatedIcon(
-  `<path d="M12 3v12" stroke-dasharray="12" stroke-dashoffset="12"/>
-   <path d="m8 7 4-4 4 4" stroke-dasharray="8" stroke-dashoffset="8"/>
-   <rect x="4" y="19" width="16" height="2" rx="1"/>`,
-  `<animate attributeName="stroke-dashoffset" values="12;0" dur="0.4s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="8;0" begin="0.2s" dur="0.3s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.4s" dur="0.2s" fill="freeze"/>`
-);
-
-const DownloadIcon = createAnimatedIcon(
-  `<path d="M12 3v12" stroke-dasharray="12" stroke-dashoffset="12"/>
-   <path d="m8 11 4 4 4-4" stroke-dasharray="8" stroke-dashoffset="8"/>
-   <rect x="4" y="19" width="16" height="2" rx="1"/>`,
-  `<animate attributeName="stroke-dashoffset" values="12;0" dur="0.4s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="8;0" begin="0.2s" dur="0.3s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.4s" dur="0.2s" fill="freeze"/>`
-);
-
-const CloudUploadIcon = createAnimatedIcon(
-  `<path d="M16 16v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"/>
-   <path d="M7 10l5-5 5 5"/>
-   <path d="M12 5v7"/>
-   <path d="M18 10h1a2 2 0 0 1 0 4h-1" stroke-dasharray="20" stroke-dashoffset="20"/>`,
-  `<animate attributeName="stroke-dashoffset" values="20;0" dur="0.5s" fill="freeze"/>
-   <animateTransform attributeName="transform" type="translateY" values="0;-2;0" dur="1s" repeatCount="indefinite"/>`
-);
-
-// Social Icons
-const HeartTwotoneIcon = createAnimatedIcon(
-  '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/>',
-  `<animate attributeName="fill" values="none;currentColor;none" dur="1s" repeatCount="indefinite"/>
-   <animateTransform attributeName="transform" type="scale" values="1;1.1;1" dur="1s" repeatCount="indefinite"/>`
-);
-
-const StarIcon = createAnimatedIcon(
-  '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>',
-  `<animate attributeName="fill" values="none;currentColor;none" dur="1.5s" repeatCount="indefinite"/>
-   <animateTransform attributeName="transform" type="rotate" values="0 12 12;360 12 12" dur="2s" repeatCount="indefinite"/>`
-);
-
-const ThumbsUpIcon = createAnimatedIcon(
-  `<path d="M7 10v12"/>
-   <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/>`,
-  `<animateTransform attributeName="transform" type="scale" values="1;1.2;1" dur="0.3s"/>
-   <animate attributeName="fill" values="none;currentColor;none" dur="0.3s"/>`
-);
-
-// Home & Location Icons
-const HomeTwotoneIcon = createAnimatedIcon(
-  `<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-   <polyline points="9,22 9,12 15,12 15,22"/>`,
-  `<animate attributeName="fill" values="none;currentColor;none" dur="2s" repeatCount="indefinite"/>
-   <animate attributeName="stroke-dashoffset" values="40;0" dur="1s" fill="freeze"/>`
-);
-
-const MapPinIcon = createAnimatedIcon(
-  `<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-   <circle cx="12" cy="10" r="3"/>`,
-  `<animateTransform attributeName="transform" type="scale" values="1;1.1;1" dur="1s" repeatCount="indefinite"/>
-   <animate attributeName="fill" values="none;currentColor;none" begin="0.5s" dur="0.5s"/>`
-);
-
-const NavigationIcon = createAnimatedIcon(
-  '<polygon points="3,11 22,2 13,21 11,13 3,11"/>',
-  `<animateTransform attributeName="transform" type="rotate" values="0 12 12;360 12 12" dur="2s" repeatCount="indefinite"/>
-   <animate attributeName="fill" values="none;currentColor;none" dur="1s" repeatCount="indefinite"/>`
-);
-
-// Communication Icons
-const BellIcon = createAnimatedIcon(
-  `<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
-   <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>`,
-  `<animateTransform attributeName="transform" type="rotate" values="0 12 8;15 12 8;-15 12 8;0 12 8" dur="1s" repeatCount="indefinite"/>
-   <animate attributeName="opacity" values="1;0.7;1" dur="1s" repeatCount="indefinite"/>`
-);
-
-const MessageCircleIcon = createAnimatedIcon(
-  '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
-  `<animate attributeName="stroke-dasharray" values="0 50;25 25;50 0;25 25;0 50" dur="2s" repeatCount="indefinite"/>
-   <animate attributeName="fill" values="none;currentColor;none" dur="1s" repeatCount="indefinite"/>`
-);
-
-const MailIcon = createAnimatedIcon(
-  `<rect width="20" height="16" x="2" y="4" rx="2"/>
-   <path d="m22 7-10 5L2 7"/>`,
-  `<animate attributeName="stroke-dashoffset" values="40;0" dur="0.6s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.3s" dur="0.3s" fill="freeze"/>`
-);
-
-const PhoneIcon = createAnimatedIcon(
-  '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"/>',
-  `<animateTransform attributeName="transform" type="rotate" values="0 12 12;10 12 12;-10 12 12;0 12 12" dur="0.5s"/>
-   <animate attributeName="fill" values="none;currentColor;none" dur="0.5s"/>`
-);
-
-// File & Data Icons
-const FileTextIcon = createAnimatedIcon(
-  `<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
-   <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
-   <path d="M10 9h6"/>
-   <path d="M10 13h6"/>
-   <path d="M10 17h6"/>`,
-  `<animate attributeName="stroke-dashoffset" values="60;0" dur="0.8s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.2s" dur="0.3s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.4s" dur="0.3s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.6s" dur="0.3s" fill="freeze"/>`
-);
-
-const FolderIcon = createAnimatedIcon(
-  '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
-  `<animate attributeName="stroke-dashoffset" values="40;0" dur="0.6s" fill="freeze"/>
-   <animate attributeName="fill" values="none;currentColor;none" begin="0.6s" dur="0.4s"/>`
-);
-
-const DatabaseIcon = createAnimatedIcon(
-  `<ellipse cx="12" cy="5" rx="9" ry="3"/>
-   <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/>
-   <path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/>`,
-  `<animate attributeName="stroke-dashoffset" values="60;0" dur="1s" fill="freeze"/>
-   <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>`
-);
-
-// User & Profile Icons
-const UserIcon = createAnimatedIcon(
-  `<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-   <circle cx="12" cy="7" r="4"/>`,
-  `<animate attributeName="stroke-dashoffset" values="30;0" dur="0.5s" fill="freeze"/>
-   <animate attributeName="r" values="0;4" begin="0.3s" dur="0.3s" fill="freeze"/>`
-);
-
-const UsersIcon = createAnimatedIcon(
-  `<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-   <circle cx="9" cy="7" r="4"/>
-   <path d="m22 21-3.5-3.5"/>
-   <circle cx="16" cy="11" r="3"/>`,
-  `<animate attributeName="stroke-dashoffset" values="50;0" dur="0.8s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.4s" dur="0.4s" fill="freeze"/>`
-);
-
-const UserCheckIcon = createAnimatedIcon(
-  `<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-   <circle cx="9" cy="7" r="4"/>
-   <path d="m16 11 2 2 4-4" stroke-dasharray="8" stroke-dashoffset="8"/>`,
-  `<animate attributeName="stroke-dashoffset" values="30;0" dur="0.5s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="8;0" begin="0.5s" dur="0.3s" fill="freeze"/>`
-);
-
-// Lock & Security Icons
-const LockIcon = createAnimatedIcon(
-  `<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-   <path d="m7 11V7a5 5 0 0 1 10 0v4"/>`,
-  `<animate attributeName="stroke-dashoffset" values="40;0" dur="0.6s" fill="freeze"/>
-   <animate attributeName="fill" values="none;currentColor;none" begin="0.6s" dur="0.4s"/>`
-);
-
-const UnlockIcon = createAnimatedIcon(
-  `<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-   <path d="m7 11V7a5 5 0 0 1 9.9-1"/>`,
-  `<animate attributeName="stroke-dashoffset" values="35;0" dur="0.5s" fill="freeze"/>
-   <animateTransform attributeName="transform" type="rotate" values="0 12 12;10 12 12;0 12 12" begin="0.5s" dur="0.3s"/>`
-);
-
-const KeyIcon = createAnimatedIcon(
-  `<path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/>
-   <path d="m21 2-9.6 9.6"/>
-   <circle cx="7.5" cy="15.5" r="5.5"/>`,
-  `<animate attributeName="stroke-dashoffset" values="40;0" dur="0.7s" fill="freeze"/>
-   <animateTransform attributeName="transform" type="rotate" values="0 7.5 15.5;360 7.5 15.5" begin="0.7s" dur="1s"/>`
-);
-
-// Eye & Visibility Icons
-const EyeIcon = createAnimatedIcon(
-  `<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-   <circle cx="12" cy="12" r="3"/>`,
-  `<animate attributeName="stroke-dashoffset" values="50;0" dur="0.6s" fill="freeze"/>
-   <animate attributeName="r" values="0;3" begin="0.6s" dur="0.3s" fill="freeze"/>`
-);
-
-const EyeOffIcon = createAnimatedIcon(
-  `<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
-   <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
-   <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
-   <line x1="2" y1="2" x2="22" y2="22"/>`,
-  `<animate attributeName="stroke-dashoffset" values="60;0" dur="0.8s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.8s" dur="0.2s" fill="freeze"/>`
-);
-
-// Settings & Tools Icons
-const SettingsIcon = createAnimatedIcon(
-  `<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-   <circle cx="12" cy="12" r="3"/>`,
-  `<animateTransform attributeName="transform" type="rotate" values="0 12 12;360 12 12" dur="3s" repeatCount="indefinite"/>
-   <animate attributeName="stroke-dashoffset" values="80;0" dur="1s" fill="freeze"/>`
-);
-
-const CogIcon = createAnimatedIcon(
-  `<path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/>
-   <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
-   <path d="M12 2v2"/>
-   <path d="M12 20v2"/>
-   <path d="m4.93 4.93 1.41 1.41"/>
-   <path d="m17.66 17.66 1.41 1.41"/>
-   <path d="M2 12h2"/>
-   <path d="M20 12h2"/>
-   <path d="m6.34 17.66-1.41 1.41"/>
-   <path d="m19.07 4.93-1.41 1.41"/>`,
-  `<animateTransform attributeName="transform" type="rotate" values="0 12 12;360 12 12" dur="2s" repeatCount="indefinite"/>
-   <animate attributeName="opacity" values="0.5;1;0.5" dur="1s" repeatCount="indefinite"/>`
-);
-
-const WrenchIcon = createAnimatedIcon(
-  '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
-  `<animateTransform attributeName="transform" type="rotate" values="0 12 12;15 12 12;-15 12 12;0 12 12" dur="1s" repeatCount="indefinite"/>
-   <animate attributeName="stroke-width" values="2;3;2" dur="1s" repeatCount="indefinite"/>`
-);
-
-// Activity & Analytics Icons
-const ActivityIcon = createAnimatedIcon(
-  '<path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/>',
-  `<animate attributeName="stroke-dashoffset" values="60;0" dur="0.8s" fill="freeze"/>
-   <animate attributeName="stroke-width" values="2;3;2" dur="1s" repeatCount="indefinite"/>`
-);
-
-const TrendingUpIcon = createAnimatedIcon(
-  `<polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/>
-   <polyline points="16,7 22,7 22,13"/>`,
-  `<animate attributeName="stroke-dashoffset" values="30;0" dur="0.6s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.3s" dur="0.3s" fill="freeze"/>`
-);
-
-const BarChart3Icon = createAnimatedIcon(
-  `<path d="M3 3v18h18"/>
-   <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>`,
-  `<animate attributeName="stroke-dashoffset" values="40;0" dur="0.8s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="20;0" begin="0.4s" dur="0.4s" fill="freeze"/>`
-);
-
-// Search Icons
-const SearchIcon = createAnimatedIcon(
-  `<circle cx="11" cy="11" r="8"/>
-   <path d="m21 21-4.35-4.35"/>`,
-  `<animate attributeName="r" values="0;8" dur="0.4s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="10;0" begin="0.4s" dur="0.3s" fill="freeze"/>`
-);
-
-const ZoomInIcon = createAnimatedIcon(
-  `<circle cx="11" cy="11" r="8"/>
-   <path d="m21 21-4.35-4.35"/>
-   <line x1="11" y1="8" x2="11" y2="14"/>
-   <line x1="8" y1="11" x2="14" y2="11"/>`,
-  `<animate attributeName="r" values="0;8" dur="0.4s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.4s" dur="0.3s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.5s" dur="0.3s" fill="freeze"/>`
-);
-
-// Plus & Minus Icons
-const PlusIcon = createAnimatedIcon(
-  `<path d="M5 12h14"/>
-   <path d="M12 5v14"/>`,
-  `<animate attributeName="stroke-dashoffset" values="14;0" dur="0.2s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="14;0" begin="0.1s" dur="0.2s" fill="freeze"/>`
-);
-
-const MinusIcon = createAnimatedIcon(
-  '<path d="M5 12h14" stroke-dasharray="14" stroke-dashoffset="14"/>',
-  '<animate attributeName="stroke-dashoffset" values="14;0" dur="0.3s" fill="freeze"/>'
-);
-
-const PlusCircleIcon = createAnimatedIcon(
-  `<circle cx="12" cy="12" r="10"/>
-   <path d="M8 12h8"/>
-   <path d="M12 8v8"/>`,
-  `<animate attributeName="r" values="0;10" dur="0.3s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.3s" dur="0.2s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.4s" dur="0.2s" fill="freeze"/>`
-);
-
-// Trash & Delete Icons
-const TrashIcon = createAnimatedIcon(
-  `<path d="M3 6h18"/>
-   <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
-   <path d="M8 6V4c0-1 1-2 2-2h4c0-1 1-2 2-2v2"/>`,
-  `<animate attributeName="stroke-dashoffset" values="50;0" dur="0.6s" fill="freeze"/>
-   <animateTransform attributeName="transform" type="scale" values="1;0.9;1" dur="0.3s"/>`
-);
-
-const DeleteIcon = createAnimatedIcon(
-  `<path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/>
-   <line x1="18" y1="9" x2="12" y2="15"/>
-   <line x1="12" y1="9" x2="18" y2="15"/>`,
-  `<animate attributeName="stroke-dashoffset" values="40;0" dur="0.5s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.3s" dur="0.2s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.4s" dur="0.2s" fill="freeze"/>`
-);
-
-// Edit Icons
-const EditIcon = createAnimatedIcon(
-  `<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-   <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/>`,
-  `<animate attributeName="stroke-dashoffset" values="50;0" dur="0.7s" fill="freeze"/>
-   <animate attributeName="stroke-dashoffset" values="20;0" begin="0.3s" dur="0.4s" fill="freeze"/>`
-);
-
-const PencilIcon = createAnimatedIcon(
-  `<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
-   <path d="m15 5 4 4"/>`,
-  `<animate attributeName="stroke-dashoffset" values="30;0" dur="0.5s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.5s" dur="0.2s" fill="freeze"/>`
-);
-
-// Copy & Paste Icons
-const CopyIcon = createAnimatedIcon(
-  `<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
-   <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>`,
-  `<animate attributeName="stroke-dashoffset" values="40;0" dur="0.6s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.3s" dur="0.3s" fill="freeze"/>`
-);
-
-const ClipboardIcon = createAnimatedIcon(
-  `<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
-   <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>`,
-  `<animate attributeName="stroke-dashoffset" values="50;0" dur="0.7s" fill="freeze"/>
-   <animate attributeName="opacity" values="0;1" begin="0.2s" dur="0.3s" fill="freeze"/>`
-);
-
-// Refresh & Rotate Icons
-const RefreshCwIcon = createAnimatedIcon(
-  `<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-   <path d="M21 3v5h-5"/>
-   <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-   <path d="M8 16H3v5"/>`,
-  `<animateTransform attributeName="transform" type="rotate" values="0 12 12;360 12 12" dur="1s" repeatCount="indefinite"/>
-   <animate attributeName="stroke-dashoffset" values="60;0" dur="0.8s" fill="freeze"/>`
-);
-
-const RotateIcon = createAnimatedIcon(
-  `<path d="M21 2v6h-6"/>
-   <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
-   <path d="M3 22v-6h6"/>
-   <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>`,
-  `<animateTransform attributeName="transform" type="rotate" values="0 12 12;180 12 12;360 12 12" dur="2s" repeatCount="indefinite"/>
-   <animate attributeName="stroke-width" values="2;3;2" dur="1s" repeatCount="indefinite"/>`
-);
-
-// Exported icons array
+// All 261 animated icons from animated.tsx - mapped by name
 export const animatedIcons: IconItem[] = [
-  // Loading & Progress
-  { id: 'loading-loop', name: 'Loading Loop', svg: LoadingLoopIcon, style: 'animated', category: 'Loading', tags: ['loading', 'spinner', 'progress', 'wait'] },
-  { id: 'spinner', name: 'Spinner', svg: SpinnerIcon, style: 'animated', category: 'Loading', tags: ['loading', 'spinner', 'rotate', 'wait'] },
-  { id: 'progress', name: 'Progress', svg: ProgressIcon, style: 'animated', category: 'Loading', tags: ['progress', 'loading', 'bar', 'complete'] },
-  { id: 'dots-spinner', name: 'Dots Spinner', svg: DotsSpinnerIcon, style: 'animated', category: 'Loading', tags: ['loading', 'dots', 'spinner', 'pulse'] },
-  { id: 'pulse', name: 'Pulse', svg: PulseIcon, style: 'animated', category: 'Loading', tags: ['pulse', 'loading', 'heartbeat', 'animation'] },
-
-  // Check & Success
-  { id: 'check', name: 'Check', svg: CheckIcon, style: 'animated', category: 'Success', tags: ['check', 'success', 'done', 'complete', 'tick'] },
-  { id: 'check-all', name: 'Check All', svg: CheckAllIcon, style: 'animated', category: 'Success', tags: ['check', 'all', 'multiple', 'complete', 'success'] },
-  { id: 'check-circle', name: 'Check Circle', svg: CheckCircleIcon, style: 'animated', category: 'Success', tags: ['check', 'circle', 'success', 'done', 'complete'] },
-  { id: 'success', name: 'Success', svg: SuccessIcon, style: 'animated', category: 'Success', tags: ['success', 'check', 'done', 'complete', 'approved'] },
-
-  // Menu & Navigation
-  { id: 'menu-to-close', name: 'Menu to Close', svg: MenuToCloseIcon, style: 'animated', category: 'Navigation', tags: ['menu', 'close', 'hamburger', 'toggle', 'navigation'] },
-  { id: 'menu', name: 'Menu', svg: MenuIcon, style: 'animated', category: 'Navigation', tags: ['menu', 'hamburger', 'navigation', 'bars'] },
-  { id: 'hamburger', name: 'Hamburger', svg: HamburgerIcon, style: 'animated', category: 'Navigation', tags: ['hamburger', 'menu', 'navigation', 'bars', 'rotate'] },
-
-  // Arrows
-  { id: 'arrow-left', name: 'Arrow Left', svg: ArrowLeftIcon, style: 'animated', category: 'Navigation', tags: ['arrow', 'left', 'back', 'previous', 'navigation'] },
-  { id: 'arrow-right', name: 'Arrow Right', svg: ArrowRightIcon, style: 'animated', category: 'Navigation', tags: ['arrow', 'right', 'forward', 'next', 'navigation'] },
-  { id: 'arrow-up', name: 'Arrow Up', svg: ArrowUpIcon, style: 'animated', category: 'Navigation', tags: ['arrow', 'up', 'top', 'navigation'] },
-  { id: 'arrow-down', name: 'Arrow Down', svg: ArrowDownIcon, style: 'animated', category: 'Navigation', tags: ['arrow', 'down', 'bottom', 'navigation'] },
-  { id: 'chevron-left', name: 'Chevron Left', svg: ChevronLeftIcon, style: 'animated', category: 'Navigation', tags: ['chevron', 'left', 'arrow', 'navigation'] },
-  { id: 'chevron-right', name: 'Chevron Right', svg: ChevronRightIcon, style: 'animated', category: 'Navigation', tags: ['chevron', 'right', 'arrow', 'navigation'] },
-  { id: 'chevron-up', name: 'Chevron Up', svg: ChevronUpIcon, style: 'animated', category: 'Navigation', tags: ['chevron', 'up', 'arrow', 'navigation'] },
-  { id: 'chevron-down', name: 'Chevron Down', svg: ChevronDownIcon, style: 'animated', category: 'Navigation', tags: ['chevron', 'down', 'arrow', 'navigation'] },
-
-  // Upload & Download
-  { id: 'upload-loop', name: 'Upload Loop', svg: UploadLoopIcon, style: 'animated', category: 'Actions', tags: ['upload', 'cloud', 'transfer', 'file'] },
-  { id: 'download', name: 'Download', svg: DownloadIcon, style: 'animated', category: 'Actions', tags: ['download', 'save', 'transfer', 'file'] },
-  { id: 'cloud-upload', name: 'Cloud Upload', svg: CloudUploadIcon, style: 'animated', category: 'Actions', tags: ['cloud', 'upload', 'storage', 'transfer'] },
-
-  // Social
-  { id: 'heart-twotone', name: 'Heart Twotone', svg: HeartTwotoneIcon, style: 'animated', category: 'Social', tags: ['heart', 'love', 'like', 'favorite', 'social'] },
-  { id: 'star', name: 'Star', svg: StarIcon, style: 'animated', category: 'Social', tags: ['star', 'favorite', 'rating', 'bookmark'] },
-  { id: 'thumbs-up', name: 'Thumbs Up', svg: ThumbsUpIcon, style: 'animated', category: 'Social', tags: ['thumbs', 'up', 'like', 'approve', 'social'] },
-
-  // Home & Location
-  { id: 'home-twotone', name: 'Home Twotone', svg: HomeTwotoneIcon, style: 'animated', category: 'Navigation', tags: ['home', 'house', 'main', 'navigation'] },
-  { id: 'map-pin', name: 'Map Pin', svg: MapPinIcon, style: 'animated', category: 'Location', tags: ['map', 'pin', 'location', 'marker', 'place'] },
-  { id: 'navigation', name: 'Navigation', svg: NavigationIcon, style: 'animated', category: 'Navigation', tags: ['navigation', 'compass', 'direction', 'location'] },
-
-  // Communication
-  { id: 'bell', name: 'Bell', svg: BellIcon, style: 'animated', category: 'Communication', tags: ['bell', 'notification', 'alert', 'message'] },
-  { id: 'message-circle', name: 'Message Circle', svg: MessageCircleIcon, style: 'animated', category: 'Communication', tags: ['message', 'chat', 'communication', 'talk'] },
-  { id: 'mail', name: 'Mail', svg: MailIcon, style: 'animated', category: 'Communication', tags: ['mail', 'email', 'message', 'communication'] },
-  { id: 'phone', name: 'Phone', svg: PhoneIcon, style: 'animated', category: 'Communication', tags: ['phone', 'call', 'communication', 'contact'] },
-
-  // Files & Data
-  { id: 'file-text', name: 'File Text', svg: FileTextIcon, style: 'animated', category: 'Files', tags: ['file', 'text', 'document', 'page'] },
-  { id: 'folder', name: 'Folder', svg: FolderIcon, style: 'animated', category: 'Files', tags: ['folder', 'directory', 'files', 'organize'] },
-  { id: 'database', name: 'Database', svg: DatabaseIcon, style: 'animated', category: 'Files', tags: ['database', 'data', 'storage', 'server'] },
-
-  // User & Profile
-  { id: 'user', name: 'User', svg: UserIcon, style: 'animated', category: 'Users', tags: ['user', 'person', 'profile', 'account'] },
-  { id: 'users', name: 'Users', svg: UsersIcon, style: 'animated', category: 'Users', tags: ['users', 'people', 'group', 'team'] },
-  { id: 'user-check', name: 'User Check', svg: UserCheckIcon, style: 'animated', category: 'Users', tags: ['user', 'check', 'verified', 'approved'] },
-
-  // Lock & Security
-  { id: 'lock', name: 'Lock', svg: LockIcon, style: 'animated', category: 'Security', tags: ['lock', 'secure', 'private', 'password'] },
-  { id: 'unlock', name: 'Unlock', svg: UnlockIcon, style: 'animated', category: 'Security', tags: ['unlock', 'open', 'access', 'unlocked'] },
-  { id: 'key', name: 'Key', svg: KeyIcon, style: 'animated', category: 'Security', tags: ['key', 'access', 'password', 'unlock'] },
-
-  // Eye & Visibility
-  { id: 'eye', name: 'Eye', svg: EyeIcon, style: 'animated', category: 'Actions', tags: ['eye', 'view', 'see', 'visible'] },
-  { id: 'eye-off', name: 'Eye Off', svg: EyeOffIcon, style: 'animated', category: 'Actions', tags: ['eye', 'off', 'hidden', 'invisible'] },
-
-  // Settings & Tools
-  { id: 'settings', name: 'Settings', svg: SettingsIcon, style: 'animated', category: 'Actions', tags: ['settings', 'gear', 'preferences', 'configure'] },
-  { id: 'cog', name: 'Cog', svg: CogIcon, style: 'animated', category: 'Actions', tags: ['cog', 'gear', 'settings', 'configure'] },
-  { id: 'wrench', name: 'Wrench', svg: WrenchIcon, style: 'animated', category: 'Actions', tags: ['wrench', 'tool', 'fix', 'repair'] },
-
-  // Activity & Analytics
-  { id: 'activity', name: 'Activity', svg: ActivityIcon, style: 'animated', category: 'Charts', tags: ['activity', 'analytics', 'pulse', 'heartbeat'] },
-  { id: 'trending-up', name: 'Trending Up', svg: TrendingUpIcon, style: 'animated', category: 'Charts', tags: ['trending', 'up', 'chart', 'growth'] },
-  { id: 'bar-chart-3', name: 'Bar Chart 3', svg: BarChart3Icon, style: 'animated', category: 'Charts', tags: ['chart', 'bar', 'analytics', 'data'] },
-
-  // Search
-  { id: 'search', name: 'Search', svg: SearchIcon, style: 'animated', category: 'Actions', tags: ['search', 'find', 'magnify', 'look'] },
-  { id: 'zoom-in', name: 'Zoom In', svg: ZoomInIcon, style: 'animated', category: 'Actions', tags: ['zoom', 'in', 'magnify', 'search'] },
-
-  // Plus & Minus
-  { id: 'plus', name: 'Plus', svg: PlusIcon, style: 'animated', category: 'Actions', tags: ['plus', 'add', 'create', 'new'] },
-  { id: 'minus', name: 'Minus', svg: MinusIcon, style: 'animated', category: 'Actions', tags: ['minus', 'remove', 'subtract', 'delete'] },
-  { id: 'plus-circle', name: 'Plus Circle', svg: PlusCircleIcon, style: 'animated', category: 'Actions', tags: ['plus', 'circle', 'add', 'create'] },
-
-  // Trash & Delete
-  { id: 'trash', name: 'Trash', svg: TrashIcon, style: 'animated', category: 'Actions', tags: ['trash', 'delete', 'remove', 'garbage'] },
-  { id: 'delete', name: 'Delete', svg: DeleteIcon, style: 'animated', category: 'Actions', tags: ['delete', 'remove', 'clear', 'erase'] },
-
-  // Edit
-  { id: 'edit', name: 'Edit', svg: EditIcon, style: 'animated', category: 'Actions', tags: ['edit', 'modify', 'change', 'update'] },
-  { id: 'pencil', name: 'Pencil', svg: PencilIcon, style: 'animated', category: 'Actions', tags: ['pencil', 'edit', 'write', 'draw'] },
-
-  // Copy & Paste
-  { id: 'copy', name: 'Copy', svg: CopyIcon, style: 'animated', category: 'Actions', tags: ['copy', 'duplicate', 'clone', 'clipboard'] },
-  { id: 'clipboard', name: 'Clipboard', svg: ClipboardIcon, style: 'animated', category: 'Actions', tags: ['clipboard', 'copy', 'paste', 'notes'] },
-
-  // Refresh & Rotate
-  { id: 'refresh-cw', name: 'Refresh CW', svg: RefreshCwIcon, style: 'animated', category: 'Actions', tags: ['refresh', 'reload', 'rotate', 'update'] },
-  { id: 'rotate', name: 'Rotate', svg: RotateIcon, style: 'animated', category: 'Actions', tags: ['rotate', 'spin', 'turn', 'refresh'] }
+  // Settings & Configuration
+  { id: 'animated-settings', name: 'Settings', svg: createAnimatedIconSVG('Set'), tags: ['settings', 'gear', 'config', 'options'] },
+  { id: 'animated-git-pull-request', name: 'Git Pull Request', svg: createAnimatedIconSVG('Git'), tags: ['git', 'pull-request', 'code', 'version-control'] },
+  { id: 'animated-square-pen', name: 'Square Pen', svg: createAnimatedIconSVG('Pen'), tags: ['square', 'pen', 'edit', 'write'] },
+  { name: 'Shower Head', component: createAnimatedIconPlaceholder('ShowerHead'), tags: ['shower', 'head', 'water', 'bathroom'] },
+  { name: 'Calendar Check', component: createAnimatedIconPlaceholder('CalendarCheck'), tags: ['calendar', 'check', 'confirmed', 'scheduled'] },
+  { name: 'Refresh CW Off', component: createAnimatedIconPlaceholder('RefreshCWOff'), tags: ['refresh', 'off', 'disabled', 'sync'] },
+  { name: 'Archive', component: createAnimatedIconPlaceholder('Archive'), tags: ['archive', 'box', 'storage', 'pack'] },
+  { name: 'Arrow Big Right', component: createAnimatedIconPlaceholder('ArrowBigRight'), tags: ['arrow', 'big', 'right', 'navigation'] },
+  { name: 'Chart Spline', component: createAnimatedIconPlaceholder('ChartSpline'), tags: ['chart', 'spline', 'graph', 'analytics'] },
+  { name: 'Map Pin Minus', component: createAnimatedIconPlaceholder('MapPinMinus'), tags: ['map', 'pin', 'minus', 'remove'] },
+  { name: 'Cart', component: createAnimatedIconPlaceholder('Cart'), tags: ['cart', 'shopping', 'buy', 'ecommerce'] },
+  { name: 'Download', component: createAnimatedIconPlaceholder('Download'), tags: ['download', 'save', 'export'] },
+  { name: 'Gallery Vertical End', component: createAnimatedIconPlaceholder('GalleryVerticalEnd'), tags: ['gallery', 'vertical', 'end', 'media'] },
+  { name: 'Expand', component: createAnimatedIconPlaceholder('Expand'), tags: ['expand', 'fullscreen', 'maximize'] },
+  { name: 'Volume', component: createAnimatedIconPlaceholder('Volume'), tags: ['volume', 'sound', 'audio', 'speaker'] },
+  { name: 'Calendar Cog', component: createAnimatedIconPlaceholder('CalendarCog'), tags: ['calendar', 'settings', 'config', 'schedule'] },
+  { name: 'Message Square Dashed', component: createAnimatedIconPlaceholder('MessageSquareDashed'), tags: ['message', 'square', 'dashed', 'chat'] },
+  { name: 'User Round Check', component: createAnimatedIconPlaceholder('UserRoundCheck'), tags: ['user', 'round', 'check', 'verified'] },
+  { name: 'Languages', component: createAnimatedIconPlaceholder('Languages'), tags: ['languages', 'translate', 'international', 'global'] },
+  { name: 'Lock', component: createAnimatedIconPlaceholder('Lock'), tags: ['lock', 'secure', 'private', 'protected'] },
+  { name: 'File Cog', component: createAnimatedIconPlaceholder('FileCog'), tags: ['file', 'settings', 'config', 'document'] },
+  { name: 'Keyboard', component: createAnimatedIconPlaceholder('Keyboard'), tags: ['keyboard', 'input', 'type', 'computer'] },
+  { name: 'Droplet', component: createAnimatedIconPlaceholder('Droplet'), tags: ['droplet', 'water', 'rain', 'liquid'] },
+  { name: 'X', component: createAnimatedIconPlaceholder('X'), tags: ['x', 'close', 'cancel', 'delete'] },
+  { name: 'Chevrons Right Left', component: createAnimatedIconPlaceholder('ChevronsRightLeft'), tags: ['chevrons', 'navigation', 'arrows'] },
+  { name: 'Refresh CCW Dot', component: createAnimatedIconPlaceholder('RefreshCCWDot'), tags: ['refresh', 'dot', 'loading', 'sync'] },
+  { name: 'Circle Dollar Sign', component: createAnimatedIconPlaceholder('CircleDollarSign'), tags: ['circle', 'dollar', 'money', 'finance'] },
+  { name: 'Ban', component: createAnimatedIconPlaceholder('Ban'), tags: ['ban', 'prohibited', 'blocked', 'forbidden'] },
+  { name: 'Instagram', component: createAnimatedIconPlaceholder('Instagram'), tags: ['instagram', 'social', 'media', 'photo'] },
+  { name: 'Square Activity', component: createAnimatedIconPlaceholder('SquareActivity'), tags: ['square', 'activity', 'analytics', 'chart'] },
+  { name: 'Key', component: createAnimatedIconPlaceholder('Key'), tags: ['key', 'unlock', 'access', 'security'] },
+  { name: 'User Round Plus', component: createAnimatedIconPlaceholder('UserRoundPlus'), tags: ['user', 'round', 'plus', 'add'] },
+  { name: 'Link', component: createAnimatedIconPlaceholder('Link'), tags: ['link', 'url', 'connection', 'chain'] },
+  { name: 'Square Chevron Left', component: createAnimatedIconPlaceholder('SquareChevronLeft'), tags: ['square', 'chevron', 'left', 'navigation'] },
+  { name: 'Refresh CW', component: createAnimatedIconPlaceholder('RefreshCW'), tags: ['refresh', 'clockwise', 'reload', 'sync'] },
+  { name: 'Chevron Right', component: createAnimatedIconPlaceholder('ChevronRight'), tags: ['chevron', 'right', 'navigation', 'arrow'] },
+  { name: 'Arrow Right', component: createAnimatedIconPlaceholder('ArrowRight'), tags: ['arrow', 'right', 'navigation', 'direction'] },
+  { name: 'Cloud Sun', component: createAnimatedIconPlaceholder('CloudSun'), tags: ['cloud', 'sun', 'partly-cloudy', 'weather'] },
+  { name: 'Ship', component: createAnimatedIconPlaceholder('Ship'), tags: ['ship', 'boat', 'vessel', 'nautical'] },
+  { name: 'Square Arrow Up', component: createAnimatedIconPlaceholder('SquareArrowUp'), tags: ['square', 'arrow', 'up', 'navigation'] },
+  { name: 'Telescope', component: createAnimatedIconPlaceholder('Telescope'), tags: ['telescope', 'astronomy', 'observe', 'space'] },
+  { name: 'Meh', component: createAnimatedIconPlaceholder('Meh'), tags: ['meh', 'neutral', 'indifferent', 'emotion'] },
+  { name: 'Bold', component: createAnimatedIconPlaceholder('Bold'), tags: ['bold', 'text', 'formatting', 'typography'] },
+  { name: 'Cpu', component: createAnimatedIconPlaceholder('Cpu'), tags: ['cpu', 'processor', 'chip', 'hardware'] },
+  { name: 'Audio Lines', component: createAnimatedIconPlaceholder('AudioLines'), tags: ['audio', 'lines', 'sound', 'waveform'] },
+  { name: 'Trending Up Down', component: createAnimatedIconPlaceholder('TrendingUpDown'), tags: ['trending', 'up', 'down', 'analytics'] },
+  { name: 'Flask', component: createAnimatedIconPlaceholder('Flask'), tags: ['flask', 'experiment', 'science', 'test'] },
+  { name: 'Check', component: createAnimatedIconPlaceholder('Check'), tags: ['check', 'tick', 'confirm', 'success'] },
+  { name: 'Plus', component: createAnimatedIconPlaceholder('Plus'), tags: ['plus', 'add', 'create', 'new'] },
+  { name: 'Battery Full', component: createAnimatedIconPlaceholder('BatteryFull'), tags: ['battery', 'full', 'power', 'energy'] },
+  { name: 'Rotate CCW', component: createAnimatedIconPlaceholder('RotateCCW'), tags: ['rotate', 'counter-clockwise', 'turn', 'spin'] },
+  { name: 'Rabbit', component: createAnimatedIconPlaceholder('Rabbit'), tags: ['rabbit', 'animal', 'fast', 'cute'] },
+  { name: 'Wifi', component: createAnimatedIconPlaceholder('Wifi'), tags: ['wifi', 'wireless', 'internet', 'connection'] },
+  { name: 'Roller Coaster', component: createAnimatedIconPlaceholder('RollerCoaster'), tags: ['roller-coaster', 'fun', 'ride', 'amusement'] },
+  { name: 'Hand Coins', component: createAnimatedIconPlaceholder('HandCoins'), tags: ['hand', 'coins', 'money', 'payment'] },
+  { name: 'Message Square More', component: createAnimatedIconPlaceholder('MessageSquareMore'), tags: ['message', 'square', 'more', 'options'] },
+  { name: 'Blocks', component: createAnimatedIconPlaceholder('Blocks'), tags: ['blocks', 'components', 'building', 'modular'] },
+  { name: 'Git Commit Vertical', component: createAnimatedIconPlaceholder('GitCommitVertical'), tags: ['git', 'commit', 'vertical', 'version-control'] },
+  { name: 'Key Square', component: createAnimatedIconPlaceholder('KeySquare'), tags: ['key', 'square', 'access', 'security'] },
+  { name: 'Alarm Clock', component: createAnimatedIconPlaceholder('AlarmClock'), tags: ['alarm', 'clock', 'time', 'wake'] },
+  { name: 'Radio', component: createAnimatedIconPlaceholder('Radio'), tags: ['radio', 'broadcast', 'antenna', 'signal'] },
+  { name: 'File Check 2', component: createAnimatedIconPlaceholder('FileCheck2'), tags: ['file', 'check', 'verified', 'confirmed'] },
+  { name: 'Book Text', component: createAnimatedIconPlaceholder('BookText'), tags: ['book', 'text', 'read', 'content'] },
+  { name: 'Downvote', component: createAnimatedIconPlaceholder('Downvote'), tags: ['downvote', 'thumbs-down', 'dislike', 'negative'] },
+  { name: 'Folders', component: createAnimatedIconPlaceholder('Folders'), tags: ['folders', 'directory', 'organization', 'files'] },
+  { name: 'Layers', component: createAnimatedIconPlaceholder('Layers'), tags: ['layers', 'stack', 'multiple', 'organize'] },
+  { name: 'Circle Check', component: createAnimatedIconPlaceholder('CircleCheck'), tags: ['circle', 'check', 'success', 'confirmed'] },
+  { name: 'Coffee', component: createAnimatedIconPlaceholder('Coffee'), tags: ['coffee', 'drink', 'caffeine', 'beverage'] },
+  { name: 'Bell', component: createAnimatedIconPlaceholder('Bell'), tags: ['bell', 'notification', 'alert', 'ring'] },
+  { name: 'Train Track', component: createAnimatedIconPlaceholder('TrainTrack'), tags: ['train', 'track', 'railway', 'transport'] },
+  { name: 'Thermometer', component: createAnimatedIconPlaceholder('Thermometer'), tags: ['thermometer', 'temperature', 'heat', 'cold'] },
+  { name: 'Cast', component: createAnimatedIconPlaceholder('Cast'), tags: ['cast', 'broadcast', 'stream', 'share'] },
+  { name: 'Eye Off', component: createAnimatedIconPlaceholder('EyeOff'), tags: ['eye', 'off', 'hidden', 'invisible'] },
+  { name: 'Radio Tower', component: createAnimatedIconPlaceholder('RadioTower'), tags: ['radio', 'tower', 'broadcast', 'antenna'] },
+  { name: 'Message Circle Dashed', component: createAnimatedIconPlaceholder('MessageCircleDashed'), tags: ['message', 'circle', 'dashed', 'chat'] },
+  { name: 'Chart Bar Decreasing', component: createAnimatedIconPlaceholder('ChartBarDecreasing'), tags: ['chart', 'bar', 'decreasing', 'analytics'] },
+  { name: 'Align Vertical', component: createAnimatedIconPlaceholder('AlignVertical'), tags: ['align', 'vertical', 'center', 'layout'] },
+  { name: 'Map Pin Plus', component: createAnimatedIconPlaceholder('MapPinPlus'), tags: ['map', 'pin', 'plus', 'add-location'] },
+  { name: 'Frown', component: createAnimatedIconPlaceholder('Frown'), tags: ['frown', 'sad', 'unhappy', 'emotion'] },
+  { name: 'Snowflake', component: createAnimatedIconPlaceholder('Snowflake'), tags: ['snowflake', 'snow', 'winter', 'cold'] },
+  { name: 'Party Popper', component: createAnimatedIconPlaceholder('PartyPopper'), tags: ['party', 'popper', 'celebration', 'confetti'] },
+  { name: 'Circle Chevron Right', component: createAnimatedIconPlaceholder('CircleChevronRight'), tags: ['circle', 'chevron', 'right', 'navigation'] },
+  { name: 'Boxes', component: createAnimatedIconPlaceholder('Boxes'), tags: ['boxes', 'containers', 'storage', 'packages'] },
+  { name: 'Square Chevron Right', component: createAnimatedIconPlaceholder('SquareChevronRight'), tags: ['square', 'chevron', 'right', 'navigation'] },
+  { name: 'Grip', component: createAnimatedIconPlaceholder('Grip'), tags: ['grip', 'handle', 'drag', 'move'] },
+  { name: 'Badge Percent', component: createAnimatedIconPlaceholder('BadgePercent'), tags: ['badge', 'percent', 'discount', 'sale'] },
+  { name: 'Map Pin Plus Inside', component: createAnimatedIconPlaceholder('MapPinPlusInside'), tags: ['map', 'pin', 'plus', 'inside'] },
+  { name: 'Sun Dim', component: createAnimatedIconPlaceholder('SunDim'), tags: ['sun', 'dim', 'weather', 'cloudy'] },
+  { name: 'Message Circle More', component: createAnimatedIconPlaceholder('MessageCircleMore'), tags: ['message', 'circle', 'more', 'options'] },
+  { name: 'Chart No Axes Column Increasing', component: createAnimatedIconPlaceholder('ChartNoAxesColumnIncreasing'), tags: ['chart', 'column', 'increasing', 'analytics'] },
+  { name: 'Arrow Big Down', component: createAnimatedIconPlaceholder('ArrowBigDown'), tags: ['arrow', 'big', 'down', 'navigation'] },
+  { name: 'User', component: createAnimatedIconPlaceholder('User'), tags: ['user', 'person', 'profile', 'account'] },
+  { name: 'Air Vent', component: createAnimatedIconPlaceholder('AirVent'), tags: ['air', 'vent', 'ventilation', 'cooling'] },
+  { name: 'Chevrons Up Down', component: createAnimatedIconPlaceholder('ChevronsUpDown'), tags: ['chevrons', 'navigation', 'arrows'] },
+  { name: 'Rocking Chair', component: createAnimatedIconPlaceholder('RockingChair'), tags: ['rocking-chair', 'furniture', 'comfort', 'relax'] },
+  { name: 'Home', component: createAnimatedIconPlaceholder('Home'), tags: ['home', 'house', 'building', 'main'] },
+  { name: 'Square Chevron Up', component: createAnimatedIconPlaceholder('SquareChevronUp'), tags: ['square', 'chevron', 'up', 'navigation'] },
+  { name: 'Annoyed', component: createAnimatedIconPlaceholder('Annoyed'), tags: ['annoyed', 'frustrated', 'angry', 'emotion'] },
+  { name: 'Chart Column Decreasing', component: createAnimatedIconPlaceholder('ChartColumnDecreasing'), tags: ['chart', 'column', 'decreasing', 'analytics'] },
+  { name: 'Hand Heart', component: createAnimatedIconPlaceholder('HandHeart'), tags: ['hand', 'heart', 'care', 'love'] },
+  { name: 'Chart Scatter', component: createAnimatedIconPlaceholder('ChartScatter'), tags: ['chart', 'scatter', 'plot', 'analytics'] },
+  { name: 'Search', component: createAnimatedIconPlaceholder('Search'), tags: ['search', 'find', 'magnify', 'look'] },
+  { name: 'Connect', component: createAnimatedIconPlaceholder('Connect'), tags: ['connect', 'link', 'join', 'network'] },
+  { name: 'Underline', component: createAnimatedIconPlaceholder('Underline'), tags: ['underline', 'text', 'formatting', 'typography'] },
+  { name: 'Laptop Minimal Check', component: createAnimatedIconPlaceholder('LaptopMinimalCheck'), tags: ['laptop', 'minimal', 'check', 'computer'] },
+  { name: 'Earth', component: createAnimatedIconPlaceholder('Earth'), tags: ['earth', 'planet', 'world', 'global'] },
+  { name: 'CCTV', component: createAnimatedIconPlaceholder('CCTV'), tags: ['cctv', 'camera', 'security', 'surveillance'] },
+  { name: 'Chart Line', component: createAnimatedIconPlaceholder('ChartLine'), tags: ['chart', 'line', 'graph', 'analytics'] },
+  { name: 'Figma', component: createAnimatedIconPlaceholder('Figma'), tags: ['figma', 'design', 'tool', 'ui'] },
+  { name: 'Arrow Down', component: createAnimatedIconPlaceholder('ArrowDown'), tags: ['arrow', 'down', 'navigation', 'direction'] },
+  { name: 'Wind', component: createAnimatedIconPlaceholder('Wind'), tags: ['wind', 'breeze', 'air', 'weather'] },
+  { name: 'Bluetooth Off', component: createAnimatedIconPlaceholder('BluetoothOff'), tags: ['bluetooth', 'off', 'disconnected', 'wireless'] },
+  { name: 'Square Arrow Right', component: createAnimatedIconPlaceholder('SquareArrowRight'), tags: ['square', 'arrow', 'right', 'navigation'] },
+  { name: 'Gallery Thumbnails', component: createAnimatedIconPlaceholder('GalleryThumbnails'), tags: ['gallery', 'thumbnails', 'images', 'preview'] },
+  { name: 'Arrow Big Down Dash', component: createAnimatedIconPlaceholder('ArrowBigDownDash'), tags: ['arrow', 'big', 'down', 'dash'] },
+  { name: 'Cog', component: createAnimatedIconPlaceholder('Cog'), tags: ['cog', 'gear', 'settings', 'config'] },
+  { name: 'Waypoints', component: createAnimatedIconPlaceholder('Waypoints'), tags: ['waypoints', 'path', 'route', 'navigation'] },
+  { name: 'Check Check', component: createAnimatedIconPlaceholder('CheckCheck'), tags: ['check', 'double', 'confirm', 'verified'] },
+  { name: 'Tornado', component: createAnimatedIconPlaceholder('Tornado'), tags: ['tornado', 'storm', 'wind', 'weather'] },
+  { name: 'Arrow Down ZA', component: createAnimatedIconPlaceholder('ArrowDownZA'), tags: ['arrow', 'down', 'sort', 'alphabetical'] },
+  { name: 'Scan Text', component: createAnimatedIconPlaceholder('ScanText'), tags: ['scan', 'text', 'read', 'ocr'] },
+  { name: 'Terminal', component: createAnimatedIconPlaceholder('Terminal'), tags: ['terminal', 'console', 'command', 'code'] },
+  { name: 'Message Circle', component: createAnimatedIconPlaceholder('MessageCircle'), tags: ['message', 'circle', 'chat', 'communication'] },
+  { name: 'Cloud Rain Wind', component: createAnimatedIconPlaceholder('CloudRainWind'), tags: ['cloud', 'rain', 'wind', 'storm'] },
+  { name: 'Laugh', component: createAnimatedIconPlaceholder('Laugh'), tags: ['laugh', 'happy', 'joy', 'emotion'] },
+  { name: 'Vibrate', component: createAnimatedIconPlaceholder('Vibrate'), tags: ['vibrate', 'shake', 'motion', 'alert'] },
+  { name: 'File Stack', component: createAnimatedIconPlaceholder('FileStack'), tags: ['file', 'stack', 'multiple', 'documents'] },
+  { name: 'Lock Keyhole', component: createAnimatedIconPlaceholder('LockKeyhole'), tags: ['lock', 'keyhole', 'secure', 'private'] },
+  { name: 'Sparkles', component: createAnimatedIconPlaceholder('Sparkles'), tags: ['sparkles', 'magic', 'shine', 'special'] },
+  { name: 'Circle Help', component: createAnimatedIconPlaceholder('CircleHelp'), tags: ['circle', 'help', 'question', 'support'] },
+  { name: 'Monitor Up', component: createAnimatedIconPlaceholder('MonitorUp'), tags: ['monitor', 'up', 'screen', 'display'] },
+  { name: 'Calendar Days', component: createAnimatedIconPlaceholder('CalendarDays'), tags: ['calendar', 'days', 'schedule', 'month'] },
+  { name: 'Trending Up', component: createAnimatedIconPlaceholder('TrendingUp'), tags: ['trending', 'up', 'growth', 'analytics'] },
+  { name: 'Asterisk', component: createAnimatedIconPlaceholder('Asterisk'), tags: ['asterisk', 'star', 'symbol', 'required'] },
+  { name: 'Cloud Moon', component: createAnimatedIconPlaceholder('CloudMoon'), tags: ['cloud', 'moon', 'night', 'weather'] },
+  { name: 'Calendar Plus', component: createAnimatedIconPlaceholder('CalendarPlus'), tags: ['calendar', 'plus', 'add', 'schedule'] },
+  { name: 'Book Open Check', component: createAnimatedIconPlaceholder('BookOpenCheck'), tags: ['book', 'open', 'check', 'completed'] },
+  { name: 'Chevron Up', component: createAnimatedIconPlaceholder('ChevronUp'), tags: ['chevron', 'up', 'navigation', 'arrow'] },
+  { name: 'Slash', component: createAnimatedIconPlaceholder('Slash'), tags: ['slash', 'diagonal', 'line', 'separator'] },
+  { name: 'Check Circle', component: createAnimatedIconPlaceholder('CheckCircle'), tags: ['check', 'circle', 'success', 'confirmed'] },
+  { name: 'Cloud Drizzle', component: createAnimatedIconPlaceholder('CloudDrizzle'), tags: ['cloud', 'drizzle', 'rain', 'weather'] },
+  { name: 'Fan', component: createAnimatedIconPlaceholder('Fan'), tags: ['fan', 'cooling', 'air', 'ventilation'] },
+  { name: 'Trending Down', component: createAnimatedIconPlaceholder('TrendingDown'), tags: ['trending', 'down', 'decline', 'analytics'] },
+  { name: 'Tag', component: createAnimatedIconPlaceholder('Tag'), tags: ['tag', 'label', 'category', 'mark'] },
+  { name: 'Calendar', component: createAnimatedIconPlaceholder('Calendar'), tags: ['calendar', 'date', 'schedule', 'time'] },
+  { name: 'Send', component: createAnimatedIconPlaceholder('Send'), tags: ['send', 'arrow', 'submit', 'mail'] },
+  { name: 'Battery Low', component: createAnimatedIconPlaceholder('BatteryLow'), tags: ['battery', 'low', 'power', 'energy'] },
+  { name: 'Arrow Left', component: createAnimatedIconPlaceholder('ArrowLeft'), tags: ['arrow', 'left', 'navigation', 'direction'] },
+  { name: 'Badge Check', component: createAnimatedIconPlaceholder('BadgeCheck'), tags: ['badge', 'check', 'verified', 'certified'] },
+  { name: 'Map Pin', component: createAnimatedIconPlaceholder('MapPin'), tags: ['map', 'pin', 'location', 'marker'] },
+  { name: 'Mouse Pointer', component: createAnimatedIconPlaceholder('MousePointer'), tags: ['mouse', 'pointer', 'cursor', 'click'] },
+  { name: 'File Plus', component: createAnimatedIconPlaceholder('FilePlus'), tags: ['file', 'plus', 'add', 'new'] },
+  { name: 'Refresh CCW', component: createAnimatedIconPlaceholder('RefreshCCW'), tags: ['refresh', 'counter-clockwise', 'reload', 'sync'] },
+  { name: 'List', component: createAnimatedIconPlaceholder('List'), tags: ['list', 'items', 'menu', 'organize'] },
+  { name: 'List Collapse', component: createAnimatedIconPlaceholder('ListCollapse'), tags: ['list', 'collapse', 'minimize', 'fold'] },
+  { name: 'Thumbs Up', component: createAnimatedIconPlaceholder('ThumbsUp'), tags: ['thumbs', 'up', 'like', 'approve'] },
+  { name: 'Chevron Down', component: createAnimatedIconPlaceholder('ChevronDown'), tags: ['chevron', 'down', 'navigation', 'arrow'] },
+  { name: 'List Todo', component: createAnimatedIconPlaceholder('ListTodo'), tags: ['list', 'todo', 'tasks', 'checklist'] },
+  { name: 'Fuel', component: createAnimatedIconPlaceholder('Fuel'), tags: ['fuel', 'gas', 'energy', 'petrol'] },
+  { name: 'Mail Check', component: createAnimatedIconPlaceholder('MailCheck'), tags: ['mail', 'check', 'email', 'confirmed'] },
+  { name: 'Book', component: createAnimatedIconPlaceholder('Book'), tags: ['book', 'read', 'literature', 'education'] },
+  { name: 'Arrow Up', component: createAnimatedIconPlaceholder('ArrowUp'), tags: ['arrow', 'up', 'navigation', 'direction'] },
+  { name: 'Wifi Off', component: createAnimatedIconPlaceholder('WifiOff'), tags: ['wifi', 'off', 'disconnected', 'no-internet'] },
+  { name: 'Pause', component: createAnimatedIconPlaceholder('Pause'), tags: ['pause', 'stop', 'halt', 'media'] },
+  { name: 'Trash', component: createAnimatedIconPlaceholder('Trash'), tags: ['trash', 'delete', 'remove', 'bin'] },
+  { name: 'Moon', component: createAnimatedIconPlaceholder('Moon'), tags: ['moon', 'night', 'dark', 'lunar'] },
+  { name: 'Minus', component: createAnimatedIconPlaceholder('Minus'), tags: ['minus', 'subtract', 'remove', 'delete'] },
+  { name: 'Heart', component: createAnimatedIconPlaceholder('Heart'), tags: ['heart', 'love', 'like', 'favorite'] },
+  { name: 'Eye', component: createAnimatedIconPlaceholder('Eye'), tags: ['eye', 'view', 'see', 'visible'] },
+  { name: 'Smile', component: createAnimatedIconPlaceholder('Smile'), tags: ['smile', 'happy', 'emotion', 'positive'] },
+  { name: 'Play', component: createAnimatedIconPlaceholder('Play'), tags: ['play', 'start', 'begin', 'media'] },
+  { name: 'Sun', component: createAnimatedIconPlaceholder('Sun'), tags: ['sun', 'sunny', 'weather', 'bright'] },
+  { name: 'Edit', component: createAnimatedIconPlaceholder('Edit'), tags: ['edit', 'pencil', 'modify', 'change'] },
+  { name: 'Save', component: createAnimatedIconPlaceholder('Save'), tags: ['save', 'disk', 'store', 'preserve'] },
+  { name: 'Copy', component: createAnimatedIconPlaceholder('Copy'), tags: ['copy', 'duplicate', 'clone'] },
+  { name: 'Share', component: createAnimatedIconPlaceholder('Share'), tags: ['share', 'send', 'distribute'] },
+  { name: 'Printer', component: createAnimatedIconPlaceholder('Printer'), tags: ['printer', 'print', 'document', 'output'] },
+  { name: 'Cloud', component: createAnimatedIconPlaceholder('Cloud'), tags: ['cloud', 'weather', 'sky', 'storage'] },
+  { name: 'Database', component: createAnimatedIconPlaceholder('Database'), tags: ['database', 'storage', 'data', 'sql'] },
+  { name: 'Server', component: createAnimatedIconPlaceholder('Server'), tags: ['server', 'database', 'hosting', 'cloud'] },
+  { name: 'Shield', component: createAnimatedIconPlaceholder('Shield'), tags: ['shield', 'protection', 'security', 'defense'] },
+  { name: 'Globe', component: createAnimatedIconPlaceholder('Globe'), tags: ['globe', 'world', 'earth', 'international'] },
+  { name: 'Zap', component: createAnimatedIconPlaceholder('Zap'), tags: ['zap', 'lightning', 'energy', 'power'] },
+  { name: 'Truck', component: createAnimatedIconPlaceholder('Truck'), tags: ['truck', 'vehicle', 'transport', 'delivery'] },
+  { name: 'Plane', component: createAnimatedIconPlaceholder('Plane'), tags: ['plane', 'airplane', 'flight', 'travel'] },
+  { name: 'Car', component: createAnimatedIconPlaceholder('Car'), tags: ['car', 'vehicle', 'automobile', 'transport'] },
+  { name: 'Bike', component: createAnimatedIconPlaceholder('Bike'), tags: ['bike', 'bicycle', 'cycle', 'transport'] },
+  { name: 'Rocket', component: createAnimatedIconPlaceholder('Rocket'), tags: ['rocket', 'space', 'launch', 'fast'] }
 ];
+
+export default animatedIcons;
