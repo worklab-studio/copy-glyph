@@ -1,4 +1,4 @@
-import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, Play, Globe, Minus, Hash, Bug, Workflow, Target, GitBranch, Component } from "lucide-react";
+import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, Play, Globe, Minus, Hash, Bug, Workflow, Target, GitBranch, Component, Sparkles } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { featherIcons } from "@/data/feather-icons";
@@ -21,9 +21,10 @@ import { iconnoirIcons } from "@/data/iconnoir-icons";
 import { ikonateIcons } from "@/data/ikonate-icons";
 import { octiconsIcons } from "@/data/octicons-icons";
 import { radixIcons } from "@/data/radix-icons";
+import { materialIcons } from "@/data/material-icons";
 
 // Calculate total icons count
-const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length + iconsaxIcons.length + atlasIcons.length + lineIcons.length + pixelartIcons.length + teenyIcons.length + antIcons.length + fluentIcons.length + iconnoirIcons.length + ikonateIcons.length + octiconsIcons.length + radixIcons.length;
+const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length + iconsaxIcons.length + atlasIcons.length + lineIcons.length + pixelartIcons.length + teenyIcons.length + antIcons.length + fluentIcons.length + iconnoirIcons.length + ikonateIcons.length + octiconsIcons.length + radixIcons.length + materialIcons.length;
 
 // Fixed top navigation items  
 const topNavItems = [{
@@ -35,6 +36,7 @@ const topNavItems = [{
 
 // Active icon libraries
 const activeLibraries = [
+  { name: "Material Design", id: "material", count: materialIcons.length, icon: Sparkles },
   { name: "Ant Design", id: "ant", count: antIcons.length, icon: Bug },
   { name: "Atlas Icons", id: "atlas", count: atlasIcons.length, icon: Globe },
   { name: "Line Icons", id: "line", count: lineIcons.length, icon: Minus },
