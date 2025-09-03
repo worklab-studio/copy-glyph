@@ -230,7 +230,11 @@ export function IconCell({
         <div 
           dangerouslySetInnerHTML={{ __html: modifiedSvg }}
           className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors"
-          style={{ color: iconColor }}
+          style={{ 
+            color: iconColor,
+            // Force color inheritance for Atlas icons that use currentColor
+            ['--icon-color' as any]: iconColor,
+          }}
         />
       );
     } else {
