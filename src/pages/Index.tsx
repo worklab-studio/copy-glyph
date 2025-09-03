@@ -5,6 +5,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { IconGrid } from "@/components/icon-grid/IconGrid";
 import { ControlPanel } from "@/components/control-panel";
 import { CategoryFilter } from "@/components/CategoryFilter";
+import { SearchSection } from "@/components/search-section";
 import { IconCustomizationProvider, useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { type IconItem } from "@/types/icon";
 import { toast } from "@/hooks/use-toast";
@@ -170,91 +171,102 @@ function IconGridPage() {
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full overflow-hidden">{/* Fixed viewport height */}
+      <div className="flex h-screen w-full overflow-hidden">
         <AppSidebar 
           selectedSet={selectedSet}
           onSetChange={setSelectedSet}
         />
         
-        <div className="flex-1 flex flex-col h-screen">{/* Fixed layout container */}
-          <Header 
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            onSearchClear={() => setSearchQuery("")}
-          />
+        <div className="flex-1 flex flex-col h-screen">
+          <Header />
           
-          {/* Fixed header with padding */}
-          <div className="px-6 pt-6 pb-4 border-b border-border/30 bg-background">
-            <div className="space-y-3">
-              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                <div className="space-y-1">
-                  <h2 className="text-2xl font-semibold">
-                    {selectedSet === "all" ? "All icons" : 
-                     selectedSet === "favorites" ? "Favorites" : 
-                     selectedSet === "material" ? "Material Design Icons" :
-                     selectedSet === "animated" ? "Animated Icons" :
-                     selectedSet === "lucide" ? "Lucide Icons" :
-                     selectedSet === "feather" ? "Feather Icons" :
-                     selectedSet === "phosphor" ? "Phosphor Icons" :
-                     selectedSet === "tabler" ? "Tabler Icons" :
-                     selectedSet === "bootstrap" ? "Bootstrap Icons" :
-                     selectedSet === "remix" ? "Remix Icons" :
-                     selectedSet === "boxicons" ? "Boxicons" :
-                     selectedSet === "css-gg" ? "CSS.GG Icons" :
-                     selectedSet === "iconsax" ? "Iconsax Icons" :
-                      selectedSet === "atlas" ? "Atlas Icons" :
-                      selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)}
-                  </h2>
-                  <p className="text-sm text-muted-foreground">
-                    {displayedIcons.length.toLocaleString()} icons
-                    {searchQuery && ` matching "${searchQuery}"`}
-                    {selectedCategory && ` in ${selectedCategory}`}
-                  </p>
+          {/* Horizontal Layout for Search and Customize */}
+          <div className="flex h-full overflow-hidden">
+            {/* Left side - Search and Main Content */}
+            <div className="flex-1 flex flex-col h-full overflow-hidden">
+              <SearchSection 
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                onSearchClear={() => setSearchQuery("")}
+              />
+              
+              {/* Fixed header with padding */}
+              <div className="px-6 pt-4 pb-4 border-b border-border/30 bg-background">
+                <div className="space-y-3">
+                  <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="space-y-1">
+                      <h2 className="text-2xl font-semibold">
+                        {selectedSet === "all" ? "All icons" : 
+                         selectedSet === "favorites" ? "Favorites" : 
+                         selectedSet === "material" ? "Material Design Icons" :
+                         selectedSet === "animated" ? "Animated Icons" :
+                         selectedSet === "lucide" ? "Lucide Icons" :
+                         selectedSet === "feather" ? "Feather Icons" :
+                         selectedSet === "phosphor" ? "Phosphor Icons" :
+                         selectedSet === "tabler" ? "Tabler Icons" :
+                         selectedSet === "bootstrap" ? "Bootstrap Icons" :
+                         selectedSet === "remix" ? "Remix Icons" :
+                         selectedSet === "boxicons" ? "Boxicons" :
+                         selectedSet === "css-gg" ? "CSS.GG Icons" :
+                         selectedSet === "iconsax" ? "Iconsax Icons" :
+                          selectedSet === "atlas" ? "Atlas Icons" :
+                          selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)}
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        {displayedIcons.length.toLocaleString()} icons
+                        {searchQuery && ` matching "${searchQuery}"`}
+                        {selectedCategory && ` in ${selectedCategory}`}
+                      </p>
+                    </div>
+                    
+                    <CategoryFilter 
+                      categories={availableCategories}
+                      selectedCategory={selectedCategory}
+                      onCategoryChange={setSelectedCategory}
+                    />
+                  </div>
                 </div>
-                
-                <CategoryFilter 
-                  categories={availableCategories}
-                  selectedCategory={selectedCategory}
-                  onCategoryChange={setSelectedCategory}
-                />
               </div>
+
+              {/* Scrollable main content */}
+              <main className="flex-1 overflow-hidden">
+                {displayedIcons.length === 0 ? (
+                  <div className="flex h-64 items-center justify-center text-center px-6">
+                    <div className="space-y-2">
+                      <p className="text-lg text-muted-foreground">
+                        {selectedSet === "favorites" ? "No favorites yet" : "No icons found"}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {selectedSet === "favorites" 
+                          ? "Star some icons to see them here"
+                          : "Try a different search term or select a different library"
+                        }
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                    <IconGrid
+                      items={displayedIcons}
+                      selectedId={selectedId}
+                      onCopy={handleCopy}
+                      onIconClick={handleIconClick}
+                      color={customization.color}
+                      strokeWidth={customization.strokeWidth}
+                    />
+                )}
+              </main>
+              
+              <footer className="border-t p-4 text-center text-xs text-muted-foreground bg-background">
+                <p>Built at Ossian Design Lab • <a href="mailto:support@notionicons.so" className="hover:text-primary">Support</a></p>
+              </footer>
+            </div>
+            
+            {/* Right side - Customize Panel */}
+            <div className="w-80">
+              <ControlPanel selectedIcon={selectedIcon} />
             </div>
           </div>
-
-          {/* Scrollable main content */}
-          <main className="flex-1 overflow-hidden">
-            {displayedIcons.length === 0 ? (
-              <div className="flex h-64 items-center justify-center text-center px-6">
-                <div className="space-y-2">
-                  <p className="text-lg text-muted-foreground">
-                    {selectedSet === "favorites" ? "No favorites yet" : "No icons found"}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedSet === "favorites" 
-                      ? "Star some icons to see them here"
-                      : "Try a different search term or select a different library"
-                    }
-                  </p>
-                </div>
-              </div>
-            ) : (
-                <IconGrid
-                  items={displayedIcons}
-                  selectedId={selectedId}
-                  onCopy={handleCopy}
-                  onIconClick={handleIconClick}
-                  color={customization.color}
-                  strokeWidth={customization.strokeWidth}
-                />
-            )}
-          </main>
-          
-          <footer className="border-t p-4 text-center text-xs text-muted-foreground bg-background">
-            <p>Built at Ossian Design Lab • <a href="mailto:support@notionicons.so" className="hover:text-primary">Support</a></p>
-          </footer>
         </div>
-        
-        <ControlPanel selectedIcon={selectedIcon} />
       </div>
     </SidebarProvider>
   );
