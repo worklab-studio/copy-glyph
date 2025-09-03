@@ -124,8 +124,8 @@ export function IconCell({
       }
 
       // Apply current customizations to the SVG (skip stroke-width for solid icons)
-      let customizedSVG = svgString.replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`);
-      customizedSVG = customizedSVG.replace(/fill="[^"]*"/g, `fill="${customization.color}"`);
+      let customizedSVG = svgString.replace(/<path([^>]*)\sstroke="[^"]*"([^>]*)/g, `<path$1 stroke="${customization.color}"$2`);
+      customizedSVG = customizedSVG.replace(/<path([^>]*)\sfill="[^"]*"([^>]*)/g, `<path$1 fill="${customization.color}"$2`);
       
       if (!isSolidIcon) {
         customizedSVG = customizedSVG.replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
