@@ -1666,6 +1666,432 @@ const EyeIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?:
   ]);
 };
 
+// Upload Icon
+const UploadIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', {
+    xmlns: 'http://www.w3.org/2000/svg',
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    className
+  }, [
+    React.createElement('g', {
+      key: 'g',
+      fill: 'none',
+      stroke: color,
+      strokeWidth: 2,
+      strokeLinecap: 'round',
+      strokeLinejoin: 'round'
+    }, [
+      React.createElement('path', {
+        key: 'path1',
+        d: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'
+      }),
+      React.createElement('polyline', {
+        key: 'polyline',
+        points: '17 8 12 3 7 8'
+      }, [
+        React.createElement('animateTransform', {
+          key: 'upload',
+          attributeName: 'transform',
+          type: 'translateY',
+          values: '0;-3;0',
+          dur: '1.5s',
+          repeatCount: 'indefinite'
+        })
+      ]),
+      React.createElement('line', {
+        key: 'line',
+        x1: '12',
+        y1: '3',
+        x2: '12',
+        y2: '15'
+      })
+    ])
+  ]);
+};
+
+// Rocket Icon  
+const RocketIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', {
+    xmlns: 'http://www.w3.org/2000/svg',
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    className
+  }, [
+    React.createElement('g', {
+      key: 'g',
+      fill: 'none',
+      stroke: color,
+      strokeWidth: 2,
+      strokeLinecap: 'round',
+      strokeLinejoin: 'round'
+    }, [
+      React.createElement('path', {
+        key: 'rocket',
+        d: 'M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z'
+      }),
+      React.createElement('path', {
+        key: 'body',
+        d: 'm12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z'
+      }, [
+        React.createElement('animateTransform', {
+          key: 'shake',
+          attributeName: 'transform',
+          type: 'rotate',
+          values: '0;3;-3;0',
+          dur: '0.6s',
+          repeatCount: 'indefinite'
+        })
+      ]),
+      React.createElement('path', {
+        key: 'path3',
+        d: 'M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0'
+      }),
+      React.createElement('path', {
+        key: 'path4',
+        d: 'M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5'
+      })
+    ])
+  ]);
+};
+
+// Archive Icon
+const ArchiveIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', {
+    xmlns: 'http://www.w3.org/2000/svg',
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    className
+  }, [
+    React.createElement('g', {
+      key: 'g',
+      fill: 'none',
+      stroke: color,
+      strokeWidth: 2,
+      strokeLinecap: 'round',
+      strokeLinejoin: 'round'
+    }, [
+      React.createElement('rect', {
+        key: 'box',
+        width: '20',
+        height: '5',
+        x: '2',
+        y: '3',
+        rx: '1'
+      }),
+      React.createElement('path', {
+        key: 'body',
+        d: 'm4 8 16 0 0 9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z'
+      }, [
+        React.createElement('animateTransform', {
+          key: 'compress',
+          attributeName: 'transform',
+          type: 'scaleY',
+          values: '1;0.95;1',
+          dur: '2s',
+          repeatCount: 'indefinite'
+        })
+      ]),
+      React.createElement('path', {
+        key: 'arrow',
+        d: 'm10 12 4 0'
+      })
+    ])
+  ]);
+};
+
+// Copy Icon
+const CopyIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', {
+    xmlns: 'http://www.w3.org/2000/svg',
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    className
+  }, [
+    React.createElement('g', {
+      key: 'g',
+      fill: 'none',
+      stroke: color,
+      strokeWidth: 2,
+      strokeLinecap: 'round',
+      strokeLinejoin: 'round'
+    }, [
+      React.createElement('rect', {
+        key: 'original',
+        width: '14',
+        height: '14',
+        x: '8',
+        y: '8',
+        rx: '2',
+        ry: '2'
+      }),
+      React.createElement('path', {
+        key: 'copy',
+        d: 'M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2'
+      }, [
+        React.createElement('animateTransform', {
+          key: 'slide',
+          attributeName: 'transform',
+          type: 'translate',
+          values: '0,0;3,-3;0,0',
+          dur: '1.5s',
+          repeatCount: 'indefinite'
+        })
+      ])
+    ])
+  ]);
+};
+
+// Trash Icon
+const TrashIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', {
+    xmlns: 'http://www.w3.org/2000/svg',
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    className
+  }, [
+    React.createElement('g', {
+      key: 'g',
+      fill: 'none',
+      stroke: color,
+      strokeWidth: 2,
+      strokeLinecap: 'round',
+      strokeLinejoin: 'round'
+    }, [
+      React.createElement('path', {
+        key: 'lid',
+        d: 'M3 6h18'
+      }),
+      React.createElement('path', {
+        key: 'body',
+        d: 'M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2'
+      }, [
+        React.createElement('animateTransform', {
+          key: 'shake',
+          attributeName: 'transform',
+          type: 'rotate',
+          values: '0;2;-2;0',
+          dur: '0.5s',
+          repeatCount: 'indefinite'
+        })
+      ]),
+      React.createElement('line', {
+        key: 'line1',
+        x1: '10',
+        x2: '10',
+        y1: '11',
+        y2: '17'
+      }),
+      React.createElement('line', {
+        key: 'line2', 
+        x1: '14',
+        x2: '14',
+        y1: '11',
+        y2: '17'
+      })
+    ])
+  ]);
+};
+
+// Maximize Icon
+const MaximizeIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', {
+    xmlns: 'http://www.w3.org/2000/svg',
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    className
+  }, [
+    React.createElement('g', {
+      key: 'g',
+      fill: 'none',
+      stroke: color,
+      strokeWidth: 2,
+      strokeLinecap: 'round',
+      strokeLinejoin: 'round'
+    }, [
+      React.createElement('path', {
+        key: 'path1',
+        d: 'M8 3H5a2 2 0 0 0-2 2v3'
+      }, [
+        React.createElement('animateTransform', {
+          key: 'expand1',
+          attributeName: 'transform',
+          type: 'translate',
+          values: '0,0;-2,-2;0,0',
+          dur: '1s',
+          repeatCount: 'indefinite'
+        })
+      ]),
+      React.createElement('path', {
+        key: 'path2',
+        d: 'M21 8V5a2 2 0 0 0-2-2h-3'
+      }, [
+        React.createElement('animateTransform', {
+          key: 'expand2',
+          attributeName: 'transform',
+          type: 'translate',
+          values: '0,0;2,-2;0,0',
+          dur: '1s',
+          repeatCount: 'indefinite'
+        })
+      ]),
+      React.createElement('path', {
+        key: 'path3',
+        d: 'M16 21h3a2 2 0 0 0 2-2v-3'
+      }, [
+        React.createElement('animateTransform', {
+          key: 'expand3',
+          attributeName: 'transform',
+          type: 'translate',
+          values: '0,0;2,2;0,0',
+          dur: '1s',
+          repeatCount: 'indefinite'
+        })
+      ]),
+      React.createElement('path', {
+        key: 'path4',
+        d: 'M3 16v3a2 2 0 0 0 2 2h3'
+      }, [
+        React.createElement('animateTransform', {
+          key: 'expand4',
+          attributeName: 'transform',
+          type: 'translate',
+          values: '0,0;-2,2;0,0',
+          dur: '1s',
+          repeatCount: 'indefinite'
+        })
+      ])
+    ])
+  ]);
+};
+
+const MinimizeIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', className }, [
+    React.createElement('g', { key: 'g', fill: 'none', stroke: color, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, [
+      React.createElement('polyline', { key: 'p1', points: '4 14 10 14 10 20' }, [React.createElement('animateTransform', { key: 'a1', attributeName: 'transform', type: 'translate', values: '0,0;1,-1;0,0', dur: '1s', repeatCount: 'indefinite' })]),
+      React.createElement('polyline', { key: 'p2', points: '20 10 14 10 14 4' }, [React.createElement('animateTransform', { key: 'a2', attributeName: 'transform', type: 'translate', values: '0,0;-1,1;0,0', dur: '1s', repeatCount: 'indefinite' })]),
+      React.createElement('line', { key: 'l1', x1: '14', x2: '21', y1: '10', y2: '3' }),
+      React.createElement('line', { key: 'l2', x1: '3', x2: '10', y1: '21', y2: '14' })
+    ])
+  ]);
+};
+
+const RefreshIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', className }, [
+    React.createElement('g', { key: 'g', fill: 'none', stroke: color, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, [
+      React.createElement('path', { key: 'path', d: 'M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8' }, [React.createElement('animateTransform', { key: 'rotate', attributeName: 'transform', type: 'rotate', values: '0 12 12;360 12 12', dur: '2s', repeatCount: 'indefinite' })]),
+      React.createElement('path', { key: 'path2', d: 'm21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16' }),
+      React.createElement('path', { key: 'arrow1', d: 'm17 8 4 0 0-4' }),
+      React.createElement('path', { key: 'arrow2', d: 'm7 16-4 0 0 4' })
+    ])
+  ]);
+};
+
+const SignalIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', className }, [
+    React.createElement('g', { key: 'g', fill: 'none', stroke: color, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, [
+      React.createElement('path', { key: 'p1', d: 'M2 20h.01' }),
+      React.createElement('path', { key: 'p2', d: 'M7 20v-4' }, [React.createElement('animate', { key: 'a1', attributeName: 'opacity', values: '0.3;1;0.3', dur: '1s', repeatCount: 'indefinite', begin: '0s' })]),
+      React.createElement('path', { key: 'p3', d: 'M12 20v-8' }, [React.createElement('animate', { key: 'a2', attributeName: 'opacity', values: '0.3;1;0.3', dur: '1s', repeatCount: 'indefinite', begin: '0.2s' })]),
+      React.createElement('path', { key: 'p4', d: 'M17 20V8' }, [React.createElement('animate', { key: 'a3', attributeName: 'opacity', values: '0.3;1;0.3', dur: '1s', repeatCount: 'indefinite', begin: '0.4s' })]),
+      React.createElement('path', { key: 'p5', d: 'M22 4v16' }, [React.createElement('animate', { key: 'a4', attributeName: 'opacity', values: '0.3;1;0.3', dur: '1s', repeatCount: 'indefinite', begin: '0.6s' })])
+    ])
+  ]);
+};
+
+const WiFiIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', className }, [
+    React.createElement('g', { key: 'g', fill: 'none', stroke: color, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, [
+      React.createElement('path', { key: 'p1', d: 'M12 20h.01' }),
+      React.createElement('path', { key: 'p2', d: 'M8.5 16.429a5 5 0 0 1 7 0' }, [React.createElement('animate', { key: 'a1', attributeName: 'opacity', values: '0.3;1;0.3', dur: '1.5s', repeatCount: 'indefinite', begin: '0.25s' })]),
+      React.createElement('path', { key: 'p3', d: 'M5 12.859a10 10 0 0 1 14 0' }, [React.createElement('animate', { key: 'a2', attributeName: 'opacity', values: '0.3;1;0.3', dur: '1.5s', repeatCount: 'indefinite', begin: '0.5s' })])
+    ])
+  ]);
+};
+
+const FolderSyncIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', className }, [
+    React.createElement('g', { key: 'g', fill: 'none', stroke: color, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, [
+      React.createElement('path', { key: 'folder', d: 'M9 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v1' }),
+      React.createElement('path', { key: 'sync1', d: 'M12 10.5c1.75-1.75 4.25-1.75 6 0v1m0-4l1.5 1.5L18 10.5' }, [React.createElement('animateTransform', { key: 'spin1', attributeName: 'transform', type: 'rotate', values: '0 15 12;360 15 12', dur: '2s', repeatCount: 'indefinite' })]),
+      React.createElement('path', { key: 'sync2', d: 'M18 17.5c-1.75 1.75-4.25 1.75-6 0v-1m0 4l-1.5-1.5L12 17.5' })
+    ])
+  ]);
+};
+
+const FileCheckIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', className }, [
+    React.createElement('g', { key: 'g', fill: 'none', stroke: color, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, [
+      React.createElement('path', { key: 'file', d: 'M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z' }),
+      React.createElement('path', { key: 'corner', d: 'M14 2v4a2 2 0 0 0 2 2h4' }),
+      React.createElement('path', { key: 'check', d: 'm9 15 2 2 4-4', strokeDasharray: '8', strokeDashoffset: '8' }, [React.createElement('animate', { key: 'draw', attributeName: 'stroke-dashoffset', values: '8;0', dur: '0.6s', fill: 'freeze' })])
+    ])
+  ]);
+};
+
+const ClipboardCheckIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', className }, [
+    React.createElement('g', { key: 'g', fill: 'none', stroke: color, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, [
+      React.createElement('rect', { key: 'board', width: '8', height: '4', x: '8', y: '2', rx: '1', ry: '1' }),
+      React.createElement('path', { key: 'clip', d: 'M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2' }),
+      React.createElement('path', { key: 'check', d: 'm9 14 2 2 4-4', strokeDasharray: '8', strokeDashoffset: '8' }, [React.createElement('animate', { key: 'draw', attributeName: 'stroke-dashoffset', values: '8;0', dur: '0.6s', fill: 'freeze' })])
+    ])
+  ]);
+};
+
+const ThumbsUpIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', className }, [
+    React.createElement('g', { key: 'g', fill: 'none', stroke: color, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, [
+      React.createElement('path', { key: 'thumb', d: 'M7 10v12M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z' }, [React.createElement('animateTransform', { key: 'bounce', attributeName: 'transform', type: 'translateY', values: '0;-3;0', dur: '0.6s', repeatCount: 'indefinite' })])
+    ])
+  ]);
+};
+
+const AwardIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', className }, [
+    React.createElement('g', { key: 'g', fill: 'none', stroke: color, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, [
+      React.createElement('circle', { key: 'medal', cx: '12', cy: '8', r: '6' }, [React.createElement('animateTransform', { key: 'glow', attributeName: 'transform', type: 'scale', values: '1;1.05;1', dur: '2s', repeatCount: 'indefinite' })]),
+      React.createElement('path', { key: 'ribbon1', d: 'm9 12 2 2 4-4' }),
+      React.createElement('path', { key: 'ribbon2', d: 'm8 14 1.5 6 4.5-2 4.5 2L20 14' }, [React.createElement('animateTransform', { key: 'sway', attributeName: 'transform', type: 'rotate', values: '0 12 14;3 12 14;-3 12 14;0 12 14', dur: '3s', repeatCount: 'indefinite' })])
+    ])
+  ]);
+};
+
+const ImageDownIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', className }, [
+    React.createElement('g', { key: 'g', fill: 'none', stroke: color, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, [
+      React.createElement('path', { key: 'frame', d: 'M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21' }),
+      React.createElement('circle', { key: 'dot', cx: '9', cy: '9', r: '2' }),
+      React.createElement('g', { key: 'arrow' }, [
+        React.createElement('path', { key: 'line', d: 'm14 19 3 3v-5.5' }, [React.createElement('animateTransform', { key: 'move', attributeName: 'transform', type: 'translateY', values: '0;2;0', dur: '1.5s', repeatCount: 'indefinite' })]),
+        React.createElement('path', { key: 'point', d: 'm17 22 3-3' })
+      ])
+    ])
+  ]);
+};
+
+const ChevronUpIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', className }, [
+    React.createElement('g', { key: 'g', fill: 'none', stroke: color, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, [
+      React.createElement('path', { key: 'chevron', d: 'm18 15-6-6-6 6' }, [React.createElement('animateTransform', { key: 'bounce', attributeName: 'transform', type: 'translateY', values: '0;-2;0', dur: '1s', repeatCount: 'indefinite' })])
+    ])
+  ]);
+};
+
+const ChevronDownIcon = ({ size = 24, color = 'currentColor', className = '' }: { size?: number; color?: string; className?: string }) => {
+  return React.createElement('svg', { xmlns: 'http://www.w3.org/2000/svg', width: size, height: size, viewBox: '0 0 24 24', className }, [
+    React.createElement('g', { key: 'g', fill: 'none', stroke: color, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, [
+      React.createElement('path', { key: 'chevron', d: 'm6 9 6 6 6-6' }, [React.createElement('animateTransform', { key: 'bounce', attributeName: 'transform', type: 'translateY', values: '0;2;0', dur: '1s', repeatCount: 'indefinite' })])
+    ])
+  ]);
+};
+
 export const animatedIcons: IconItem[] = [
   // Loading & Progress
   {
@@ -1949,5 +2375,151 @@ export const animatedIcons: IconItem[] = [
     style: "animated",
     category: "Actions",
     tags: ["eye", "view", "see", "visible", "watch", "look", "visibility"]
+  },
+
+  // Upload & File Management
+  {
+    id: "animated-upload",
+    name: "Upload",
+    svg: UploadIcon,
+    style: "animated", 
+    category: "Actions",
+    tags: ["upload", "file", "transfer", "send", "cloud", "arrow-up"]
+  },
+  {
+    id: "animated-rocket",
+    name: "Rocket",
+    svg: RocketIcon,
+    style: "animated",
+    category: "Actions", 
+    tags: ["rocket", "launch", "speed", "fast", "deploy", "startup"]
+  },
+  {
+    id: "animated-archive",
+    name: "Archive",
+    svg: ArchiveIcon,
+    style: "animated",
+    category: "Files",
+    tags: ["archive", "box", "storage", "compress", "save"]
+  },
+  {
+    id: "animated-copy",
+    name: "Copy", 
+    svg: CopyIcon,
+    style: "animated",
+    category: "Actions",
+    tags: ["copy", "duplicate", "clipboard", "clone"]
+  },
+  {
+    id: "animated-trash",
+    name: "Trash",
+    svg: TrashIcon,
+    style: "animated",
+    category: "Actions", 
+    tags: ["trash", "delete", "remove", "bin", "garbage"]
+  },
+  {
+    id: "animated-maximize",
+    name: "Maximize",
+    svg: MaximizeIcon,
+    style: "animated",
+    category: "Interface",
+    tags: ["maximize", "expand", "fullscreen", "resize", "window"]
+  },
+  {
+    id: "animated-minimize",
+    name: "Minimize", 
+    svg: MinimizeIcon,
+    style: "animated",
+    category: "Interface",
+    tags: ["minimize", "reduce", "compress", "shrink", "window"]
+  },
+  {
+    id: "animated-refresh",
+    name: "Refresh",
+    svg: RefreshIcon,
+    style: "animated", 
+    category: "Actions",
+    tags: ["refresh", "reload", "update", "sync", "rotate"]
+  },
+  {
+    id: "animated-signal",
+    name: "Signal",
+    svg: SignalIcon,
+    style: "animated",
+    category: "System",
+    tags: ["signal", "network", "connection", "bars", "strength"]
+  },
+  {
+    id: "animated-wifi",
+    name: "WiFi High",
+    svg: WiFiIcon,
+    style: "animated", 
+    category: "System",
+    tags: ["wifi", "wireless", "internet", "connection", "network"]
+  },
+  {
+    id: "animated-folder-sync",
+    name: "Folder Sync",
+    svg: FolderSyncIcon,
+    style: "animated",
+    category: "Files",
+    tags: ["folder", "sync", "synchronize", "cloud", "backup"]
+  },
+  {
+    id: "animated-file-check",
+    name: "File Check",
+    svg: FileCheckIcon,
+    style: "animated",
+    category: "Files", 
+    tags: ["file", "check", "complete", "done", "verified"]
+  },
+  {
+    id: "animated-clipboard-check",
+    name: "Clipboard Check",
+    svg: ClipboardCheckIcon,
+    style: "animated",
+    category: "Actions",
+    tags: ["clipboard", "check", "task", "complete", "done"]
+  },
+  {
+    id: "animated-thumbs-up", 
+    name: "Thumbs Up",
+    svg: ThumbsUpIcon,
+    style: "animated",
+    category: "Actions",
+    tags: ["thumbs", "up", "like", "approve", "positive", "good"]
+  },
+  {
+    id: "animated-award",
+    name: "Award",
+    svg: AwardIcon,
+    style: "animated", 
+    category: "Actions",
+    tags: ["award", "trophy", "achievement", "winner", "medal"]
+  },
+  {
+    id: "animated-image-down",
+    name: "Image Down", 
+    svg: ImageDownIcon,
+    style: "animated",
+    category: "Media",
+    tags: ["image", "download", "picture", "photo", "save"]
+  },
+  {
+    id: "animated-chevron-up",
+    name: "Chevron Up",
+    svg: ChevronUpIcon,
+    style: "animated",
+    category: "Navigation",
+    tags: ["chevron", "up", "arrow", "expand", "show"]
+  },
+  {
+    id: "animated-chevron-down", 
+    name: "Chevron Down",
+    svg: ChevronDownIcon,
+    style: "animated",
+    category: "Navigation",
+    tags: ["chevron", "down", "arrow", "collapse", "hide"]
   }
 ];
