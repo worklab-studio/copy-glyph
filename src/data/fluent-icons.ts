@@ -1,35 +1,115 @@
 import { IconItem } from '../types/icon';
 
-// Placeholder data for Fluent icons - replace with actual SVG data when available
-export const fluentIcons: IconItem[] = [
-  {
-    id: 'fluent-home',
-    name: 'Home',
-    svg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12.707 2.293C12.316 1.902 11.684 1.902 11.293 2.293L3.293 10.293C2.902 10.684 2.902 11.316 3.293 11.707C3.684 12.098 4.316 12.098 4.707 11.707L5 11.414V20C5 20.552 5.448 21 6 21H9C9.552 21 10 20.552 10 20V15H14V20C14 20.552 14.448 21 15 21H18C18.552 21 19 20.552 19 20V11.414L19.293 11.707C19.684 12.098 20.316 12.098 20.707 11.707C21.098 11.316 21.098 10.684 20.707 10.293L12.707 2.293Z" fill="currentColor"/>
-    </svg>`,
-    tags: ['home', 'house', 'main'],
-    style: 'solid',
-    category: 'navigation',
-  },
-  {
-    id: 'fluent-person',
-    name: 'Person',
-    svg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 13.5V20C15 21.1 14.1 22 13 22H11C9.9 22 9 21.1 9 20V13.5L3 7V9H1V7C1 5.9 1.9 5 3 5H21C22.1 5 23 5.9 23 7V9H21Z" fill="currentColor"/>
-    </svg>`,
-    tags: ['person', 'user', 'profile'],
-    style: 'solid',
-    category: 'user',
-  },
-  {
-    id: 'fluent-settings',
-    name: 'Settings',
-    svg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 8C9.79 8 8 9.79 8 12C8 14.21 9.79 16 12 16C14.21 16 16 14.21 16 12C16 9.79 14.21 8 12 8ZM21.14 13.0978C21.18 12.7378 21.2 12.3778 21.2 12.0178C21.2 11.6578 21.18 11.2978 21.14 10.9378L23.16 9.37782C23.34 9.21782 23.39 8.95782 23.28 8.73782L21.36 5.26782C21.25 5.04782 20.99 4.97782 20.77 5.05782L18.38 6.05782C17.88 5.65782 17.35 5.32782 16.76 5.07782L16.4 2.51782C16.36 2.27782 16.16 2.09782 15.92 2.09782H12.08C11.84 2.09782 11.64 2.27782 11.6 2.51782L11.24 5.07782C10.65 5.32782 10.12 5.66782 9.62 6.05782L7.23 5.05782C7.01 4.96782 6.75 5.04782 6.64 5.26782L4.72 8.73782C4.61 8.95782 4.66 9.21782 4.84 9.37782L6.86 10.9378C6.82 11.2978 6.8 11.6578 6.8 12.0178C6.8 12.3778 6.82 12.7378 6.86 13.0978L4.84 14.6578C4.66 14.8178 4.61 15.0778 4.72 15.2978L6.64 18.7678C6.75 18.9878 7.01 19.0578 7.23 18.9778L9.62 17.9778C10.12 18.3778 10.65 18.7078 11.24 18.9578L11.6 21.5178C11.64 21.7578 11.84 21.9378 12.08 21.9378H15.92C16.16 21.9378 16.36 21.7578 16.4 21.5178L16.76 18.9578C17.35 18.7078 17.88 18.3678 18.38 17.9778L20.77 18.9778C20.99 19.0678 21.25 18.9878 21.36 18.7678L23.28 15.2978C23.39 15.0778 23.34 14.8178 23.16 14.6578L21.14 13.0978Z" fill="currentColor"/>
-    </svg>`,
-    tags: ['settings', 'gear', 'config'],
-    style: 'solid',
-    category: 'system',
-  },
-];
+// Convert Fluent icon name from camelCase to readable format
+const formatName = (name: string): string => {
+  // Remove the icFluent prefix and 24Filled/24Regular suffix
+  let baseName = name.replace(/^icFluent/, '').replace(/24(Filled|Regular)$/, '');
+  
+  // Convert camelCase to spaced words
+  return baseName
+    .replace(/([A-Z])/g, ' $1')
+    .trim()
+    .replace(/^./, str => str.toUpperCase());
+};
+
+// Generate icon ID from name
+const generateId = (name: string): string => {
+  const baseName = name.replace(/^icFluent/, '').replace(/24(Filled|Regular)$/, '');
+  const style = name.includes('Filled') ? '-filled' : '-regular';
+  
+  return 'fluent-' + baseName
+    .replace(/([A-Z])/g, '-$1')
+    .toLowerCase()
+    .replace(/^-/, '') + style;
+};
+
+// Categorize icons based on their names
+const categorizeIcon = (name: string): string => {
+  const lowerName = name.toLowerCase();
+  
+  if (lowerName.includes('home') || lowerName.includes('navigation') || lowerName.includes('arrow') || 
+      lowerName.includes('chevron') || lowerName.includes('back') || lowerName.includes('forward') ||
+      lowerName.includes('menu') || lowerName.includes('breadcrumb')) {
+    return 'navigation';
+  }
+  
+  if (lowerName.includes('person') || lowerName.includes('user') || lowerName.includes('profile') ||
+      lowerName.includes('contact') || lowerName.includes('people') || lowerName.includes('group')) {
+    return 'user';
+  }
+  
+  if (lowerName.includes('settings') || lowerName.includes('config') || lowerName.includes('gear') ||
+      lowerName.includes('options') || lowerName.includes('preferences') || lowerName.includes('admin')) {
+    return 'system';
+  }
+  
+  if (lowerName.includes('mail') || lowerName.includes('message') || lowerName.includes('chat') ||
+      lowerName.includes('call') || lowerName.includes('phone') || lowerName.includes('communication')) {
+    return 'communication';
+  }
+  
+  if (lowerName.includes('file') || lowerName.includes('folder') || lowerName.includes('document') ||
+      lowerName.includes('save') || lowerName.includes('open') || lowerName.includes('storage')) {
+    return 'file';
+  }
+  
+  if (lowerName.includes('media') || lowerName.includes('play') || lowerName.includes('pause') ||
+      lowerName.includes('music') || lowerName.includes('video') || lowerName.includes('image')) {
+    return 'media';
+  }
+  
+  if (lowerName.includes('edit') || lowerName.includes('delete') || lowerName.includes('add') ||
+      lowerName.includes('remove') || lowerName.includes('create') || lowerName.includes('modify')) {
+    return 'action';
+  }
+  
+  return 'general';
+};
+
+// Generate tags from icon name
+const generateTags = (name: string, category: string): string[] => {
+  const tags = new Set<string>();
+  
+  // Add category as tag
+  tags.add(category);
+  
+  // Extract words from name
+  const words = name
+    .replace(/^icFluent/, '')
+    .replace(/24(Filled|Regular)$/, '')
+    .replace(/([A-Z])/g, ' $1')
+    .toLowerCase()
+    .split(' ')
+    .filter(word => word.length > 1);
+  
+  words.forEach(word => tags.add(word.trim()));
+  
+  return Array.from(tags);
+};
+
+// Process SVG to use currentColor theming
+const processSvg = (svg: string): string => {
+  return svg.replace(/fill="#212121"/g, 'fill="currentColor"')
+            .replace(/stroke="#212121"/g, 'stroke="currentColor"');
+};
+
+// Import the raw icon data
+import iconMap from '../../Fluent  Icons.ts';
+
+// Process all valid Fluent icons (starting from icFluent prefix)
+export const fluentIcons: IconItem[] = Object.entries(iconMap)
+  .filter(([key, value]) => 
+    key.startsWith('icFluent') && 
+    (key.includes('24Filled') || key.includes('24Regular')) &&
+    typeof value === 'string' &&
+    value.includes('<svg')
+  )
+  .map(([key, svg]) => ({
+    id: generateId(key),
+    name: formatName(key),
+    svg: processSvg(svg),
+    tags: generateTags(key, categorizeIcon(key)),
+    style: key.includes('Filled') ? 'filled' : 'regular',
+    category: categorizeIcon(key)
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
