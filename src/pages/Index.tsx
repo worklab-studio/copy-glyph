@@ -18,6 +18,7 @@ import { boxicons } from "@/data/boxicons";
 import cssGgIcons from "@/data/css-gg-icons";
 import { animatedIcons } from "@/data/animated-icons";
 import { iconsaxIcons } from "@/data/iconsax-icons";
+import atlasIcons from "@/data/atlas-icons";
 // Combine all icon libraries
 const allIcons: IconItem[] = [
   ...animatedIcons,
@@ -29,7 +30,8 @@ const allIcons: IconItem[] = [
   ...remixIcons,
   ...boxicons,
   ...cssGgIcons,
-  ...iconsaxIcons
+  ...iconsaxIcons,
+  ...atlasIcons
 ];
 
 function IconGridPage() {
@@ -93,6 +95,9 @@ function IconGridPage() {
     }
     if (selectedSet === "iconsax") {
       return filteredIcons.filter(icon => icon.id.startsWith('iconsax-'));
+    }
+    if (selectedSet === "atlas") {
+      return filteredIcons.filter(icon => icon.id.startsWith('atlas-'));
     }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
