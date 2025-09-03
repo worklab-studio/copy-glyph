@@ -27,12 +27,20 @@ import { materialIcons } from "@/data/material-icons";
 const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length + iconsaxIcons.length + atlasIcons.length + lineIcons.length + pixelartIcons.length + teenyIcons.length + antIcons.length + fluentIcons.length + iconnoirIcons.length + ikonateIcons.length + octiconsIcons.length + radixIcons.length + materialIcons.length;
 
 // Fixed top navigation items  
-const topNavItems = [{
-  name: "All Icons",
-  id: "all",
-  count: totalIconsCount,
-  icon: Home
-}];
+const topNavItems = [
+  {
+    name: "All Icons",
+    id: "all",
+    count: totalIconsCount,
+    icon: Home
+  },
+  {
+    name: "Animated",
+    id: "animated",
+    count: animatedIcons.length,
+    icon: Play
+  }
+];
 
 // Active icon libraries
 const activeLibraries = [
@@ -42,7 +50,6 @@ const activeLibraries = [
   { name: "Line Icons", id: "line", count: lineIcons.length, icon: Minus },
   { name: "Pixelart Icons", id: "pixelart", count: pixelartIcons.length, icon: Hash },
   { name: "Teeny Icons", id: "teeny", count: teenyIcons.length, icon: Circle },
-  { name: "Animated", id: "animated", count: animatedIcons.length, icon: Play },
   { name: "Tabler", id: "tabler", count: tablerIcons.length, icon: Table },
   { name: "Lucide", id: "lucide", count: lucideIcons.length, icon: Zap },
   { name: "Feather", id: "feather", count: featherIcons.length, icon: Feather },
@@ -88,6 +95,11 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
           </div>
         </div>
       </SidebarHeader>
+
+      {/* Segment Separator */}
+      <div className="flex-shrink-0 px-3">
+        <SidebarSeparator />
+      </div>
 
       {/* Fixed Browse Section */}
       <div className="flex-shrink-0 px-3">
