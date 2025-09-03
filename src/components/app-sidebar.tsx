@@ -1,5 +1,6 @@
 import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, Play, Globe, Minus, Hash, Bug, Workflow, Target, GitBranch, Component, Sparkles } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { featherIcons } from "@/data/feather-icons";
 import { phosphorIcons } from "@/data/phosphor-icons";
@@ -88,91 +89,70 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
-        {/* All Icons */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Browse
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {topNavItems.map((item) => (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton 
-                    onClick={() => onSetChange(item.id)}
-                    className={cn(
-                      "w-full justify-start gap-3 text-sm",
-                      selectedSet === item.id && "bg-accent text-accent-foreground font-medium"
-                    )}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span className="flex-1 text-left">{item.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {item.count.toLocaleString()}
-                    </span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+      <SidebarContent className="flex flex-col">
+        {/* Fixed Browse Section */}
+        <div className="flex-none">
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Browse
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {topNavItems.map((item) => (
+                  <SidebarMenuItem key={item.id}>
+                    <SidebarMenuButton 
+                      onClick={() => onSetChange(item.id)}
+                      className={cn(
+                        "w-full justify-start gap-3 text-sm",
+                        selectedSet === item.id && "bg-accent text-accent-foreground font-medium"
+                      )}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      <span className="flex-1 text-left">{item.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {item.count.toLocaleString()}
+                      </span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+          
+          <SidebarSeparator />
+        </div>
 
-        <SidebarSeparator />
-
-        {/* Available Libraries */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Available Libraries
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {activeLibraries.map((library) => (
-                <SidebarMenuItem key={library.id}>
-                  <SidebarMenuButton 
-                    onClick={() => onSetChange(library.id)}
-                    className={cn(
-                      "w-full justify-start gap-3 text-sm",
-                      selectedSet === library.id && "bg-accent text-accent-foreground font-medium"
-                    )}
-                  >
-                    <library.icon className="h-4 w-4" />
-                    <span className="flex-1 text-left">{library.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {library.count.toLocaleString()}
-                    </span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarSeparator />
-
-        {/* Coming Soon */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Coming Soon
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {placeholderLibraries.map((library) => (
-                <SidebarMenuItem key={library.id}>
-                  <SidebarMenuButton 
-                    disabled
-                    className="w-full justify-start gap-3 text-sm opacity-50 cursor-not-allowed"
-                  >
-                    <library.icon className="h-4 w-4" />
-                    <span className="flex-1 text-left">{library.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {library.count}
-                    </span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {/* Scrollable Available Libraries Section */}
+        <div className="flex-1 min-h-0">
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Available Libraries
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <ScrollArea className="h-full">
+                <SidebarMenu>
+                  {activeLibraries.map((library) => (
+                    <SidebarMenuItem key={library.id}>
+                      <SidebarMenuButton 
+                        onClick={() => onSetChange(library.id)}
+                        className={cn(
+                          "w-full justify-start gap-3 text-sm",
+                          selectedSet === library.id && "bg-accent text-accent-foreground font-medium"
+                        )}
+                      >
+                        <library.icon className="h-4 w-4" />
+                        <span className="flex-1 text-left">{library.name}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {library.count.toLocaleString()}
+                        </span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </ScrollArea>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </div>
       </SidebarContent>
     </Sidebar>
   );
