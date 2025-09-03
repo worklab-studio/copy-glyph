@@ -35,6 +35,7 @@ const topNavItems = [{
 
 // Active icon libraries
 const activeLibraries = [
+  { name: "Ant Design", id: "ant", count: antIcons.length, icon: Bug },
   { name: "Atlas Icons", id: "atlas", count: atlasIcons.length, icon: Globe },
   { name: "Line Icons", id: "line", count: lineIcons.length, icon: Minus },
   { name: "Pixelart Icons", id: "pixelart", count: pixelartIcons.length, icon: Hash },
@@ -53,7 +54,6 @@ const activeLibraries = [
 
 // Placeholder libraries (coming soon)
 const placeholderLibraries = [
-  { name: "Ant Design", id: "ant", count: antIcons.length, icon: Bug },
   { name: "Fluent UI", id: "fluent", count: fluentIcons.length, icon: Workflow },
   { name: "IconNoir", id: "iconnoir", count: iconnoirIcons.length, icon: Palette },
   { name: "Ikonate", id: "ikonate", count: ikonateIcons.length, icon: Target },
