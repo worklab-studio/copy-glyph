@@ -174,15 +174,82 @@ function ensureCurrentColor(svg: string): string {
   return processedSvg;
 }
 
-// Processed Octicons icons with proper categorization and tagging
-export const octiconsIcons: IconItem[] = Object.entries(iconMap).map(([iconName, svg]) => {
-  const category = categorizeIcon(iconName);
-  const tags = generateTags(iconName, category);
-  const displayName = camelCaseToTitleCase(iconName);
+// Helper function to normalize icon names (remove size suffixes and clean up)
+function normalizeIconName(iconName: string): string {
+  return iconName
+    .replace(/(\d+)$/, '') // Remove size suffixes like 16, 24
+    .replace(/Fill$/, '') // Remove Fill suffix
+    .replace(/Inset$/, '') // Remove Inset suffix
+    .toLowerCase();
+}
+
+// Helper function to check if an icon should be excluded
+function shouldExcludeIcon(iconName: string): boolean {
+  const name = iconName.toLowerCase();
+  
+  // Exclude GitHub branding and size-specific duplicates
+  const excludePatterns = [
+    'github', 'copilot', 'dependabot', // GitHub branding
+    'mark-github', // GitHub specific
+    'inset', // Inset variants (prefer regular versions)
+  ];
+  
+  // Exclude if matches any exclude pattern
+  if (excludePatterns.some(pattern => name.includes(pattern))) {
+    return true;
+  }
+  
+  return false;
+}
+
+// Helper function to prefer specific size variants
+function getPreferredIcon(icons: [string, string][]): [string, string] {
+  // Prefer 16px versions for consistency, or the one without size suffix
+  const size16 = icons.find(([name]) => name.includes('16'));
+  const withoutSize = icons.find(([name]) => !/\d+$/.test(name));
+  
+  return size16 || withoutSize || icons[0];
+}
+
+// Process and deduplicate icons by normalized name
+const processedIcons = new Map<string, { iconName: string; svg: string }>();
+
+Object.entries(iconMap).forEach(([iconName, svg]) => {
+  // Skip excluded icons
+  if (shouldExcludeIcon(iconName)) {
+    return;
+  }
+  
+  const normalizedName = normalizeIconName(iconName);
+  
+  // If we already have this icon (by normalized name), prefer the better variant
+  if (processedIcons.has(normalizedName)) {
+    const existing = processedIcons.get(normalizedName)!;
+    const currentEntry: [string, string] = [iconName, svg];
+    const existingEntry: [string, string] = [existing.iconName, existing.svg];
+    
+    const preferred = getPreferredIcon([existingEntry, currentEntry]);
+    if (preferred[0] === iconName) {
+      // Current icon is preferred, update the entry
+      processedIcons.set(normalizedName, { iconName, svg });
+    }
+    // If existing is preferred, skip processing current icon
+    return;
+  }
+  
+  // Store the raw data for this new normalized icon
+  processedIcons.set(normalizedName, { iconName, svg });
+});
+
+// Convert processed icons to IconItem array
+export const octiconsIcons: IconItem[] = Array.from(processedIcons.entries()).map(([normalizedName, { iconName, svg }]) => {
+  const category = categorizeIcon(normalizedName);
+  const tags = generateTags(normalizedName, category);
+  const displayName = camelCaseToTitleCase(normalizedName);
   const themedSvg = ensureCurrentColor(svg);
 
   return {
-    id: `octicons-${iconName}`,
+    id: `octicons-${normalizedName}`,
     name: displayName,
     svg: themedSvg,
     tags: tags,
