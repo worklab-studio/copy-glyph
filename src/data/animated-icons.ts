@@ -1,204 +1,158 @@
-import React from 'react';
 import { type IconItem } from '../types/icon';
 
-// Simple placeholder SVG for animated icons - these would be replaced with actual animated components
-const createAnimatedIconSVG = (iconName: string) => {
+// Create animated SVG strings with CSS animations
+const createAnimatedSVG = (paths: string, animations: string) => {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <text x="12" y="16" text-anchor="middle" font-size="8" font-family="monospace" opacity="0.7">${iconName.slice(0, 3)}</text>
+    <style>${animations}</style>
+    ${paths}
   </svg>`;
 };
 
-// All 261 animated icons from animated.tsx - mapped by name
 export const animatedIcons: IconItem[] = [
-  // Settings & Configuration
-  { id: 'animated-settings', name: 'Settings', svg: createAnimatedIconSVG('Set'), tags: ['settings', 'gear', 'config', 'options'] },
-  { id: 'animated-git-pull-request', name: 'Git Pull Request', svg: createAnimatedIconSVG('Git'), tags: ['git', 'pull-request', 'code', 'version-control'] },
-  { id: 'animated-square-pen', name: 'Square Pen', svg: createAnimatedIconSVG('Pen'), tags: ['square', 'pen', 'edit', 'write'] },
-  { name: 'Shower Head', component: createAnimatedIconPlaceholder('ShowerHead'), tags: ['shower', 'head', 'water', 'bathroom'] },
-  { name: 'Calendar Check', component: createAnimatedIconPlaceholder('CalendarCheck'), tags: ['calendar', 'check', 'confirmed', 'scheduled'] },
-  { name: 'Refresh CW Off', component: createAnimatedIconPlaceholder('RefreshCWOff'), tags: ['refresh', 'off', 'disabled', 'sync'] },
-  { name: 'Archive', component: createAnimatedIconPlaceholder('Archive'), tags: ['archive', 'box', 'storage', 'pack'] },
-  { name: 'Arrow Big Right', component: createAnimatedIconPlaceholder('ArrowBigRight'), tags: ['arrow', 'big', 'right', 'navigation'] },
-  { name: 'Chart Spline', component: createAnimatedIconPlaceholder('ChartSpline'), tags: ['chart', 'spline', 'graph', 'analytics'] },
-  { name: 'Map Pin Minus', component: createAnimatedIconPlaceholder('MapPinMinus'), tags: ['map', 'pin', 'minus', 'remove'] },
-  { name: 'Cart', component: createAnimatedIconPlaceholder('Cart'), tags: ['cart', 'shopping', 'buy', 'ecommerce'] },
-  { name: 'Download', component: createAnimatedIconPlaceholder('Download'), tags: ['download', 'save', 'export'] },
-  { name: 'Gallery Vertical End', component: createAnimatedIconPlaceholder('GalleryVerticalEnd'), tags: ['gallery', 'vertical', 'end', 'media'] },
-  { name: 'Expand', component: createAnimatedIconPlaceholder('Expand'), tags: ['expand', 'fullscreen', 'maximize'] },
-  { name: 'Volume', component: createAnimatedIconPlaceholder('Volume'), tags: ['volume', 'sound', 'audio', 'speaker'] },
-  { name: 'Calendar Cog', component: createAnimatedIconPlaceholder('CalendarCog'), tags: ['calendar', 'settings', 'config', 'schedule'] },
-  { name: 'Message Square Dashed', component: createAnimatedIconPlaceholder('MessageSquareDashed'), tags: ['message', 'square', 'dashed', 'chat'] },
-  { name: 'User Round Check', component: createAnimatedIconPlaceholder('UserRoundCheck'), tags: ['user', 'round', 'check', 'verified'] },
-  { name: 'Languages', component: createAnimatedIconPlaceholder('Languages'), tags: ['languages', 'translate', 'international', 'global'] },
-  { name: 'Lock', component: createAnimatedIconPlaceholder('Lock'), tags: ['lock', 'secure', 'private', 'protected'] },
-  { name: 'File Cog', component: createAnimatedIconPlaceholder('FileCog'), tags: ['file', 'settings', 'config', 'document'] },
-  { name: 'Keyboard', component: createAnimatedIconPlaceholder('Keyboard'), tags: ['keyboard', 'input', 'type', 'computer'] },
-  { name: 'Droplet', component: createAnimatedIconPlaceholder('Droplet'), tags: ['droplet', 'water', 'rain', 'liquid'] },
-  { name: 'X', component: createAnimatedIconPlaceholder('X'), tags: ['x', 'close', 'cancel', 'delete'] },
-  { name: 'Chevrons Right Left', component: createAnimatedIconPlaceholder('ChevronsRightLeft'), tags: ['chevrons', 'navigation', 'arrows'] },
-  { name: 'Refresh CCW Dot', component: createAnimatedIconPlaceholder('RefreshCCWDot'), tags: ['refresh', 'dot', 'loading', 'sync'] },
-  { name: 'Circle Dollar Sign', component: createAnimatedIconPlaceholder('CircleDollarSign'), tags: ['circle', 'dollar', 'money', 'finance'] },
-  { name: 'Ban', component: createAnimatedIconPlaceholder('Ban'), tags: ['ban', 'prohibited', 'blocked', 'forbidden'] },
-  { name: 'Instagram', component: createAnimatedIconPlaceholder('Instagram'), tags: ['instagram', 'social', 'media', 'photo'] },
-  { name: 'Square Activity', component: createAnimatedIconPlaceholder('SquareActivity'), tags: ['square', 'activity', 'analytics', 'chart'] },
-  { name: 'Key', component: createAnimatedIconPlaceholder('Key'), tags: ['key', 'unlock', 'access', 'security'] },
-  { name: 'User Round Plus', component: createAnimatedIconPlaceholder('UserRoundPlus'), tags: ['user', 'round', 'plus', 'add'] },
-  { name: 'Link', component: createAnimatedIconPlaceholder('Link'), tags: ['link', 'url', 'connection', 'chain'] },
-  { name: 'Square Chevron Left', component: createAnimatedIconPlaceholder('SquareChevronLeft'), tags: ['square', 'chevron', 'left', 'navigation'] },
-  { name: 'Refresh CW', component: createAnimatedIconPlaceholder('RefreshCW'), tags: ['refresh', 'clockwise', 'reload', 'sync'] },
-  { name: 'Chevron Right', component: createAnimatedIconPlaceholder('ChevronRight'), tags: ['chevron', 'right', 'navigation', 'arrow'] },
-  { name: 'Arrow Right', component: createAnimatedIconPlaceholder('ArrowRight'), tags: ['arrow', 'right', 'navigation', 'direction'] },
-  { name: 'Cloud Sun', component: createAnimatedIconPlaceholder('CloudSun'), tags: ['cloud', 'sun', 'partly-cloudy', 'weather'] },
-  { name: 'Ship', component: createAnimatedIconPlaceholder('Ship'), tags: ['ship', 'boat', 'vessel', 'nautical'] },
-  { name: 'Square Arrow Up', component: createAnimatedIconPlaceholder('SquareArrowUp'), tags: ['square', 'arrow', 'up', 'navigation'] },
-  { name: 'Telescope', component: createAnimatedIconPlaceholder('Telescope'), tags: ['telescope', 'astronomy', 'observe', 'space'] },
-  { name: 'Meh', component: createAnimatedIconPlaceholder('Meh'), tags: ['meh', 'neutral', 'indifferent', 'emotion'] },
-  { name: 'Bold', component: createAnimatedIconPlaceholder('Bold'), tags: ['bold', 'text', 'formatting', 'typography'] },
-  { name: 'Cpu', component: createAnimatedIconPlaceholder('Cpu'), tags: ['cpu', 'processor', 'chip', 'hardware'] },
-  { name: 'Audio Lines', component: createAnimatedIconPlaceholder('AudioLines'), tags: ['audio', 'lines', 'sound', 'waveform'] },
-  { name: 'Trending Up Down', component: createAnimatedIconPlaceholder('TrendingUpDown'), tags: ['trending', 'up', 'down', 'analytics'] },
-  { name: 'Flask', component: createAnimatedIconPlaceholder('Flask'), tags: ['flask', 'experiment', 'science', 'test'] },
-  { name: 'Check', component: createAnimatedIconPlaceholder('Check'), tags: ['check', 'tick', 'confirm', 'success'] },
-  { name: 'Plus', component: createAnimatedIconPlaceholder('Plus'), tags: ['plus', 'add', 'create', 'new'] },
-  { name: 'Battery Full', component: createAnimatedIconPlaceholder('BatteryFull'), tags: ['battery', 'full', 'power', 'energy'] },
-  { name: 'Rotate CCW', component: createAnimatedIconPlaceholder('RotateCCW'), tags: ['rotate', 'counter-clockwise', 'turn', 'spin'] },
-  { name: 'Rabbit', component: createAnimatedIconPlaceholder('Rabbit'), tags: ['rabbit', 'animal', 'fast', 'cute'] },
-  { name: 'Wifi', component: createAnimatedIconPlaceholder('Wifi'), tags: ['wifi', 'wireless', 'internet', 'connection'] },
-  { name: 'Roller Coaster', component: createAnimatedIconPlaceholder('RollerCoaster'), tags: ['roller-coaster', 'fun', 'ride', 'amusement'] },
-  { name: 'Hand Coins', component: createAnimatedIconPlaceholder('HandCoins'), tags: ['hand', 'coins', 'money', 'payment'] },
-  { name: 'Message Square More', component: createAnimatedIconPlaceholder('MessageSquareMore'), tags: ['message', 'square', 'more', 'options'] },
-  { name: 'Blocks', component: createAnimatedIconPlaceholder('Blocks'), tags: ['blocks', 'components', 'building', 'modular'] },
-  { name: 'Git Commit Vertical', component: createAnimatedIconPlaceholder('GitCommitVertical'), tags: ['git', 'commit', 'vertical', 'version-control'] },
-  { name: 'Key Square', component: createAnimatedIconPlaceholder('KeySquare'), tags: ['key', 'square', 'access', 'security'] },
-  { name: 'Alarm Clock', component: createAnimatedIconPlaceholder('AlarmClock'), tags: ['alarm', 'clock', 'time', 'wake'] },
-  { name: 'Radio', component: createAnimatedIconPlaceholder('Radio'), tags: ['radio', 'broadcast', 'antenna', 'signal'] },
-  { name: 'File Check 2', component: createAnimatedIconPlaceholder('FileCheck2'), tags: ['file', 'check', 'verified', 'confirmed'] },
-  { name: 'Book Text', component: createAnimatedIconPlaceholder('BookText'), tags: ['book', 'text', 'read', 'content'] },
-  { name: 'Downvote', component: createAnimatedIconPlaceholder('Downvote'), tags: ['downvote', 'thumbs-down', 'dislike', 'negative'] },
-  { name: 'Folders', component: createAnimatedIconPlaceholder('Folders'), tags: ['folders', 'directory', 'organization', 'files'] },
-  { name: 'Layers', component: createAnimatedIconPlaceholder('Layers'), tags: ['layers', 'stack', 'multiple', 'organize'] },
-  { name: 'Circle Check', component: createAnimatedIconPlaceholder('CircleCheck'), tags: ['circle', 'check', 'success', 'confirmed'] },
-  { name: 'Coffee', component: createAnimatedIconPlaceholder('Coffee'), tags: ['coffee', 'drink', 'caffeine', 'beverage'] },
-  { name: 'Bell', component: createAnimatedIconPlaceholder('Bell'), tags: ['bell', 'notification', 'alert', 'ring'] },
-  { name: 'Train Track', component: createAnimatedIconPlaceholder('TrainTrack'), tags: ['train', 'track', 'railway', 'transport'] },
-  { name: 'Thermometer', component: createAnimatedIconPlaceholder('Thermometer'), tags: ['thermometer', 'temperature', 'heat', 'cold'] },
-  { name: 'Cast', component: createAnimatedIconPlaceholder('Cast'), tags: ['cast', 'broadcast', 'stream', 'share'] },
-  { name: 'Eye Off', component: createAnimatedIconPlaceholder('EyeOff'), tags: ['eye', 'off', 'hidden', 'invisible'] },
-  { name: 'Radio Tower', component: createAnimatedIconPlaceholder('RadioTower'), tags: ['radio', 'tower', 'broadcast', 'antenna'] },
-  { name: 'Message Circle Dashed', component: createAnimatedIconPlaceholder('MessageCircleDashed'), tags: ['message', 'circle', 'dashed', 'chat'] },
-  { name: 'Chart Bar Decreasing', component: createAnimatedIconPlaceholder('ChartBarDecreasing'), tags: ['chart', 'bar', 'decreasing', 'analytics'] },
-  { name: 'Align Vertical', component: createAnimatedIconPlaceholder('AlignVertical'), tags: ['align', 'vertical', 'center', 'layout'] },
-  { name: 'Map Pin Plus', component: createAnimatedIconPlaceholder('MapPinPlus'), tags: ['map', 'pin', 'plus', 'add-location'] },
-  { name: 'Frown', component: createAnimatedIconPlaceholder('Frown'), tags: ['frown', 'sad', 'unhappy', 'emotion'] },
-  { name: 'Snowflake', component: createAnimatedIconPlaceholder('Snowflake'), tags: ['snowflake', 'snow', 'winter', 'cold'] },
-  { name: 'Party Popper', component: createAnimatedIconPlaceholder('PartyPopper'), tags: ['party', 'popper', 'celebration', 'confetti'] },
-  { name: 'Circle Chevron Right', component: createAnimatedIconPlaceholder('CircleChevronRight'), tags: ['circle', 'chevron', 'right', 'navigation'] },
-  { name: 'Boxes', component: createAnimatedIconPlaceholder('Boxes'), tags: ['boxes', 'containers', 'storage', 'packages'] },
-  { name: 'Square Chevron Right', component: createAnimatedIconPlaceholder('SquareChevronRight'), tags: ['square', 'chevron', 'right', 'navigation'] },
-  { name: 'Grip', component: createAnimatedIconPlaceholder('Grip'), tags: ['grip', 'handle', 'drag', 'move'] },
-  { name: 'Badge Percent', component: createAnimatedIconPlaceholder('BadgePercent'), tags: ['badge', 'percent', 'discount', 'sale'] },
-  { name: 'Map Pin Plus Inside', component: createAnimatedIconPlaceholder('MapPinPlusInside'), tags: ['map', 'pin', 'plus', 'inside'] },
-  { name: 'Sun Dim', component: createAnimatedIconPlaceholder('SunDim'), tags: ['sun', 'dim', 'weather', 'cloudy'] },
-  { name: 'Message Circle More', component: createAnimatedIconPlaceholder('MessageCircleMore'), tags: ['message', 'circle', 'more', 'options'] },
-  { name: 'Chart No Axes Column Increasing', component: createAnimatedIconPlaceholder('ChartNoAxesColumnIncreasing'), tags: ['chart', 'column', 'increasing', 'analytics'] },
-  { name: 'Arrow Big Down', component: createAnimatedIconPlaceholder('ArrowBigDown'), tags: ['arrow', 'big', 'down', 'navigation'] },
-  { name: 'User', component: createAnimatedIconPlaceholder('User'), tags: ['user', 'person', 'profile', 'account'] },
-  { name: 'Air Vent', component: createAnimatedIconPlaceholder('AirVent'), tags: ['air', 'vent', 'ventilation', 'cooling'] },
-  { name: 'Chevrons Up Down', component: createAnimatedIconPlaceholder('ChevronsUpDown'), tags: ['chevrons', 'navigation', 'arrows'] },
-  { name: 'Rocking Chair', component: createAnimatedIconPlaceholder('RockingChair'), tags: ['rocking-chair', 'furniture', 'comfort', 'relax'] },
-  { name: 'Home', component: createAnimatedIconPlaceholder('Home'), tags: ['home', 'house', 'building', 'main'] },
-  { name: 'Square Chevron Up', component: createAnimatedIconPlaceholder('SquareChevronUp'), tags: ['square', 'chevron', 'up', 'navigation'] },
-  { name: 'Annoyed', component: createAnimatedIconPlaceholder('Annoyed'), tags: ['annoyed', 'frustrated', 'angry', 'emotion'] },
-  { name: 'Chart Column Decreasing', component: createAnimatedIconPlaceholder('ChartColumnDecreasing'), tags: ['chart', 'column', 'decreasing', 'analytics'] },
-  { name: 'Hand Heart', component: createAnimatedIconPlaceholder('HandHeart'), tags: ['hand', 'heart', 'care', 'love'] },
-  { name: 'Chart Scatter', component: createAnimatedIconPlaceholder('ChartScatter'), tags: ['chart', 'scatter', 'plot', 'analytics'] },
-  { name: 'Search', component: createAnimatedIconPlaceholder('Search'), tags: ['search', 'find', 'magnify', 'look'] },
-  { name: 'Connect', component: createAnimatedIconPlaceholder('Connect'), tags: ['connect', 'link', 'join', 'network'] },
-  { name: 'Underline', component: createAnimatedIconPlaceholder('Underline'), tags: ['underline', 'text', 'formatting', 'typography'] },
-  { name: 'Laptop Minimal Check', component: createAnimatedIconPlaceholder('LaptopMinimalCheck'), tags: ['laptop', 'minimal', 'check', 'computer'] },
-  { name: 'Earth', component: createAnimatedIconPlaceholder('Earth'), tags: ['earth', 'planet', 'world', 'global'] },
-  { name: 'CCTV', component: createAnimatedIconPlaceholder('CCTV'), tags: ['cctv', 'camera', 'security', 'surveillance'] },
-  { name: 'Chart Line', component: createAnimatedIconPlaceholder('ChartLine'), tags: ['chart', 'line', 'graph', 'analytics'] },
-  { name: 'Figma', component: createAnimatedIconPlaceholder('Figma'), tags: ['figma', 'design', 'tool', 'ui'] },
-  { name: 'Arrow Down', component: createAnimatedIconPlaceholder('ArrowDown'), tags: ['arrow', 'down', 'navigation', 'direction'] },
-  { name: 'Wind', component: createAnimatedIconPlaceholder('Wind'), tags: ['wind', 'breeze', 'air', 'weather'] },
-  { name: 'Bluetooth Off', component: createAnimatedIconPlaceholder('BluetoothOff'), tags: ['bluetooth', 'off', 'disconnected', 'wireless'] },
-  { name: 'Square Arrow Right', component: createAnimatedIconPlaceholder('SquareArrowRight'), tags: ['square', 'arrow', 'right', 'navigation'] },
-  { name: 'Gallery Thumbnails', component: createAnimatedIconPlaceholder('GalleryThumbnails'), tags: ['gallery', 'thumbnails', 'images', 'preview'] },
-  { name: 'Arrow Big Down Dash', component: createAnimatedIconPlaceholder('ArrowBigDownDash'), tags: ['arrow', 'big', 'down', 'dash'] },
-  { name: 'Cog', component: createAnimatedIconPlaceholder('Cog'), tags: ['cog', 'gear', 'settings', 'config'] },
-  { name: 'Waypoints', component: createAnimatedIconPlaceholder('Waypoints'), tags: ['waypoints', 'path', 'route', 'navigation'] },
-  { name: 'Check Check', component: createAnimatedIconPlaceholder('CheckCheck'), tags: ['check', 'double', 'confirm', 'verified'] },
-  { name: 'Tornado', component: createAnimatedIconPlaceholder('Tornado'), tags: ['tornado', 'storm', 'wind', 'weather'] },
-  { name: 'Arrow Down ZA', component: createAnimatedIconPlaceholder('ArrowDownZA'), tags: ['arrow', 'down', 'sort', 'alphabetical'] },
-  { name: 'Scan Text', component: createAnimatedIconPlaceholder('ScanText'), tags: ['scan', 'text', 'read', 'ocr'] },
-  { name: 'Terminal', component: createAnimatedIconPlaceholder('Terminal'), tags: ['terminal', 'console', 'command', 'code'] },
-  { name: 'Message Circle', component: createAnimatedIconPlaceholder('MessageCircle'), tags: ['message', 'circle', 'chat', 'communication'] },
-  { name: 'Cloud Rain Wind', component: createAnimatedIconPlaceholder('CloudRainWind'), tags: ['cloud', 'rain', 'wind', 'storm'] },
-  { name: 'Laugh', component: createAnimatedIconPlaceholder('Laugh'), tags: ['laugh', 'happy', 'joy', 'emotion'] },
-  { name: 'Vibrate', component: createAnimatedIconPlaceholder('Vibrate'), tags: ['vibrate', 'shake', 'motion', 'alert'] },
-  { name: 'File Stack', component: createAnimatedIconPlaceholder('FileStack'), tags: ['file', 'stack', 'multiple', 'documents'] },
-  { name: 'Lock Keyhole', component: createAnimatedIconPlaceholder('LockKeyhole'), tags: ['lock', 'keyhole', 'secure', 'private'] },
-  { name: 'Sparkles', component: createAnimatedIconPlaceholder('Sparkles'), tags: ['sparkles', 'magic', 'shine', 'special'] },
-  { name: 'Circle Help', component: createAnimatedIconPlaceholder('CircleHelp'), tags: ['circle', 'help', 'question', 'support'] },
-  { name: 'Monitor Up', component: createAnimatedIconPlaceholder('MonitorUp'), tags: ['monitor', 'up', 'screen', 'display'] },
-  { name: 'Calendar Days', component: createAnimatedIconPlaceholder('CalendarDays'), tags: ['calendar', 'days', 'schedule', 'month'] },
-  { name: 'Trending Up', component: createAnimatedIconPlaceholder('TrendingUp'), tags: ['trending', 'up', 'growth', 'analytics'] },
-  { name: 'Asterisk', component: createAnimatedIconPlaceholder('Asterisk'), tags: ['asterisk', 'star', 'symbol', 'required'] },
-  { name: 'Cloud Moon', component: createAnimatedIconPlaceholder('CloudMoon'), tags: ['cloud', 'moon', 'night', 'weather'] },
-  { name: 'Calendar Plus', component: createAnimatedIconPlaceholder('CalendarPlus'), tags: ['calendar', 'plus', 'add', 'schedule'] },
-  { name: 'Book Open Check', component: createAnimatedIconPlaceholder('BookOpenCheck'), tags: ['book', 'open', 'check', 'completed'] },
-  { name: 'Chevron Up', component: createAnimatedIconPlaceholder('ChevronUp'), tags: ['chevron', 'up', 'navigation', 'arrow'] },
-  { name: 'Slash', component: createAnimatedIconPlaceholder('Slash'), tags: ['slash', 'diagonal', 'line', 'separator'] },
-  { name: 'Check Circle', component: createAnimatedIconPlaceholder('CheckCircle'), tags: ['check', 'circle', 'success', 'confirmed'] },
-  { name: 'Cloud Drizzle', component: createAnimatedIconPlaceholder('CloudDrizzle'), tags: ['cloud', 'drizzle', 'rain', 'weather'] },
-  { name: 'Fan', component: createAnimatedIconPlaceholder('Fan'), tags: ['fan', 'cooling', 'air', 'ventilation'] },
-  { name: 'Trending Down', component: createAnimatedIconPlaceholder('TrendingDown'), tags: ['trending', 'down', 'decline', 'analytics'] },
-  { name: 'Tag', component: createAnimatedIconPlaceholder('Tag'), tags: ['tag', 'label', 'category', 'mark'] },
-  { name: 'Calendar', component: createAnimatedIconPlaceholder('Calendar'), tags: ['calendar', 'date', 'schedule', 'time'] },
-  { name: 'Send', component: createAnimatedIconPlaceholder('Send'), tags: ['send', 'arrow', 'submit', 'mail'] },
-  { name: 'Battery Low', component: createAnimatedIconPlaceholder('BatteryLow'), tags: ['battery', 'low', 'power', 'energy'] },
-  { name: 'Arrow Left', component: createAnimatedIconPlaceholder('ArrowLeft'), tags: ['arrow', 'left', 'navigation', 'direction'] },
-  { name: 'Badge Check', component: createAnimatedIconPlaceholder('BadgeCheck'), tags: ['badge', 'check', 'verified', 'certified'] },
-  { name: 'Map Pin', component: createAnimatedIconPlaceholder('MapPin'), tags: ['map', 'pin', 'location', 'marker'] },
-  { name: 'Mouse Pointer', component: createAnimatedIconPlaceholder('MousePointer'), tags: ['mouse', 'pointer', 'cursor', 'click'] },
-  { name: 'File Plus', component: createAnimatedIconPlaceholder('FilePlus'), tags: ['file', 'plus', 'add', 'new'] },
-  { name: 'Refresh CCW', component: createAnimatedIconPlaceholder('RefreshCCW'), tags: ['refresh', 'counter-clockwise', 'reload', 'sync'] },
-  { name: 'List', component: createAnimatedIconPlaceholder('List'), tags: ['list', 'items', 'menu', 'organize'] },
-  { name: 'List Collapse', component: createAnimatedIconPlaceholder('ListCollapse'), tags: ['list', 'collapse', 'minimize', 'fold'] },
-  { name: 'Thumbs Up', component: createAnimatedIconPlaceholder('ThumbsUp'), tags: ['thumbs', 'up', 'like', 'approve'] },
-  { name: 'Chevron Down', component: createAnimatedIconPlaceholder('ChevronDown'), tags: ['chevron', 'down', 'navigation', 'arrow'] },
-  { name: 'List Todo', component: createAnimatedIconPlaceholder('ListTodo'), tags: ['list', 'todo', 'tasks', 'checklist'] },
-  { name: 'Fuel', component: createAnimatedIconPlaceholder('Fuel'), tags: ['fuel', 'gas', 'energy', 'petrol'] },
-  { name: 'Mail Check', component: createAnimatedIconPlaceholder('MailCheck'), tags: ['mail', 'check', 'email', 'confirmed'] },
-  { name: 'Book', component: createAnimatedIconPlaceholder('Book'), tags: ['book', 'read', 'literature', 'education'] },
-  { name: 'Arrow Up', component: createAnimatedIconPlaceholder('ArrowUp'), tags: ['arrow', 'up', 'navigation', 'direction'] },
-  { name: 'Wifi Off', component: createAnimatedIconPlaceholder('WifiOff'), tags: ['wifi', 'off', 'disconnected', 'no-internet'] },
-  { name: 'Pause', component: createAnimatedIconPlaceholder('Pause'), tags: ['pause', 'stop', 'halt', 'media'] },
-  { name: 'Trash', component: createAnimatedIconPlaceholder('Trash'), tags: ['trash', 'delete', 'remove', 'bin'] },
-  { name: 'Moon', component: createAnimatedIconPlaceholder('Moon'), tags: ['moon', 'night', 'dark', 'lunar'] },
-  { name: 'Minus', component: createAnimatedIconPlaceholder('Minus'), tags: ['minus', 'subtract', 'remove', 'delete'] },
-  { name: 'Heart', component: createAnimatedIconPlaceholder('Heart'), tags: ['heart', 'love', 'like', 'favorite'] },
-  { name: 'Eye', component: createAnimatedIconPlaceholder('Eye'), tags: ['eye', 'view', 'see', 'visible'] },
-  { name: 'Smile', component: createAnimatedIconPlaceholder('Smile'), tags: ['smile', 'happy', 'emotion', 'positive'] },
-  { name: 'Play', component: createAnimatedIconPlaceholder('Play'), tags: ['play', 'start', 'begin', 'media'] },
-  { name: 'Sun', component: createAnimatedIconPlaceholder('Sun'), tags: ['sun', 'sunny', 'weather', 'bright'] },
-  { name: 'Edit', component: createAnimatedIconPlaceholder('Edit'), tags: ['edit', 'pencil', 'modify', 'change'] },
-  { name: 'Save', component: createAnimatedIconPlaceholder('Save'), tags: ['save', 'disk', 'store', 'preserve'] },
-  { name: 'Copy', component: createAnimatedIconPlaceholder('Copy'), tags: ['copy', 'duplicate', 'clone'] },
-  { name: 'Share', component: createAnimatedIconPlaceholder('Share'), tags: ['share', 'send', 'distribute'] },
-  { name: 'Printer', component: createAnimatedIconPlaceholder('Printer'), tags: ['printer', 'print', 'document', 'output'] },
-  { name: 'Cloud', component: createAnimatedIconPlaceholder('Cloud'), tags: ['cloud', 'weather', 'sky', 'storage'] },
-  { name: 'Database', component: createAnimatedIconPlaceholder('Database'), tags: ['database', 'storage', 'data', 'sql'] },
-  { name: 'Server', component: createAnimatedIconPlaceholder('Server'), tags: ['server', 'database', 'hosting', 'cloud'] },
-  { name: 'Shield', component: createAnimatedIconPlaceholder('Shield'), tags: ['shield', 'protection', 'security', 'defense'] },
-  { name: 'Globe', component: createAnimatedIconPlaceholder('Globe'), tags: ['globe', 'world', 'earth', 'international'] },
-  { name: 'Zap', component: createAnimatedIconPlaceholder('Zap'), tags: ['zap', 'lightning', 'energy', 'power'] },
-  { name: 'Truck', component: createAnimatedIconPlaceholder('Truck'), tags: ['truck', 'vehicle', 'transport', 'delivery'] },
-  { name: 'Plane', component: createAnimatedIconPlaceholder('Plane'), tags: ['plane', 'airplane', 'flight', 'travel'] },
-  { name: 'Car', component: createAnimatedIconPlaceholder('Car'), tags: ['car', 'vehicle', 'automobile', 'transport'] },
-  { name: 'Bike', component: createAnimatedIconPlaceholder('Bike'), tags: ['bike', 'bicycle', 'cycle', 'transport'] },
-  { name: 'Rocket', component: createAnimatedIconPlaceholder('Rocket'), tags: ['rocket', 'space', 'launch', 'fast'] }
+  {
+    id: 'animated-loading-spinner',
+    name: 'Loading Spinner',
+    svg: createAnimatedSVG(
+      '<circle cx="12" cy="12" r="3" class="animate-spin"/>',
+      '.animate-spin { animation: spin 1s linear infinite; } @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }'
+    ),
+    tags: ['loading', 'spinner', 'progress', 'wait']
+  },
+  {
+    id: 'animated-heart-beat',
+    name: 'Heart Beat',
+    svg: createAnimatedSVG(
+      '<path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z" class="animate-pulse"/>',
+      '.animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; } @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }'
+    ),
+    tags: ['heart', 'love', 'like', 'favorite']
+  },
+  {
+    id: 'animated-bell-ring',
+    name: 'Bell Ring',
+    svg: createAnimatedSVG(
+      '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" class="animate-bounce"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+      '.animate-bounce { animation: bounce 1s infinite; } @keyframes bounce { 0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); } 50% { transform: none; animation-timing-function: cubic-bezier(0, 0, 0.2, 1); } }'
+    ),
+    tags: ['bell', 'notification', 'alert', 'ring']
+  },
+  {
+    id: 'animated-settings',
+    name: 'Settings',
+    svg: createAnimatedSVG(
+      '<circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m11-7h-6m-6 0H1" class="rotate"/>',
+      '.rotate { transform-origin: 12px 12px; animation: rotate 3s linear infinite; } @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }'
+    ),
+    tags: ['settings', 'gear', 'config', 'options']
+  },
+  {
+    id: 'animated-search',
+    name: 'Search',
+    svg: createAnimatedSVG(
+      '<circle cx="11" cy="11" r="8" class="scale-pulse"/><path d="21 21l-4.35-4.35" class="scale-pulse"/>',
+      '.scale-pulse { animation: scalePulse 2s ease-in-out infinite; } @keyframes scalePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }'
+    ),
+    tags: ['search', 'find', 'magnify', 'look']
+  },
+  {
+    id: 'animated-download',
+    name: 'Download',
+    svg: createAnimatedSVG(
+      '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10" class="slide-down"/><line x1="12" y1="15" x2="12" y2="3" class="slide-down"/>',
+      '.slide-down { animation: slideDown 2s ease-in-out infinite; } @keyframes slideDown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }'
+    ),
+    tags: ['download', 'save', 'export', 'get']
+  },
+  {
+    id: 'animated-upload',
+    name: 'Upload',
+    svg: createAnimatedSVG(
+      '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8" class="slide-up"/><line x1="12" y1="3" x2="12" y2="15" class="slide-up"/>',
+      '.slide-up { animation: slideUp 2s ease-in-out infinite; } @keyframes slideUp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }'
+    ),
+    tags: ['upload', 'send', 'import', 'put']
+  },
+  {
+    id: 'animated-arrow-right',
+    name: 'Arrow Right',
+    svg: createAnimatedSVG(
+      '<path d="M5 12h14"/><path d="m12 5 7 7-7 7" class="slide-right"/>',
+      '.slide-right { animation: slideRight 1.5s ease-in-out infinite; } @keyframes slideRight { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(2px); } }'
+    ),
+    tags: ['arrow', 'right', 'navigation', 'next']
+  },
+  {
+    id: 'animated-check',
+    name: 'Check',
+    svg: createAnimatedSVG(
+      '<polyline points="20,6 9,17 4,12" class="check-draw"/>',
+      '.check-draw { stroke-dasharray: 20; stroke-dashoffset: 20; animation: checkDraw 1s ease-in-out infinite; } @keyframes checkDraw { 0% { stroke-dashoffset: 20; } 100% { stroke-dashoffset: 0; } }'
+    ),
+    tags: ['check', 'tick', 'confirm', 'success']
+  },
+  {
+    id: 'animated-home',
+    name: 'Home',
+    svg: createAnimatedSVG(
+      '<path d="M3 12l9-9 9 9M5 10v10a1 1 0 0 0 1 1h3m0-6v6m4-6v6m3-6a1 1 0 0 0 1-1V10" class="float"/>',
+      '.float { animation: float 3s ease-in-out infinite; } @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }'
+    ),
+    tags: ['home', 'house', 'building', 'main']
+  },
+  {
+    id: 'animated-mail',
+    name: 'Mail',
+    svg: createAnimatedSVG(
+      '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" class="envelope"/><polyline points="22,6 12,13 2,6" class="letter"/>',
+      '.envelope { animation: shake 2s ease-in-out infinite; } .letter { animation: bounce 2s ease-in-out infinite; } @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-1px); } 75% { transform: translateX(1px); } } @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }'
+    ),
+    tags: ['mail', 'email', 'message', 'envelope']
+  },
+  {
+    id: 'animated-user',
+    name: 'User',
+    svg: createAnimatedSVG(
+      '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4" class="user-glow"/>',
+      '.user-glow { animation: glow 2s ease-in-out infinite alternate; } @keyframes glow { from { filter: drop-shadow(0 0 5px currentColor); } to { filter: drop-shadow(0 0 10px currentColor); opacity: 0.8; } }'
+    ),
+    tags: ['user', 'person', 'profile', 'account']
+  },
+  {
+    id: 'animated-play',
+    name: 'Play',
+    svg: createAnimatedSVG(
+      '<polygon points="5,3 19,12 5,21" class="play-pulse"/>',
+      '.play-pulse { animation: playPulse 2s ease-in-out infinite; } @keyframes playPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }'
+    ),
+    tags: ['play', 'start', 'begin', 'media']
+  },
+  {
+    id: 'animated-wifi',
+    name: 'WiFi',
+    svg: createAnimatedSVG(
+      '<path d="M2 12.88a22.6 22.6 0 0 1 20 0" class="wave-1"/><path d="M5 16.82a16 16 0 0 1 14 0" class="wave-2"/><path d="M8.5 20.6a9 9 0 0 1 7 0" class="wave-3"/><circle cx="12" cy="20.4" r=".6"/>',
+      '.wave-1 { animation: wave 2s ease-in-out infinite; animation-delay: 0s; } .wave-2 { animation: wave 2s ease-in-out infinite; animation-delay: 0.2s; } .wave-3 { animation: wave 2s ease-in-out infinite; animation-delay: 0.4s; } @keyframes wave { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }'
+    ),
+    tags: ['wifi', 'wireless', 'internet', 'connection']
+  },
+  {
+    id: 'animated-sun',
+    name: 'Sun',
+    svg: createAnimatedSVG(
+      '<circle cx="12" cy="12" r="5" class="sun-rotate"/><line x1="12" y1="1" x2="12" y2="3" class="ray"/><line x1="12" y1="21" x2="12" y2="23" class="ray"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" class="ray"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" class="ray"/><line x1="1" y1="12" x2="3" y2="12" class="ray"/><line x1="21" y1="12" x2="23" y2="12" class="ray"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" class="ray"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" class="ray"/>',
+      '.sun-rotate { transform-origin: 12px 12px; animation: sunRotate 8s linear infinite; } .ray { animation: rayPulse 2s ease-in-out infinite; } @keyframes sunRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } @keyframes rayPulse { 0%, 100% { opacity: 0.8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }'
+    ),
+    tags: ['sun', 'sunny', 'weather', 'bright']
+  },
+  {
+    id: 'animated-moon',
+    name: 'Moon',
+    svg: createAnimatedSVG(
+      '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" class="moon-glow"/>',
+      '.moon-glow { animation: moonGlow 3s ease-in-out infinite; } @keyframes moonGlow { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; filter: drop-shadow(0 0 8px currentColor); } }'
+    ),
+    tags: ['moon', 'night', 'dark', 'lunar']
+  },
 ];
 
 export default animatedIcons;
