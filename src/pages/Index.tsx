@@ -186,7 +186,7 @@ function IconGridPage() {
           {/* Fixed header with padding */}
           <div className="px-6 pt-6 pb-4 border-b border-border/30 bg-background">
             <div className="space-y-3">
-              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="space-y-1">
                   <h2 className="text-2xl font-semibold">
                     {selectedSet === "all" ? "All icons" : 
@@ -212,11 +212,13 @@ function IconGridPage() {
                   </p>
                 </div>
                 
-                <CategoryFilter 
-                  categories={availableCategories}
-                  selectedCategory={selectedCategory}
-                  onCategoryChange={setSelectedCategory}
-                />
+                <div className="flex items-center">
+                  <CategoryFilter 
+                    categories={availableCategories}
+                    selectedCategory={selectedCategory}
+                    onCategoryChange={setSelectedCategory}
+                  />
+                </div>
               </div>
             </div>
           </div>
