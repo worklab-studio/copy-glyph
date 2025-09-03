@@ -221,7 +221,7 @@ function IconGridPage() {
             </div>
           </div>
 
-          {/* Scrollable main content - no padding for edge-to-edge grid */}
+          {/* Scrollable main content */}
           <main className="flex-1 overflow-hidden">
             {displayedIcons.length === 0 ? (
               <div className="flex h-64 items-center justify-center text-center px-6">
@@ -238,7 +238,6 @@ function IconGridPage() {
                 </div>
               </div>
             ) : (
-              <div className="w-full h-full">
                 <IconGrid
                   items={displayedIcons}
                   selectedId={selectedId}
@@ -247,7 +246,6 @@ function IconGridPage() {
                   color={customization.color}
                   strokeWidth={customization.strokeWidth}
                 />
-              </div>
             )}
           </main>
           

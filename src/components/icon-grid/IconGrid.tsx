@@ -78,11 +78,11 @@ export function IconGrid({
           })}
         </div>
       ) : (
-        // Simple grid for smaller lists - use fixed columns for edge-to-edge layout
+        // Simple grid for smaller lists
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, 80px)',
+            gridTemplateColumns: 'repeat(auto-fit, 80px)',
             justifyContent: 'start',
             gap: 0,
           }}
