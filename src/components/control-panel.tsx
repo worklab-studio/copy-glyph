@@ -238,7 +238,7 @@ export function ControlPanel({
   };
 
   return (
-    <div className="w-80 border-l bg-background h-full flex flex-col">
+    <div className="w-80 border-l bg-background h-screen flex flex-col">
       {/* Fixed Header */}
       <div className="p-6 pb-4 border-b">
         <h2 className="text-lg font-semibold">Customize</h2>

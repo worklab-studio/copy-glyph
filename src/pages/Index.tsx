@@ -143,7 +143,7 @@ function IconGridPage() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full overflow-hidden">{/* Prevent horizontal scroll */}
+      <div className="flex h-screen w-full overflow-hidden">{/* Fixed viewport height */}
         <AppSidebar 
           selectedSet={selectedSet}
           onSetChange={setSelectedSet}
