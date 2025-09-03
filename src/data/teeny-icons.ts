@@ -51,20 +51,36 @@ const processIconSvg = (svg: string): string => {
     .replace(/#[0-9A-Fa-f]{6}/g, 'currentColor')
     // Convert all 3-digit hex colors to currentColor  
     .replace(/#[0-9A-Fa-f]{3}(?![0-9A-Fa-f])/g, 'currentColor')
-    // Convert CSS style attributes with colors
+    // Convert named colors in fill attributes (but preserve fill="none")
+    .replace(/fill="(black|white)"/g, 'fill="currentColor"')
+    // Convert named colors in stroke attributes (but preserve stroke="none")  
+    .replace(/stroke="(black|white)"/g, 'stroke="currentColor"')
+    // Convert CSS style attributes with hex colors
     .replace(/style="[^"]*fill:\s*#[0-9A-Fa-f]{3,6}[^"]*"/g, (match) => 
       match.replace(/#[0-9A-Fa-f]{3,6}/g, 'currentColor'))
+    // Convert CSS style attributes with named colors
+    .replace(/style="[^"]*fill:\s*(black|white)[^"]*"/g, (match) => 
+      match.replace(/(black|white)/g, 'currentColor'))
+    .replace(/style="[^"]*stroke:\s*(black|white)[^"]*"/g, (match) => 
+      match.replace(/(black|white)/g, 'currentColor'))
     // Convert SVG class-based styling
     .replace(/<style[^>]*>[\s\S]*?<\/style>/g, (match) =>
-      match.replace(/#[0-9A-Fa-f]{3,6}/g, 'currentColor'))
+      match.replace(/#[0-9A-Fa-f]{3,6}/g, 'currentColor').replace(/(black|white)/g, 'currentColor'))
     // Convert gradient stop-color attributes
     .replace(/stop-color="[^"]*#[0-9A-Fa-f]{3,6}[^"]*"/g, (match) =>
       match.replace(/#[0-9A-Fa-f]{3,6}/g, 'currentColor'))
-    // Preserve fill="none" and stroke="none"
-    .replace(/currentColor/g, (match, offset, string) => {
-      const before = string.substring(Math.max(0, offset - 20), offset);
-      if (before.includes('fill="none"') || before.includes('stroke="none"')) {
-        return 'none';
+    // Preserve fill="none" and stroke="none" by reverting them back
+    .replace(/fill="currentColor"/g, (match, offset, string) => {
+      const before = string.substring(Math.max(0, offset - 50), offset);
+      if (before.includes('fill="none"')) {
+        return 'fill="none"';
+      }
+      return match;
+    })
+    .replace(/stroke="currentColor"/g, (match, offset, string) => {
+      const before = string.substring(Math.max(0, offset - 50), offset);
+      if (before.includes('stroke="none"')) {
+        return 'stroke="none"';
       }
       return match;
     });
