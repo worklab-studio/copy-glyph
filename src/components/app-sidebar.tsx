@@ -1,6 +1,5 @@
 import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, Play, Globe, Minus, Hash, Bug, Workflow, Target, GitBranch, Component, Sparkles } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { featherIcons } from "@/data/feather-icons";
 import { phosphorIcons } from "@/data/phosphor-icons";
@@ -60,10 +59,6 @@ const activeLibraries = [
   { name: "Radix Icons", id: "radix", count: radixIcons.length, icon: Component },
 ];
 
-// Placeholder libraries (coming soon)
-const placeholderLibraries = [
-  // All libraries are now active!
-];
 
 interface AppSidebarProps {
   selectedSet: string;
@@ -129,7 +124,7 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
               Available Libraries
             </SidebarGroupLabel>
             <SidebarGroupContent className="flex-1 min-h-0">
-              <ScrollArea className="h-full">
+              <div className="h-full overflow-y-auto scrollbar-none">
                 <SidebarMenu>
                   {activeLibraries.map((library) => (
                     <SidebarMenuItem key={library.id}>
@@ -149,7 +144,7 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
                     </SidebarMenuItem>
                   ))}
                 </SidebarMenu>
-              </ScrollArea>
+              </div>
             </SidebarGroupContent>
           </SidebarGroup>
         </div>
