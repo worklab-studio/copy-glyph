@@ -127,19 +127,13 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
         <SidebarSeparator />
       </div>
 
-      {/* Fixed Libraries Header */}
-      <div className="flex-shrink-0">
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Libraries
-          </SidebarGroupLabel>
-        </SidebarGroup>
-      </div>
-
       {/* Scrollable Content Area */}
       <SidebarContent className="flex-1 overflow-y-auto">
         {/* Icon Libraries */}
         <SidebarGroup>
+          <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Libraries
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {activeLibraries.map((library) => (
