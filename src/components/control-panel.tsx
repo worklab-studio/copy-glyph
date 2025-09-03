@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ColorPicker } from "./color-picker";
@@ -9,6 +8,7 @@ import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { toast } from "@/hooks/use-toast";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+
 interface ControlPanelProps {
   selectedIcon?: {
     id: string;
@@ -17,12 +17,14 @@ interface ControlPanelProps {
     style?: string;
   } | null;
 }
+
 export function ControlPanel({
   selectedIcon
 }: ControlPanelProps) {
   const {
     customization
   } = useIconCustomization();
+
   const handleDownloadSVG = async () => {
     if (!selectedIcon) return;
     
@@ -143,6 +145,7 @@ export function ControlPanel({
       });
     }
   };
+
   const getCustomizedSVG = () => {
     if (!selectedIcon) return '';
     
@@ -177,6 +180,7 @@ export function ControlPanel({
     
     return customizedSVG;
   };
+
   const handleCopySVG = async () => {
     if (!selectedIcon) {
       toast({
@@ -205,6 +209,7 @@ export function ControlPanel({
       });
     }
   };
+
   const handleCopyXML = async () => {
     if (!selectedIcon) {
       toast({
@@ -229,49 +234,81 @@ export function ControlPanel({
       });
     }
   };
-  return <div className="w-80 border-l bg-background">
-      <Card className="border-0 rounded-none h-full">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg">Customize</CardTitle>
-        </CardHeader>
-        
-        <CardContent className="space-y-6">
-          <ColorPicker />
-          
-          <Separator />
-          
-          {/* Always show stroke slider, but hide when solid icon is selected */}
-          {(!selectedIcon || selectedIcon.style !== 'solid') && (
-            <>
-              <StrokeSlider />
-              <Separator />
-            </>
-          )}
-          
-          <div className="space-y-3">
-            <h4 className="text-sm font-medium">Export</h4>
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" size="sm" onClick={handleCopySVG} disabled={!selectedIcon} className="text-xs">
-                <Copy className="h-3 w-3 mr-1" />
-                Copy SVG
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleCopyXML} disabled={!selectedIcon} className="text-xs">
-                <Copy className="h-3 w-3 mr-1" />
-                Copy XML
-              </Button>
-            </div>
-            <Button variant="default" size="sm" onClick={handleDownloadSVG} disabled={!selectedIcon} className="w-full text-xs">
-              <Download className="h-3 w-3 mr-1" />
-              Download svg icon
+
+  return (
+    <div className="w-80 border-l bg-background h-full flex flex-col">
+      {/* Fixed Header */}
+      <div className="p-6 pb-4 border-b">
+        <h2 className="text-lg font-semibold">Customize</h2>
+      </div>
+      
+      {/* Scrollable Middle Section */}
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full scrollbar-none">
+          <div className="p-6 space-y-6">
+            <ColorPicker />
+            
+            <Separator />
+            
+            {/* Always show stroke slider, but hide when solid icon is selected */}
+            {(!selectedIcon || selectedIcon.style !== 'solid') && (
+              <>
+                <StrokeSlider />
+                <Separator />
+              </>
+            )}
+          </div>
+        </ScrollArea>
+      </div>
+      
+      {/* Fixed Footer - Export Section */}
+      <div className="p-6 pt-4 border-t bg-background">
+        <div className="space-y-3">
+          <h4 className="text-sm font-medium">Export</h4>
+          <div className="grid grid-cols-2 gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleCopySVG} 
+              disabled={!selectedIcon} 
+              className="text-xs"
+            >
+              <Copy className="h-3 w-3 mr-1" />
+              Copy SVG
             </Button>
-            <Button variant="outline" size="sm" onClick={handleDownloadPNG} disabled={!selectedIcon} className="w-full text-xs">
-              <Download className="h-3 w-3 mr-1" />
-              Download PNG icon
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleCopyXML} 
+              disabled={!selectedIcon} 
+              className="text-xs"
+            >
+              <Copy className="h-3 w-3 mr-1" />
+              Copy XML
             </Button>
           </div>
-          
-          
-        </CardContent>
-      </Card>
-    </div>;
+          <Button 
+            variant="default" 
+            size="sm" 
+            onClick={handleDownloadSVG} 
+            disabled={!selectedIcon} 
+            className="w-full text-xs"
+          >
+            <Download className="h-3 w-3 mr-1" />
+            Download SVG
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleDownloadPNG} 
+            disabled={!selectedIcon} 
+            className="w-full text-xs"
+          >
+            <Download className="h-3 w-3 mr-1" />
+            Download PNG
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }
