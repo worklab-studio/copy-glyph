@@ -80,7 +80,7 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
   return (
     <Sidebar className="border-r flex flex-col">
       {/* Fixed Header - Logo Area */}
-      <SidebarHeader className="flex-shrink-0">
+      <SidebarHeader className="flex-shrink-0 border-b">
         <div className="px-3 py-2">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
@@ -95,11 +95,6 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
           </div>
         </div>
       </SidebarHeader>
-
-      {/* Segment Separator */}
-      <div className="flex-shrink-0 px-3">
-        <SidebarSeparator />
-      </div>
 
       {/* Fixed Browse Section */}
       <div className="flex-shrink-0 px-3">
