@@ -91,6 +91,7 @@ function IconGridPage() {
     
     const setMappings: Record<string, string> = {
       'material': 'material-',
+      'solar': 'solar-',
       'animated': 'animated-',
       'lucide': 'lucide-',
       'feather': 'feather-',
@@ -194,6 +195,7 @@ function IconGridPage() {
                     {selectedSet === "all" ? "All icons" : 
                      selectedSet === "favorites" ? "Favorites" : 
                      selectedSet === "material" ? "Material Design Icons" :
+                     selectedSet === "solar" ? "Solar Icons" :
                      selectedSet === "animated" ? "Animated Icons" :
                      selectedSet === "lucide" ? "Lucide Icons" :
                      selectedSet === "feather" ? "Feather Icons" :

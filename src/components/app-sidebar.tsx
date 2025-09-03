@@ -1,4 +1,4 @@
-import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, Play, Globe, Minus, Hash, Bug, Workflow, Target, GitBranch, Component, Sparkles } from "lucide-react";
+import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, Play, Globe, Minus, Hash, Bug, Workflow, Target, GitBranch, Component, Sparkles, Sun } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { AnimatedPlayIcon } from "@/components/animated-play-icon";
@@ -47,6 +47,7 @@ const topNavItems = [
 // Active icon libraries
 const activeLibraries = [
   { name: "Material Design", id: "material", count: materialIcons.length, icon: Sparkles },
+  { name: "Solar Icons", id: "solar", count: solarIcons.length, icon: Sun },
   { name: "Ant Design", id: "ant", count: antIcons.length, icon: Bug },
   { name: "Atlas Icons", id: "atlas", count: atlasIcons.length, icon: Globe },
   { name: "Line Icons", id: "line", count: lineIcons.length, icon: Minus },
