@@ -29,7 +29,6 @@ import { ikonateIcons } from "@/data/ikonate-icons";
 import { octiconsIcons } from "@/data/octicons-icons";
 import { radixIcons } from "@/data/radix-icons";
 import { materialIcons } from "@/data/material-icons";
-import { solarIcons } from "@/data/solar-icons";
 // Combine all icon libraries
 const allIcons: IconItem[] = [
   ...materialIcons,
@@ -53,7 +52,6 @@ const allIcons: IconItem[] = [
   ...ikonateIcons,
   ...octiconsIcons,
   ...radixIcons,
-  ...solarIcons,
 ];
 
 function IconGridPage() {
@@ -111,7 +109,6 @@ function IconGridPage() {
       'ikonate': 'ikonate-',
       'octicons': 'octicons-',
       'radix': 'radix-',
-      'solar': 'solar-',
     };
     
     const prefix = setMappings[selectedSet];
