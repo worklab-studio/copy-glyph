@@ -71,26 +71,27 @@ interface AppSidebarProps {
 
 export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
   return (
-    <Sidebar className="border-r flex flex-col h-screen">
-      {/* Fixed Logo Area */}
-      <div className="border-b bg-background p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-            <Crown className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-bold">Icon Library</span>
-            <span className="text-xs text-muted-foreground">
-              {totalIconsCount.toLocaleString()}+ icons
-            </span>
+    <Sidebar className="border-r">
+      <SidebarHeader>
+        <div className="px-3 py-2">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
+              <Crown className="h-4 w-4 text-primary-foreground" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold">Icon Library</span>
+              <span className="text-xs text-muted-foreground">
+                {totalIconsCount.toLocaleString()}+ icons
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      </SidebarHeader>
 
-      {/* Fixed Browse Section */}
-      <div className="border-b bg-background">
+      <SidebarContent>
+        {/* All Icons */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-3 py-2">
+          <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Browse
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -100,7 +101,7 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
                   <SidebarMenuButton 
                     onClick={() => onSetChange(item.id)}
                     className={cn(
-                      "w-full justify-start gap-3 text-sm mx-3",
+                      "w-full justify-start gap-3 text-sm",
                       selectedSet === item.id && "bg-accent text-accent-foreground font-medium"
                     )}
                   >
@@ -115,39 +116,64 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-      </div>
 
-      {/* Scrollable Available Libraries */}
-      <div className="flex-1 overflow-hidden">
-        <SidebarContent className="h-full">
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-3 py-2">
-              Available Libraries
-            </SidebarGroupLabel>
-            <SidebarGroupContent className="overflow-y-auto">
-              <SidebarMenu>
-                {activeLibraries.map((library) => (
-                  <SidebarMenuItem key={library.id}>
-                    <SidebarMenuButton 
-                      onClick={() => onSetChange(library.id)}
-                      className={cn(
-                        "w-full justify-start gap-3 text-sm mx-3",
-                        selectedSet === library.id && "bg-accent text-accent-foreground font-medium"
-                      )}
-                    >
-                      <library.icon className="h-4 w-4" />
-                      <span className="flex-1 text-left">{library.name}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {library.count.toLocaleString()}
-                      </span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-      </div>
+        <SidebarSeparator />
+
+        {/* Available Libraries */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Available Libraries
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {activeLibraries.map((library) => (
+                <SidebarMenuItem key={library.id}>
+                  <SidebarMenuButton 
+                    onClick={() => onSetChange(library.id)}
+                    className={cn(
+                      "w-full justify-start gap-3 text-sm",
+                      selectedSet === library.id && "bg-accent text-accent-foreground font-medium"
+                    )}
+                  >
+                    <library.icon className="h-4 w-4" />
+                    <span className="flex-1 text-left">{library.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {library.count.toLocaleString()}
+                    </span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        {/* Coming Soon */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Coming Soon
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {placeholderLibraries.map((library) => (
+                <SidebarMenuItem key={library.id}>
+                  <SidebarMenuButton 
+                    disabled
+                    className="w-full justify-start gap-3 text-sm opacity-50 cursor-not-allowed"
+                  >
+                    <library.icon className="h-4 w-4" />
+                    <span className="flex-1 text-left">{library.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {library.count}
+                    </span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
     </Sidebar>
   );
 }

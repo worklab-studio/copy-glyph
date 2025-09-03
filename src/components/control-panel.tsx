@@ -238,16 +238,16 @@ export function ControlPanel({
   };
 
   return (
-    <div className="border-l bg-background h-full flex flex-col">
+    <div className="w-80 border-l bg-background h-screen flex flex-col">
       {/* Fixed Header */}
-      <div className="p-4 border-b bg-background">
-        <h3 className="text-sm font-medium">Customize Icons</h3>
+      <div className="h-16 border-b flex items-center px-6">
+        <h2 className="text-lg font-semibold">Customize</h2>
       </div>
       
       {/* Scrollable Middle Section */}
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full scrollbar-none">
-          <div className="p-4 space-y-4">
+          <div className="p-6 space-y-6">
             <ColorPicker />
             
             <Separator />
@@ -264,7 +264,7 @@ export function ControlPanel({
       </div>
       
       {/* Fixed Footer - Export Section */}
-      <div className="p-4 border-t bg-background">
+      <div className="p-6 pt-4 border-t bg-background">
         <div className="space-y-3">
           <h4 className="text-sm font-medium">Export</h4>
           <div className="grid grid-cols-2 gap-2">
