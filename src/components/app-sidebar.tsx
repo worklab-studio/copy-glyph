@@ -1,6 +1,7 @@
 import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, Play, Globe, Minus, Hash, Bug, Workflow, Target, GitBranch, Component, Sparkles } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { AnimatedPlayIcon } from "@/components/animated-play-icon";
 import { featherIcons } from "@/data/feather-icons";
 import { phosphorIcons } from "@/data/phosphor-icons";
 import { lucideIcons } from "@/data/lucide-icons";
@@ -38,7 +39,7 @@ const topNavItems = [
     name: "Animated",
     id: "animated",
     count: animatedIcons.length,
-    icon: Play
+    icon: AnimatedPlayIcon
   }
 ];
 
