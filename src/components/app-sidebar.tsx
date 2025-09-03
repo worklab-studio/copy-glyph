@@ -10,9 +10,10 @@ import { bootstrapIcons } from "@/data/bootstrap-icons";
 import { boxicons } from "@/data/boxicons";
 import cssGgIcons from "@/data/css-gg-icons";
 import { animatedIcons } from "@/data/animated-icons";
+import { iconsaxIcons } from "@/data/iconsax-icons";
 
 // Calculate total icons count
-const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length;
+const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length + iconsaxIcons.length;
 
 // Fixed top navigation items  
 const topNavItems = [{
