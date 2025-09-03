@@ -97,7 +97,7 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
       </SidebarHeader>
 
       {/* Fixed Browse Section */}
-      <div className="flex-shrink-0 px-3">
+      <div className="flex-shrink-0">
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Browse
