@@ -9,6 +9,8 @@ import { toast } from "@/hooks/use-toast";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
+// Force HMR refresh - no Card components used in this file
+
 interface ControlPanelProps {
   selectedIcon?: {
     id: string;
