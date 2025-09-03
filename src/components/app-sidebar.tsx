@@ -129,10 +129,10 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
 
       {/* Scrollable Content Area */}
       <SidebarContent className="flex-1 overflow-y-auto">
-        {/* Available Libraries */}
+        {/* Icon Libraries */}
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Available Libraries
+            Libraries
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -149,33 +149,6 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
                     <span className="flex-1 text-left">{library.name}</span>
                     <span className="text-xs text-muted-foreground">
                       {library.count.toLocaleString()}
-                    </span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarSeparator />
-
-        {/* Coming Soon */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Coming Soon
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {placeholderLibraries.map((library) => (
-                <SidebarMenuItem key={library.id}>
-                  <SidebarMenuButton 
-                    disabled
-                    className="w-full justify-start gap-3 text-sm opacity-50 cursor-not-allowed"
-                  >
-                    <library.icon className="h-4 w-4" />
-                    <span className="flex-1 text-left">{library.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {library.count}
                     </span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
