@@ -89,7 +89,7 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="flex flex-col">
+      <SidebarContent className="flex flex-col overflow-hidden">
         {/* Fixed Browse Section */}
         <div className="flex-none">
           <SidebarGroup>
@@ -123,12 +123,12 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
         </div>
 
         {/* Scrollable Available Libraries Section */}
-        <div className="flex-1 min-h-0">
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <SidebarGroup className="h-full">
+            <SidebarGroupLabel className="flex-none text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Available Libraries
             </SidebarGroupLabel>
-            <SidebarGroupContent>
+            <SidebarGroupContent className="flex-1 min-h-0">
               <ScrollArea className="h-full">
                 <SidebarMenu>
                   {activeLibraries.map((library) => (
