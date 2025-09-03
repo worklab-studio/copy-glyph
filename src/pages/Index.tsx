@@ -18,8 +18,10 @@ import { boxicons } from "@/data/boxicons";
 import cssGgIcons from "@/data/css-gg-icons";
 import { animatedIcons } from "@/data/animated-icons";
 import { iconsaxIcons } from "@/data/iconsax-icons";
+import { atlasIcons } from "@/data/atlas-icons";
 // Combine all icon libraries
 const allIcons: IconItem[] = [
+  ...atlasIcons,
   ...animatedIcons,
   ...lucideIcons,
   ...featherIcons,
