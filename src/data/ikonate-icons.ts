@@ -114,28 +114,21 @@ function generateTags(iconName: string, category: string): string[] {
 
 // Helper function to ensure SVG uses currentColor for theming
 function ensureCurrentColor(svg: string): string {
-  // Ikonate icons are outline icons, so we need to ensure they have proper stroke attributes
-  let processedSvg = svg;
-  
-  // Replace any existing stroke colors with currentColor (except "none")
-  processedSvg = processedSvg.replace(/stroke="(?!none|currentColor)[^"]*"/g, 'stroke="currentColor"');
-  
-  // Replace any existing fill colors with "none" for outline icons (except when already "none" or "currentColor")
-  processedSvg = processedSvg.replace(/fill="(?!none|currentColor)[^"]*"/g, 'fill="none"');
-  
-  // For elements without stroke attribute, add stroke="currentColor"
-  processedSvg = processedSvg.replace(/<(path|circle|ellipse|rect|polygon|polyline|line)(?![^>]*stroke=)([^>]*?)>/g, 
-    '<$1 stroke="currentColor"$2>');
-  
-  // For elements without fill attribute, add fill="none" 
-  processedSvg = processedSvg.replace(/<(path|circle|ellipse|rect|polygon|polyline)(?![^>]*fill=)([^>]*?)>/g, 
-    '<$1 fill="none"$2>');
-  
-  // Ensure SVG root has proper attributes for theming
-  if (!processedSvg.includes('stroke=') || !processedSvg.includes('currentColor')) {
-    // If no elements have stroke, add it to the SVG root
-    processedSvg = processedSvg.replace(/<svg(?![^>]*stroke=)([^>]*?)>/g, 
-      '<svg stroke="currentColor" fill="none"$1>');
+  // First, replace any existing color attributes
+  let processedSvg = svg
+    .replace(/stroke="(?!none)[^"]*"/g, 'stroke="currentColor"')
+    .replace(/fill="(?!none)[^"]*"/g, 'fill="currentColor"');
+    
+  // For outline SVGs without explicit stroke attributes, add stroke="currentColor"
+  // This handles Ikonate icons which are pure outline SVGs
+  if (!processedSvg.includes('stroke=') && !processedSvg.includes('fill=')) {
+    // Check if this appears to be an outline icon (has path elements)
+    if (processedSvg.includes('<path')) {
+      // Add stroke="currentColor" and stroke-width to path elements for outline icons
+      processedSvg = processedSvg.replace(/<path(?![^>]*stroke=)([^>]*)>/g, '<path$1 stroke="currentColor" fill="none">');
+      // Also handle other shape elements for outline icons
+      processedSvg = processedSvg.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*stroke=)([^>]*)>/g, '<$1$2 stroke="currentColor" fill="none">');
+    }
   }
   
   return processedSvg;
