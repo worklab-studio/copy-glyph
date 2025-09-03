@@ -8,6 +8,13 @@ import { CategoryFilter } from "@/components/CategoryFilter";
 import { IconCustomizationProvider, useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { type IconItem } from "@/types/icon";
 import { toast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+import { ColorPicker } from "@/components/color-picker";
+import { StrokeSlider } from "@/components/stroke-slider";
+import { Download, Copy, Palette } from "lucide-react";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { renderToStaticMarkup } from "react-dom/server";
 import { featherIcons } from "@/data/feather-icons";
 import { phosphorIcons } from "@/data/phosphor-icons";
 import { lucideIcons } from "@/data/lucide-icons";
@@ -63,6 +70,7 @@ function IconGridPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { customization } = useIconCustomization();
+  const isMobile = useIsMobile();
 
   // Get the selected icon object
   const selectedIcon = useMemo(() => {
@@ -172,13 +180,118 @@ function IconGridPage() {
     setSelectedId(prevId => prevId === icon.id ? null : icon.id);
   };
 
+  // Mobile download handlers
+  const handleMobileDownload = async () => {
+    if (!selectedIcon) {
+      toast({
+        description: "Please select an icon first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      let svgContent = '';
+      if (typeof selectedIcon.svg === 'string') {
+        svgContent = selectedIcon.svg;
+      } else {
+        const IconComponent = selectedIcon.svg as React.ComponentType<any>;
+        const iconProps: any = {
+          size: 24,
+          color: customization.color
+        };
+        
+        if (selectedIcon.style !== 'solid') {
+          iconProps.strokeWidth = customization.strokeWidth;
+        }
+        
+        const element = React.createElement(IconComponent, iconProps);
+        svgContent = renderToStaticMarkup(element);
+      }
+
+      let customizedSVG = svgContent.replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`);
+      
+      if (selectedIcon.style !== 'solid') {
+        customizedSVG = customizedSVG.replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+      }
+
+      const blob = new Blob([customizedSVG], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${selectedIcon.name}.svg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast({
+        description: `${selectedIcon.name}.svg downloaded!`,
+      });
+    } catch (error) {
+      toast({
+        description: "Failed to download SVG",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleMobileCopy = async () => {
+    if (!selectedIcon) {
+      toast({
+        description: "Please select an icon first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      let svgContent = '';
+      if (typeof selectedIcon.svg === 'string') {
+        svgContent = selectedIcon.svg;
+      } else {
+        const IconComponent = selectedIcon.svg as React.ComponentType<any>;
+        const iconProps: any = {
+          size: 24,
+          color: customization.color
+        };
+        
+        if (selectedIcon.style !== 'solid') {
+          iconProps.strokeWidth = customization.strokeWidth;
+        }
+        
+        const element = React.createElement(IconComponent, iconProps);
+        svgContent = renderToStaticMarkup(element);
+      }
+
+      let customizedSVG = svgContent.replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`);
+      
+      if (selectedIcon.style !== 'solid') {
+        customizedSVG = customizedSVG.replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+      }
+
+      await navigator.clipboard.writeText(customizedSVG);
+      toast({
+        description: "SVG copied to clipboard!",
+      });
+    } catch (error) {
+      toast({
+        description: "Failed to copy SVG",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full overflow-hidden">{/* Fixed viewport height */}
-        <AppSidebar 
-          selectedSet={selectedSet}
-          onSetChange={setSelectedSet}
-        />
+        {/* Hide sidebar on mobile */}
+        {!isMobile && (
+          <AppSidebar 
+            selectedSet={selectedSet}
+            onSetChange={setSelectedSet}
+          />
+        )}
         
         <div className="flex-1 flex flex-col h-screen">{/* Fixed layout container */}
           <Header 
@@ -228,7 +341,7 @@ function IconGridPage() {
           </div>
 
           {/* Scrollable main content */}
-          <main className="flex-1 overflow-hidden">
+          <main className={`flex-1 overflow-hidden ${isMobile ? 'pb-20' : ''}`}>
             {displayedIcons.length === 0 ? (
               <div className="flex h-64 items-center justify-center text-center px-6">
                 <div className="space-y-2">
@@ -255,12 +368,63 @@ function IconGridPage() {
             )}
           </main>
           
-          <footer className="border-t p-4 text-center text-xs text-muted-foreground bg-background">
-            <p>Built at Ossian Design Lab • <a href="mailto:support@notionicons.so" className="hover:text-primary">Support</a></p>
-          </footer>
+          {/* Hide footer on mobile */}
+          {!isMobile && (
+            <footer className="border-t p-4 text-center text-xs text-muted-foreground bg-background">
+              <p>Built at Ossian Design Lab • <a href="mailto:support@notionicons.so" className="hover:text-primary">Support</a></p>
+            </footer>
+          )}
         </div>
         
-        <ControlPanel selectedIcon={selectedIcon} />
+        {/* Hide control panel on mobile */}
+        {!isMobile && <ControlPanel selectedIcon={selectedIcon} />}
+        
+        {/* Mobile bottom bar */}
+        {isMobile && (
+          <div className="fixed bottom-0 left-0 right-0 bg-background border-t p-4 flex items-center gap-3 z-50">
+            <Drawer>
+              <DrawerTrigger asChild>
+                <Button variant="outline" size="sm" className="flex-1">
+                  <Palette className="h-4 w-4 mr-2" />
+                  Customize
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <DrawerHeader>
+                  <DrawerTitle>Customize Icon</DrawerTitle>
+                </DrawerHeader>
+                <div className="p-4 space-y-6">
+                  <ColorPicker />
+                  {(!selectedIcon || selectedIcon.style !== 'solid') && (
+                    <StrokeSlider />
+                  )}
+                </div>
+              </DrawerContent>
+            </Drawer>
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleMobileCopy}
+              disabled={!selectedIcon}
+              className="flex-1"
+            >
+              <Copy className="h-4 w-4 mr-2" />
+              Copy
+            </Button>
+            
+            <Button 
+              variant="default" 
+              size="sm" 
+              onClick={handleMobileDownload}
+              disabled={!selectedIcon} 
+              className="flex-1"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Download
+            </Button>
+          </div>
+        )}
       </div>
     </SidebarProvider>
   );
