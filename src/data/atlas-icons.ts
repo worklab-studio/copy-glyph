@@ -9,18 +9,26 @@ export const atlasIcons: IconItem[] = Object.entries(iconMap).map(([key, svg]) =
   // Ensure svg is a string and convert ALL hardcoded colors to currentColor for proper theming
   const svgString = String(svg);
   const themedSvg = svgString
-    // Replace all hex colors in fill attributes
+    // Replace all hex colors in fill attributes (3 and 6 digit)
     .replace(/fill="#[0-9A-Fa-f]{6}"/g, 'fill="currentColor"')
     .replace(/fill="#[0-9A-Fa-f]{3}"/g, 'fill="currentColor"')
-    // Replace all hex colors in stroke attributes  
+    // Replace all hex colors in stroke attributes (3 and 6 digit)
     .replace(/stroke="#[0-9A-Fa-f]{6}"/g, 'stroke="currentColor"')
     .replace(/stroke="#[0-9A-Fa-f]{3}"/g, 'stroke="currentColor"')
-    // Replace specific known colors
-    .replace(/fill="#020202"/g, 'fill="currentColor"')
-    .replace(/fill="#292D32"/g, 'fill="currentColor"')
-    .replace(/stroke="#292D32"/g, 'stroke="currentColor"')
-    // Keep fill="none" as is
-    .replace(/fill="currentColor" stroke="currentColor"/g, 'fill="none" stroke="currentColor"');
+    // Replace hex colors in CSS style attributes
+    .replace(/style="([^"]*?)fill:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, 'style="$1fill: currentColor$2"')
+    .replace(/style="([^"]*?)stroke:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, 'style="$1stroke: currentColor$2"')
+    // Replace hex colors in CSS classes (common in Atlas icons like .cls-1{fill:#020202;})
+    .replace(/<style[^>]*>([^<]*\.cls-\d+[^}]*fill:\s*#[0-9A-Fa-f]{3,6}[^<]*)<\/style>/gi, 
+      (match, content) => match.replace(/#[0-9A-Fa-f]{3,6}/g, 'currentColor'))
+    .replace(/<style[^>]*>([^<]*\.cls-\d+[^}]*stroke:\s*#[0-9A-Fa-f]{3,6}[^<]*)<\/style>/gi, 
+      (match, content) => match.replace(/#[0-9A-Fa-f]{3,6}/g, 'currentColor'))
+    // Replace stop-color in gradients
+    .replace(/stop-color="#[0-9A-Fa-f]{3,6}"/gi, 'stop-color="currentColor"')
+    // Preserve fill="none" and stroke="none" - restore them if they were converted
+    .replace(/fill="currentColor"([^>]*?)stroke="currentColor"/g, 'fill="none"$1stroke="currentColor"')
+    .replace(/fill="currentColor"([^>]*?)stroke="none"/g, 'fill="currentColor"$1stroke="none"')
+    .replace(/fill="none"([^>]*?)stroke="currentColor"/g, 'fill="none"$1stroke="currentColor"');
 
   // Determine category based on key prefix
   let category = 'general';

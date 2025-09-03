@@ -127,19 +127,31 @@ export function IconCell({
       let customizedSVG = svgString
         // Replace all instances of #292D32 (main Iconsax color)
         .replace(/#292D32/gi, customization.color)
+        // Handle Atlas-specific colors
+        .replace(/#020202/gi, customization.color)
         // Handle other common hardcoded colors
         .replace(/#2F2F2F/gi, customization.color)
         .replace(/#333333/gi, customization.color)
         .replace(/#000000/gi, customization.color)
         .replace(/#000/gi, customization.color)
-        // Handle CSS style attributes
-        .replace(/style="([^"]*?)fill:\s*#292D32([^"]*?)"/gi, `style="$1fill: ${customization.color}$2"`)
-        .replace(/style="([^"]*?)stroke:\s*#292D32([^"]*?)"/gi, `style="$1stroke: ${customization.color}$2"`)
-        // Handle stop-color in gradients
-        .replace(/stop-color="#292D32"/gi, `stop-color="${customization.color}"`)
+        // Replace ALL hex colors in attributes
+        .replace(/fill="#[0-9A-Fa-f]{3,6}"/gi, `fill="${customization.color}"`)
+        .replace(/stroke="#[0-9A-Fa-f]{3,6}"/gi, `stroke="${customization.color}"`)
+        // Handle CSS style attributes with any hex colors
+        .replace(/style="([^"]*?)fill:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1fill: ${customization.color}$2"`)
+        .replace(/style="([^"]*?)stroke:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1stroke: ${customization.color}$2"`)
+        // Handle stop-color in gradients with any hex colors
+        .replace(/stop-color="#[0-9A-Fa-f]{3,6}"/gi, `stop-color="${customization.color}"`)
+        // Handle CSS classes within SVG (common in Atlas icons)
+        .replace(/<style[^>]*>([^<]*\.cls-\d+[^}]*fill:\s*#[0-9A-Fa-f]{3,6}[^<]*)<\/style>/gi, 
+          (match, content) => match.replace(/#[0-9A-Fa-f]{3,6}/g, customization.color))
+        .replace(/<style[^>]*>([^<]*\.cls-\d+[^}]*stroke:\s*#[0-9A-Fa-f]{3,6}[^<]*)<\/style>/gi, 
+          (match, content) => match.replace(/#[0-9A-Fa-f]{3,6}/g, customization.color))
         // Handle currentColor replacement for copy (Atlas icons)
         .replace(/stroke="currentColor"/gi, `stroke="${customization.color}"`)
-        .replace(/fill="currentColor"/gi, `fill="${customization.color}"`);
+        .replace(/fill="currentColor"/gi, `fill="${customization.color}"`)
+        // Preserve fill="none" and stroke="none"
+        .replace(new RegExp(`fill="${customization.color}"([^>]*?)stroke="${customization.color}"`, 'gi'), `fill="none"$1stroke="${customization.color}"`);
       
       if (!isSolidIcon) {
         // More comprehensive stroke-width replacement for all icon libraries
@@ -201,19 +213,32 @@ export function IconCell({
       modifiedSvg = modifiedSvg
         // Replace all instances of #292D32 (main Iconsax color) with currentColor
         .replace(/#292D32/gi, 'currentColor')
+        // Handle Atlas-specific colors
+        .replace(/#020202/gi, 'currentColor')
+        .replace(/#020202/gi, 'currentColor')
         // Handle other common hardcoded colors that might exist
         .replace(/#2F2F2F/gi, 'currentColor')
         .replace(/#333333/gi, 'currentColor')
         .replace(/#000000/gi, 'currentColor')
         .replace(/#000/gi, 'currentColor')
-        // Handle CSS style attributes
-        .replace(/style="([^"]*?)fill:\s*#292D32([^"]*?)"/gi, 'style="$1fill: currentColor$2"')
-        .replace(/style="([^"]*?)stroke:\s*#292D32([^"]*?)"/gi, 'style="$1stroke: currentColor$2"')
-        .replace(/style="([^"]*?)fill:\s*#000000([^"]*?)"/gi, 'style="$1fill: currentColor$2"')
-        .replace(/style="([^"]*?)stroke:\s*#000000([^"]*?)"/gi, 'style="$1stroke: currentColor$2"')
-        // Handle stop-color in gradients
-        .replace(/stop-color="#292D32"/gi, 'stop-color="currentColor"')
-        .replace(/stop-color="#000000"/gi, 'stop-color="currentColor"');
+        // Replace ALL 6-digit hex colors in fill and stroke
+        .replace(/fill="#[0-9A-Fa-f]{6}"/gi, 'fill="currentColor"')
+        .replace(/stroke="#[0-9A-Fa-f]{6}"/gi, 'stroke="currentColor"')
+        // Replace ALL 3-digit hex colors in fill and stroke
+        .replace(/fill="#[0-9A-Fa-f]{3}"/gi, 'fill="currentColor"')
+        .replace(/stroke="#[0-9A-Fa-f]{3}"/gi, 'stroke="currentColor"')
+        // Handle CSS style attributes with any hex colors
+        .replace(/style="([^"]*?)fill:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, 'style="$1fill: currentColor$2"')
+        .replace(/style="([^"]*?)stroke:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, 'style="$1stroke: currentColor$2"')
+        // Handle stop-color in gradients with any hex colors
+        .replace(/stop-color="#[0-9A-Fa-f]{3,6}"/gi, 'stop-color="currentColor"')
+        // Handle CSS classes within SVG (common in Atlas icons)
+        .replace(/<style[^>]*>([^<]*\.cls-\d+[^}]*fill:\s*#[0-9A-Fa-f]{3,6}[^<]*)<\/style>/gi, 
+          (match, content) => match.replace(/#[0-9A-Fa-f]{3,6}/g, 'currentColor'))
+        .replace(/<style[^>]*>([^<]*\.cls-\d+[^}]*stroke:\s*#[0-9A-Fa-f]{3,6}[^<]*)<\/style>/gi, 
+          (match, content) => match.replace(/#[0-9A-Fa-f]{3,6}/g, 'currentColor'))
+        // Preserve fill="none" and stroke="none"
+        .replace(/fill="currentColor"([^>]*?)stroke="currentColor"/gi, 'fill="none"$1stroke="currentColor"');
       
       // Apply stroke width to SVG string only for outline icons
       if (!isSolidIcon) {
