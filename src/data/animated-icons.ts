@@ -1,7 +1,7 @@
 import React from 'react';
 import { type IconItem } from "@/types/icon";
 
-// Animated icon components that return SVG elements
+// Animated icon components using proper React/JSX syntax
 const CheckAllIcon = ({ size = 24, color = "currentColor", className = "", ...props }: any) => {
   return React.createElement('svg', {
     xmlns: "http://www.w3.org/2000/svg",
@@ -10,63 +10,40 @@ const CheckAllIcon = ({ size = 24, color = "currentColor", className = "", ...pr
     viewBox: "0 0 24 24",
     className,
     ...props
-  },
-    React.createElement('mask', { id: "check-all-mask" },
-      React.createElement('g', { 
-        fill: "none", 
-        stroke: "#fff", 
-        strokeWidth: "2", 
-        strokeLinecap: "round", 
-        strokeLinejoin: "round" 
+  }, 
+    React.createElement('g', {
+      fill: "none",
+      stroke: color,
+      strokeWidth: "2",
+      strokeLinecap: "round",
+      strokeLinejoin: "round"
+    },
+      React.createElement('path', {
+        d: "M2 13.5l4 4l10.75 -10.75",
+        strokeDasharray: "24",
+        strokeDashoffset: "24"
       },
-        React.createElement('path', {
-          d: "M2 13.5l4 4l10.75 -10.75",
-          strokeDasharray: "24",
-          strokeDashoffset: "24"
-        },
-          React.createElement('animate', {
-            attributeName: "stroke-dashoffset",
-            values: "24;0",
-            dur: "0.4s",
-            fill: "freeze"
-          })
-        ),
-        React.createElement('path', {
-          d: "M7.5 13.5l4 4l10.75 -10.75",
-          stroke: "#000",
-          strokeWidth: "6",
-          strokeDasharray: "24",
-          strokeDashoffset: "24"
-        },
-          React.createElement('animate', {
-            attributeName: "stroke-dashoffset",
-            values: "24;0",
-            begin: "0.4s",
-            dur: "0.4s",
-            fill: "freeze"
-          })
-        ),
-        React.createElement('path', {
-          d: "M7.5 13.5l4 4l10.75 -10.75",
-          strokeDasharray: "24",
-          strokeDashoffset: "24"
-        },
-          React.createElement('animate', {
-            attributeName: "stroke-dashoffset",
-            values: "24;0",
-            begin: "0.4s",
-            dur: "0.4s",
-            fill: "freeze"
-          })
-        )
+        React.createElement('animate', {
+          attributeName: "stroke-dashoffset",
+          values: "24;0",
+          dur: "0.4s",
+          fill: "freeze"
+        })
+      ),
+      React.createElement('path', {
+        d: "M7.5 13.5l4 4l10.75 -10.75",
+        strokeDasharray: "24",
+        strokeDashoffset: "24"
+      },
+        React.createElement('animate', {
+          attributeName: "stroke-dashoffset",
+          values: "24;0",
+          begin: "0.4s",
+          dur: "0.4s",
+          fill: "freeze"
+        })
       )
-    ),
-    React.createElement('rect', {
-      mask: "url(#check-all-mask)",
-      width: "24",
-      height: "24",
-      fill: color
-    })
+    )
   );
 };
 
@@ -181,31 +158,22 @@ const UploadLoopIcon = ({ size = 24, color = "currentColor", className = "", ...
       strokeLinejoin: "round"
     },
       React.createElement('path', {
-        d: "M12 15h2v-6h2.5l-4.5 -4.5M12 15h-2v-6h-2.5l4.5 -4.5",
-        fill: color,
-        fillOpacity: "0",
+        d: "M12 15v-6m0 0l-3 3m3-3l3 3",
         strokeDasharray: "20",
         strokeDashoffset: "20"
       },
-        React.createElement('animate', {
-          attributeName: "d",
-          values: "M12 15h2v-6h2.5l-4.5 -4.5M12 15h-2v-6h-2.5l4.5 -4.5;M12 15h2v-3h2.5l-4.5 -4.5M12 15h-2v-3h-2.5l4.5 -4.5;M12 15h2v-6h2.5l-4.5 -4.5M12 15h-2v-6h-2.5l4.5 -4.5",
-          begin: "0.5s",
-          dur: "1.5s",
-          repeatCount: "indefinite"
-        }),
-        React.createElement('animate', {
-          attributeName: "fill-opacity",
-          values: "0;1",
-          begin: "0.7s",
-          dur: "0.5s",
-          fill: "freeze"
-        }),
         React.createElement('animate', {
           attributeName: "stroke-dashoffset",
           values: "20;0",
           dur: "0.4s",
           fill: "freeze"
+        }),
+        React.createElement('animate', {
+          attributeName: "d",
+          values: "M12 15v-6m0 0l-3 3m3-3l3 3;M12 15v-3m0 0l-3 3m3-3l3 3;M12 15v-6m0 0l-3 3m3-3l3 3",
+          begin: "0.5s",
+          dur: "1.5s",
+          repeatCount: "indefinite"
         })
       ),
       React.createElement('path', {
@@ -234,39 +202,35 @@ const HeartTwotoneIcon = ({ size = 24, color = "currentColor", className = "", .
     className,
     ...props
   },
-    React.createElement('g', { fill: color },
-      React.createElement('path', {
-        d: "M12 8c0 0 0 0 0.76 -1c0.88 -1.16 2.18 -2 3.74 -2c2.49 0 4.5 2.01 4.5 4.5c0 0.93 -0.28 1.79 -0.76 2.5c-0.81 1.21 -8.24 9 -8.24 9c0 0 -7.43 -7.79 -8.24 -9c-0.48 -0.71 -0.76 -1.57 -0.76 -2.5c0 -2.49 2.01 -4.5 4.5 -4.5c1.56 0 2.87 0.84 3.74 2c0.76 1 0.76 1 0.76 1Z",
-        fillOpacity: "0"
-      },
-        React.createElement('animate', {
-          attributeName: "fill-opacity",
-          values: "0;0.3",
-          begin: "0.7s",
-          dur: "0.15s",
-          fill: "freeze"
-        })
-      )
+    React.createElement('path', {
+      d: "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z",
+      fill: color,
+      fillOpacity: "0"
+    },
+      React.createElement('animate', {
+        attributeName: "fill-opacity",
+        values: "0;0.3",
+        begin: "0.7s",
+        dur: "0.15s",
+        fill: "freeze"
+      })
     ),
-    React.createElement('g', {
+    React.createElement('path', {
+      d: "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z",
       fill: "none",
       stroke: color,
       strokeWidth: "2",
       strokeLinecap: "round",
-      strokeLinejoin: "round"
+      strokeLinejoin: "round",
+      strokeDasharray: "32",
+      strokeDashoffset: "32"
     },
-      React.createElement('path', {
-        d: "M12 8c0 0 0 0 -0.76 -1c-0.88 -1.16 -2.18 -2 -3.74 -2c-2.49 0 -4.5 2.01 -4.5 4.5c0 0.93 0.28 1.79 0.76 2.5c0.81 1.21 8.24 9 8.24 9M12 8c0 0 0 0 0.76 -1c0.88 -1.16 2.18 -2 3.74 -2c2.49 0 4.5 2.01 4.5 4.5c0 0.93 -0.28 1.79 -0.76 2.5c-0.81 1.21 -8.24 9 -8.24 9",
-        strokeDasharray: "32",
-        strokeDashoffset: "32"
-      },
-        React.createElement('animate', {
-          attributeName: "stroke-dashoffset",
-          values: "32;0",
-          dur: "0.7s",
-          fill: "freeze"
-        })
-      )
+      React.createElement('animate', {
+        attributeName: "stroke-dashoffset",
+        values: "32;0",
+        dur: "0.7s",
+        fill: "freeze"
+      })
     )
   );
 };
@@ -280,19 +244,18 @@ const HomeTwotoneIcon = ({ size = 24, color = "currentColor", className = "", ..
     className,
     ...props
   },
-    React.createElement('g', { fill: color },
-      React.createElement('path', {
-        d: "M10 13h4v8h-4Z",
-        fillOpacity: "0"
-      },
-        React.createElement('animate', {
-          attributeName: "fill-opacity",
-          values: "0;0.3",
-          begin: "1.1s",
-          dur: "0.15s",
-          fill: "freeze"
-        })
-      )
+    React.createElement('path', {
+      d: "M10 13h4v8h-4Z",
+      fill: color,
+      fillOpacity: "0"
+    },
+      React.createElement('animate', {
+        attributeName: "fill-opacity",
+        values: "0;0.3",
+        begin: "1.1s",
+        dur: "0.15s",
+        fill: "freeze"
+      })
     ),
     React.createElement('g', {
       fill: "none",
