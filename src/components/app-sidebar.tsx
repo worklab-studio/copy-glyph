@@ -86,6 +86,12 @@ const activeLibraries = [{
   count: iconsaxIcons.length,
   icon: Crown,
   hasVariants: false
+}, {
+  name: "Atlas",
+  id: "atlas",
+  count: atlasIcons.length,
+  icon: Map,
+  hasVariants: false
 }];
 
 // Placeholder icon library sets (not implemented yet)
