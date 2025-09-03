@@ -105,9 +105,34 @@ function isValidSvg(svgContent: string): boolean {
   return true;
 }
 
+// Check if an SVG can respond to color changes
+function canChangeColor(svgContent: string): boolean {
+  // Test if the SVG contains colorable elements
+  const hasColorableContent = 
+    svgContent.includes('#292D32') || // Main Iconsax color
+    svgContent.includes('#2F2F2F') ||
+    svgContent.includes('#333333') ||
+    svgContent.includes('fill=') ||
+    svgContent.includes('stroke=') ||
+    svgContent.includes('currentColor') ||
+    /style="[^"]*(?:fill|stroke)/.test(svgContent);
+  
+  // Reject icons with complex gradients or patterns that won't work with simple color replacement
+  const hasComplexStructures = 
+    svgContent.includes('<defs>') ||
+    svgContent.includes('<linearGradient>') ||
+    svgContent.includes('<radialGradient>') ||
+    svgContent.includes('<pattern>') ||
+    svgContent.includes('<mask>') ||
+    svgContent.includes('<clipPath>');
+  
+  // Accept if it has colorable content and no complex structures
+  return hasColorableContent && !hasComplexStructures;
+}
+
 // Transform the iconMap into IconItem array
 export const iconsaxIcons: IconItem[] = Object.entries(iconMap)
-  .filter(([_, svgContent]) => isValidSvg(svgContent))
+  .filter(([_, svgContent]) => isValidSvg(svgContent) && canChangeColor(svgContent))
   .map(([iconName, svgContent]: [string, string]) => {
     const category = parseIconCategory(iconName);
     const style = parseIconStyle(iconName);
