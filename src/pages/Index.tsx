@@ -107,7 +107,8 @@ function IconGridPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="px-6 py-6 md:px-6 space-y-6">
+      {/* Fixed header for mobile, normal for desktop */}
+      <div className={`px-6 py-6 md:px-6 space-y-6 bg-background ${isMobile ? 'fixed top-0 left-0 right-0 z-40 border-b border-border/30' : ''}`}>
         <div className="space-y-2">
           <h1 className="text-3xl font-bold">Icon Browser</h1>
           <p className="text-muted-foreground">
@@ -117,7 +118,8 @@ function IconGridPage() {
         </div>
       </div>
       
-      <div className={`px-0 md:px-6 ${isMobile ? 'pb-20' : ''}`}>
+      {/* Content area with top padding on mobile to account for fixed header */}
+      <div className={`px-0 md:px-6 ${isMobile ? 'pt-32 pb-20' : ''}`}>
         <IconGrid
           items={lucideIcons}
           selectedId={selectedId}
