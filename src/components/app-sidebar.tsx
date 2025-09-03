@@ -11,9 +11,10 @@ import { boxicons } from "@/data/boxicons";
 import cssGgIcons from "@/data/css-gg-icons";
 import { animatedIcons } from "@/data/animated-icons";
 import { iconsaxIcons } from "@/data/iconsax-icons";
+import atlasIcons from "@/data/atlas-icons";
 
 // Calculate total icons count
-const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length + iconsaxIcons.length;
+const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length + iconsaxIcons.length + atlasIcons.length;
 
 // Fixed top navigation items  
 const topNavItems = [{
@@ -84,6 +85,12 @@ const activeLibraries = [{
   count: iconsaxIcons.length,
   icon: Crown,
   hasVariants: false
+}, {
+  name: "Atlas",
+  id: "atlas",
+  count: atlasIcons.length,
+  icon: Map,
+  hasVariants: false
 }];
 
 // Placeholder icon library sets (not implemented yet)
@@ -92,11 +99,6 @@ const placeholderLibraries = [{
   id: "untitled-ui",
   count: 2400,
   icon: Layers
-}, {
-  name: "Atlas",
-  id: "atlas",
-  count: 1800,
-  icon: Map
 }, {
   name: "Majesticons",
   id: "majesticons",
