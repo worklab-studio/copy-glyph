@@ -89,6 +89,9 @@ function IconGridPage() {
     if (selectedSet === "css-gg") {
       return filteredIcons.filter(icon => icon.id.startsWith('css-gg-'));
     }
+    if (selectedSet === "iconsax") {
+      return filteredIcons.filter(icon => icon.id.startsWith('iconsax-'));
+    }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
 

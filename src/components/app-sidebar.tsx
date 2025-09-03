@@ -77,6 +77,12 @@ const activeLibraries = [{
   count: cssGgIcons.length,
   icon: Code2,
   hasVariants: false
+}, {
+  name: "Iconsax",
+  id: "iconsax",
+  count: iconsaxIcons.length,
+  icon: Crown,
+  hasVariants: false
 }];
 
 // Placeholder icon library sets (not implemented yet)
