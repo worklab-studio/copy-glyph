@@ -71,8 +71,9 @@ interface AppSidebarProps {
 
 export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
   return (
-    <Sidebar className="border-r">
-      <SidebarHeader>
+    <Sidebar className="border-r flex flex-col">
+      {/* Fixed Header - Logo Area */}
+      <SidebarHeader className="flex-shrink-0">
         <div className="px-3 py-2">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
@@ -88,8 +89,8 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
-        {/* All Icons */}
+      {/* Fixed Browse Section */}
+      <div className="flex-shrink-0 px-3">
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Browse
@@ -116,9 +117,11 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
         <SidebarSeparator />
+      </div>
 
+      {/* Scrollable Content Area */}
+      <SidebarContent className="flex-1 overflow-y-auto">
         {/* Available Libraries */}
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
