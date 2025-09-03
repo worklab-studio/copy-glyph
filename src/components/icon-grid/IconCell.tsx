@@ -123,9 +123,9 @@ export function IconCell({
         svgString = renderToStaticMarkup(element);
       }
 
-      // Apply current customizations to the SVG (skip stroke-width for solid icons)
-      let customizedSVG = svgString.replace(/<path([^>]*)\sstroke="[^"]*"([^>]*)/g, `<path$1 stroke="${customization.color}"$2`);
-      customizedSVG = customizedSVG.replace(/<path([^>]*)\sfill="[^"]*"([^>]*)/g, `<path$1 fill="${customization.color}"$2`);
+      // Apply current customizations to the SVG - replace hardcoded Iconsax colors
+      let customizedSVG = svgString.replace(/fill="#292D32"/g, `fill="${customization.color}"`);
+      customizedSVG = customizedSVG.replace(/stroke="#292D32"/g, `stroke="${customization.color}"`);
       
       if (!isSolidIcon) {
         customizedSVG = customizedSVG.replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
@@ -176,8 +176,12 @@ export function IconCell({
     const isAnimatedIcon = icon.style === 'animated';
     
     if (typeof icon.svg === 'string') {
-      // For SVG strings, we need to modify the stroke-width attribute
+      // For SVG strings, we need to modify the stroke-width attribute and colors
       let modifiedSvg = icon.svg;
+      
+      // Replace hardcoded Iconsax colors with currentColor for display
+      modifiedSvg = modifiedSvg.replace(/fill="#292D32"/g, 'fill="currentColor"');
+      modifiedSvg = modifiedSvg.replace(/stroke="#292D32"/g, 'stroke="currentColor"');
       
       // Apply stroke width to SVG string only for outline icons
       if (!isSolidIcon) {
