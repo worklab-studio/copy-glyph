@@ -94,6 +94,9 @@ function IconGridPage() {
     if (selectedSet === "iconsax") {
       return filteredIcons.filter(icon => icon.id.startsWith('iconsax-'));
     }
+    if (selectedSet === "atlas") {
+      return filteredIcons.filter(icon => icon.id.startsWith('atlas-'));
+    }
     return []; // Other sets not implemented yet
   }, [selectedSet, filteredIcons]);
 
@@ -178,7 +181,8 @@ function IconGridPage() {
                      selectedSet === "remix" ? "Remix Icons" :
                      selectedSet === "boxicons" ? "Boxicons" :
                      selectedSet === "css-gg" ? "CSS.GG Icons" :
-                      selectedSet === "iconsax" ? "Iconsax Icons" :
+                     selectedSet === "iconsax" ? "Iconsax Icons" :
+                      selectedSet === "atlas" ? "Atlas Icons" :
                       selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)}
                   </h2>
                   <p className="text-sm text-muted-foreground">
