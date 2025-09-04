@@ -1,6 +1,6 @@
 import React, { useRef, useMemo } from "react";
 import { type IconGridProps } from "@/types/icon";
-import { IconCellSimple } from "./IconCell.simple";
+import { IconCell } from "./IconCell";
 import { useVirtualGrid } from "./useVirtualGrid";
 import { getGridAriaLabel } from "@/lib/a11y";
 import { cn } from "@/lib/utils";
@@ -10,7 +10,7 @@ export function IconGrid({
   selectedId,
   onCopy,
   onIconClick,
-  color = "#666",
+  color = "currentColor",
   strokeWidth = 1.5,
   ariaLabel,
 }: IconGridProps) {
@@ -25,13 +25,12 @@ export function IconGrid({
     return ariaLabel || getGridAriaLabel(items.length);
   }, [ariaLabel, items.length]);
 
-  // Enhanced smooth scrolling container
+  // Enhanced smooth scrolling container with consistent styling
   return (
     <div 
       ref={containerRef}
       className={cn(
-        "w-full h-full overflow-auto",
-        "virtual-grid-container smooth-scroll scroll-optimized"
+        "h-full overflow-y-auto overflow-x-hidden"
       )}
       role="grid"
       aria-label={computedAriaLabel}
@@ -63,39 +62,31 @@ export function IconGrid({
                   width: '100%',
                   height: `${virtualItem.size}px`,
                   transform: `translateY(${virtualItem.start}px)`,
-                  display: 'grid',
-                  gridTemplateColumns: `repeat(${columnsCount}, 80px)`,
-                  justifyContent: 'start',
-                  gap: 0,
                 }}
+                className=""
               >
-                {row.map((icon) => (
-                  <IconCellSimple
-                    key={icon.id}
-                    icon={icon}
-                    isSelected={icon.id === selectedId}
-                    color={color}
-                    strokeWidth={strokeWidth}
-                    onCopy={onCopy}
-                    onIconClick={onIconClick}
-                  />
-                ))}
+                <div className="grid min-w-0 gap-0" style={{ gridTemplateColumns: `repeat(${columnsCount}, minmax(0, 1fr))`, height: '80px' }}>
+                  {row.map((icon) => (
+                    <IconCell
+                      key={icon.id}
+                      icon={icon}
+                      isSelected={icon.id === selectedId}
+                      color={color}
+                      strokeWidth={strokeWidth}
+                      onCopy={onCopy}
+                      onIconClick={onIconClick}
+                    />
+                  ))}
+                </div>
               </div>
             );
           })}
         </div>
       ) : (
         // Simple grid for smaller lists
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, 80px)',
-            justifyContent: 'start',
-            gap: 0,
-          }}
-        >
+        <div className="grid min-w-0 gap-0" style={{ gridTemplateColumns: `repeat(${columnsCount}, minmax(0, 1fr))` }}>
           {items.map((icon) => (
-            <IconCellSimple
+            <IconCell
               key={icon.id}
               icon={icon}
               isSelected={selectedId === icon.id}
