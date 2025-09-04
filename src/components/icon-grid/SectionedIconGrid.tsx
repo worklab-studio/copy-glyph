@@ -26,8 +26,8 @@ export function SectionedIconGrid({
   const [containerWidth, setContainerWidth] = useState(0);
   const [scrollTop, setScrollTop] = useState(0);
 
-  // Calculate columns to fit container width without gaps (minimum 60px per icon)
-  const columnsCount = Math.floor(Math.max(containerWidth, 320) / 60) || 4;
+  // Calculate columns to fit container width without gaps (minimum 80px per icon)
+  const columnsCount = containerWidth > 0 ? Math.floor(Math.max(containerWidth, 320) / 80) || 4 : 4;
 
   // Update container width and track scroll
   useEffect(() => {
@@ -152,7 +152,7 @@ export function SectionedIconGrid({
       
       <div
         ref={containerRef}
-        className="h-full overflow-auto"
+        className="h-full overflow-y-auto overflow-x-hidden"
         role="grid"
         aria-label={computedAriaLabel}
       >
@@ -208,7 +208,7 @@ export function SectionedIconGrid({
                   }}
                   className=""
                 >
-                  <div className="grid h-full" style={{ gridTemplateColumns: `repeat(${columnsCount}, 1fr)` }}>
+                  <div className="grid h-full min-w-0" style={{ gridTemplateColumns: `repeat(${columnsCount}, minmax(0, 1fr))` }}>
                     {item.icons.map((icon) => (
                       <IconCell
                         key={icon.id}
