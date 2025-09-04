@@ -13,7 +13,9 @@ export const loadTablerIcons = () => import('./tabler-icons').then(m => m.tabler
 export const loadRemixIcons = () => import('./remix-icons').then(m => m.remixIcons);
 export const loadPhosphorIcons = () => import('./phosphor-icons').then(m => m.phosphorIcons);
 export const loadSolarIcons = () => import('./solar-icons').then(m => m.solarIcons);
-export const loadIconsaxIcons = () => import('./iconsax-icons').then(m => m.iconsaxIcons);
+export const loadIconnoirIcons = () => import('./iconnoir-icons').then(m => m.iconnoirIcons);
+export const loadTeenyIcons = () => import('./teeny-icons').then(m => m.teenyIcons);
+export const loadAntIcons = () => import('./ant-icons').then(m => m.antIcons);
 
 // Static libraries (loaded immediately)
 export { lucideIcons } from './lucide-icons';

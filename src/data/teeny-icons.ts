@@ -1,5 +1,5 @@
-import { IconItem } from '../types/icon';
-import { iconMap } from '../../Teeny Icons';
+import { type IconItem } from '@/types/icon';
+import { iconMap } from './raw/teeny-icons-raw';
 
 const categorizeIcon = (key: string): string => {
   const lowerKey = key.toLowerCase();

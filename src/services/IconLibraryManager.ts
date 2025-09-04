@@ -50,10 +50,6 @@ class IconLibraryManager {
           const materialModule = await import('@/data/material-icons');
           return materialModule.materialIcons;
         
-        case 'atlas':
-          const atlasModule = await import('@/data/atlas-icons');
-          return atlasModule.atlasIcons;
-        
         case 'lucide':
           const lucideModule = await import('@/data/lucide-icons');
           return lucideModule.lucideIcons;
@@ -90,18 +86,6 @@ class IconLibraryManager {
           const cssGgModule = await import('@/data/css-gg-icons');
           return cssGgModule.default;
         
-        case 'iconsax':
-          const iconsaxModule = await import('@/data/iconsax-icons');
-          return iconsaxModule.iconsaxIcons;
-        
-        case 'line':
-          const lineModule = await import('@/data/line-icons');
-          return lineModule.lineIcons;
-        
-        case 'pixelart':
-          const pixelartModule = await import('@/data/pixelart-icons');
-          return pixelartModule.pixelartIcons;
-        
         case 'teeny':
           const teenyModule = await import('@/data/teeny-icons');
           return teenyModule.teenyIcons;
@@ -117,10 +101,6 @@ class IconLibraryManager {
         case 'iconnoir':
           const iconnoirModule = await import('@/data/iconnoir-icons');
           return iconnoirModule.iconnoirIcons;
-        
-        case 'octicons':
-          const octiconsModule = await import('@/data/octicons-icons');
-          return octiconsModule.octiconsIcons;
         
         case 'radix':
           const radixModule = await import('@/data/radix-icons');

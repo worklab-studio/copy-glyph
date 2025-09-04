@@ -81,6 +81,42 @@ export const ICON_LIBRARIES: Record<string, IconLibraryConfig> = {
     style: 'mixed',
     priority: 60,
     source: 'dynamic'
+  },
+  iconnoir: {
+    id: 'iconnoir',
+    name: 'IconNoir',
+    description: 'High quality SVG icons',
+    count: 1671,
+    style: 'outline',
+    priority: 55,
+    source: 'dynamic'
+  },
+  solar: {
+    id: 'solar',
+    name: 'Solar Icons',
+    description: 'Bold, outline and broken icons',
+    count: 7000,
+    style: 'mixed',
+    priority: 50,
+    source: 'dynamic'
+  },
+  teeny: {
+    id: 'teeny',
+    name: 'Teeny Icons',
+    description: 'Tiny minimal SVG icons',
+    count: 360,
+    style: 'outline',
+    priority: 45,
+    source: 'dynamic'
+  },
+  ant: {
+    id: 'ant',
+    name: 'Ant Design',
+    description: 'Enterprise-class UI design icons',
+    count: 789,
+    style: 'mixed',
+    priority: 40,
+    source: 'dynamic'
   }
 };
 
