@@ -50,10 +50,13 @@ function IconGridPage() {
     }
   }, [selectedSet, loadLibrary, loadAllLibraries]);
 
-  // Index loaded icons for search
+  // Index loaded icons for search - with error handling
   useEffect(() => {
     if (loaded && icons.length > 0 && searchReady) {
-      indexLibrary(selectedSet, icons).catch(console.error);
+      indexLibrary(selectedSet, icons).catch(error => {
+        console.error('Failed to index icons for search:', error);
+        // Search will fall back to client-side search automatically
+      });
     }
   }, [loaded, icons, searchReady, selectedSet, indexLibrary]);
 

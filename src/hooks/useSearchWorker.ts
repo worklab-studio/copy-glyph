@@ -138,7 +138,7 @@ export function useSearchWorker(): SearchWorkerHook {
     });
   }, [isReady]);
 
-  // Index library function
+  // Index library function - only send serializable data to worker
   const indexLibrary = useCallback(async (libraryId: string, icons: IconItem[]): Promise<void> => {
     if (!workerRef.current || !isReady) {
       return Promise.resolve();
@@ -148,11 +148,24 @@ export function useSearchWorker(): SearchWorkerHook {
       const key = `index-${libraryId}`;
       pendingCallbacks.current.set(key, { resolve, reject });
       
-      // Send index message
+      // Filter out React components and only send serializable data
+      const serializableIcons = icons
+        .filter(icon => icon.svg) // Only include icons with valid svg
+        .map(icon => ({
+          id: icon.id,
+          name: icon.name,
+          tags: icon.tags || [],
+          category: icon.category || '',
+          style: icon.style,
+          // Only include svg if it's a string, not a React component
+          svg: typeof icon.svg === 'string' ? icon.svg : 'component'
+        }));
+      
+      // Send index message with serializable data only
       workerRef.current!.postMessage({
         type: 'index',
         libraryId,
-        icons
+        icons: serializableIcons
       });
 
       // Set timeout

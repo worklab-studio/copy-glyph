@@ -59,10 +59,14 @@ class IconLibraryManager {
     setTimeout(() => this.preloadPopularLibraries(), 1000);
     
     // Clean up old cache entries on startup
+    this.clearOldCacheEntries();
     this.cleanupExpiredCache();
     
     // Set up periodic cache cleanup
-    setInterval(() => this.cleanupExpiredCache(), 5 * 60 * 1000); // Every 5 minutes
+    setInterval(() => {
+      this.clearOldCacheEntries();
+      this.cleanupExpiredCache();
+    }, 5 * 60 * 1000); // Every 5 minutes
   }
 
   // Dynamic import functions for each library
@@ -309,19 +313,87 @@ class IconLibraryManager {
     return Date.now() - cached.timestamp > CACHE_EXPIRY_MS;
   }
 
-  // LocalStorage cache
+  // LocalStorage cache with size management
   private saveToLocalStorage(libraryId: string, icons: IconItem[]) {
     try {
+      // Don't cache large icon libraries with React components - only cache metadata
+      if (icons.length > 100) {
+        console.log(`Skipping localStorage cache for large library: ${libraryId} (${icons.length} icons)`);
+        return;
+      }
+      
+      // Create lightweight version without React components
+      const lightweightIcons = icons.map(icon => ({
+        id: icon.id,
+        name: icon.name,
+        tags: icon.tags,
+        category: icon.category,
+        style: icon.style,
+        // Only store string SVGs, not React components
+        svg: typeof icon.svg === 'string' ? icon.svg : null
+      }));
+      
       const data = {
-        icons,
+        icons: lightweightIcons,
         timestamp: Date.now(),
         accessCount: 1,
         lastAccessed: Date.now()
       };
-      localStorage.setItem(CACHE_KEY_PREFIX + libraryId, JSON.stringify(data));
+      
+      const serialized = JSON.stringify(data);
+      if (serialized.length < 2 * 1024 * 1024) { // 2MB limit
+        localStorage.setItem(CACHE_KEY_PREFIX + libraryId, serialized);
+      } else {
+        console.warn(`Data too large to cache: ${libraryId} (${(serialized.length / 1024 / 1024).toFixed(2)}MB)`);
+      }
     } catch (error) {
-      // Ignore localStorage errors (quota exceeded, etc.)
       console.warn('Failed to save to localStorage:', error);
+      // Try to clear some space by removing old cache entries
+      this.clearOldCacheEntries();
+    }
+  }
+
+  private clearOldCacheEntries() {
+    try {
+      // Remove expired entries first
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key?.startsWith(CACHE_KEY_PREFIX)) {
+          try {
+            const data = JSON.parse(localStorage.getItem(key) || '');
+            if (Date.now() - data.timestamp > CACHE_EXPIRY_MS) {
+              localStorage.removeItem(key);
+            }
+          } catch {
+            localStorage.removeItem(key);
+          }
+        }
+      }
+      
+      // If still over quota, remove least recently used entries
+      const cacheEntries: { key: string; lastAccessed: number }[] = [];
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key?.startsWith(CACHE_KEY_PREFIX)) {
+          try {
+            const data = JSON.parse(localStorage.getItem(key) || '');
+            cacheEntries.push({ key, lastAccessed: data.lastAccessed || 0 });
+          } catch {
+            localStorage.removeItem(key);
+          }
+        }
+      }
+      
+      // Sort by last accessed and remove oldest if we have too many entries
+      cacheEntries.sort((a, b) => a.lastAccessed - b.lastAccessed);
+      while (cacheEntries.length > 5) { // Keep only 5 most recent libraries
+        const oldest = cacheEntries.shift();
+        if (oldest) {
+          localStorage.removeItem(oldest.key);
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to clear old cache entries:', error);
     }
   }
 
