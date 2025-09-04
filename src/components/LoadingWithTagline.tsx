@@ -52,15 +52,15 @@ const LoadingWithTagline: React.FC<LoadingWithTaglineProps> = ({
   }, [minDuration, onMinDurationComplete]);
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-6">
+    <div className="flex flex-col items-center justify-center space-y-3">
       <DotLottieReact
         src="https://lottie.host/48a3d687-d94b-4ef9-aa77-049a95f15af7/O2PsD2POjh.lottie"
         loop
         autoplay
         className="w-32 h-32"
       />
-      <div className="text-center space-y-2">
-        <h1 className="text-2xl font-bold text-primary">
+      <div className="text-center space-y-1">
+        <h1 className="text-lg font-bold text-primary">
           Iconstack
         </h1>
         <p className="text-lg font-medium text-muted-foreground animate-fade-in">
