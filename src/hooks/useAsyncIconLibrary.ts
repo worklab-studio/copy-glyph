@@ -144,22 +144,23 @@ export function useAsyncIconLibrary(): UseAsyncIconLibraryReturn {
 
   // Load all libraries sectioned progressively
   const loadAllLibrariesSectionedProgressive = useCallback(async () => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
+    // Start with loaded: true immediately for instant display
+    setState(prev => ({ ...prev, loading: false, error: null, loaded: true }));
     
     try {
       const { initialSections, loadRemaining } = await iconLibraryManager.loadAllLibrariesSectionedProgressive(120);
       // Also create flat array for search compatibility
       const initialIcons = initialSections.flatMap(section => section.icons);
       
-      // Show initial batch immediately
-      setState({
+      // Show initial batch immediately (no loading state)
+      setState(prev => ({
+        ...prev,
         icons: initialIcons,
         sections: initialSections,
-        loading: false,
         backgroundLoading: true,
         error: null,
         loaded: true
-      });
+      }));
 
       // Load remaining sections in background
       const allSections = await loadRemaining();
