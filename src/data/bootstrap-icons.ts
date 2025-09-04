@@ -34,7 +34,9 @@ const getCategoryFromName = (name: string): string => {
   return 'general';
 };
 
-export const bootstrapIcons: IconItem[] = bootstrapIconNames.map(name => {
+import { sortIconsByStyleThenName } from '@/lib/icon-utils';
+
+const rawBootstrapIcons: IconItem[] = bootstrapIconNames.map(name => {
   const IconComponent = BootstrapIcons[name as keyof typeof BootstrapIcons];
   const category = getCategoryFromName(name);
   
@@ -83,3 +85,5 @@ export const bootstrapIcons: IconItem[] = bootstrapIconNames.map(name => {
     tags: [...new Set(tags)] // Remove duplicates
   };
 });
+
+export const bootstrapIcons: IconItem[] = sortIconsByStyleThenName(rawBootstrapIcons);

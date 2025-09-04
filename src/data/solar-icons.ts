@@ -1,5 +1,6 @@
 import { type IconItem } from "@/types/icon";
 import { iconMap } from "../../solar";
+import { sortIconsByStyleThenName } from '@/lib/icon-utils';
 
 function formatIconName(key: string): string {
   // Remove svg prefix and convert to readable name
@@ -70,7 +71,7 @@ function generateTags(key: string, name: string, category: string): string[] {
   return [...new Set(tags)]; // Remove duplicates
 }
 
-export const solarIcons: IconItem[] = Object.entries(iconMap).map(([key, svgString]) => {
+const rawSolarIcons: IconItem[] = Object.entries(iconMap).map(([key, svgString]) => {
   const name = formatIconName(key);
   const category = determineCategory(key);
   const style = determineStyle(key);
@@ -86,3 +87,5 @@ export const solarIcons: IconItem[] = Object.entries(iconMap).map(([key, svgStri
     category,
   };
 });
+
+export const solarIcons: IconItem[] = sortIconsByStyleThenName(rawSolarIcons);

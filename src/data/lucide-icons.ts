@@ -1,5 +1,6 @@
 import { icons } from 'lucide-react';
 import { type IconItem } from '@/types/icon';
+import { sortIconsByStyleThenName } from '@/lib/icon-utils';
 
 // Category mapping for Lucide icons
 const getCategoryFromName = (name: string): string => {
@@ -24,7 +25,7 @@ const getCategoryFromName = (name: string): string => {
   return 'general';
 };
 
-export const lucideIcons: IconItem[] = Object.entries(icons).map(([name, IconComponent]) => {
+const rawLucideIcons: IconItem[] = Object.entries(icons).map(([name, IconComponent]) => {
   const category = getCategoryFromName(name);
   
   // Add tags based on icon name patterns
@@ -53,3 +54,5 @@ export const lucideIcons: IconItem[] = Object.entries(icons).map(([name, IconCom
     tags: [...new Set(tags)]
   };
 });
+
+export const lucideIcons: IconItem[] = sortIconsByStyleThenName(rawLucideIcons);

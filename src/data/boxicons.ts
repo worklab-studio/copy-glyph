@@ -1,12 +1,13 @@
 import { type IconItem } from "@/types/icon";
 import * as BiIcons from "react-icons/bi";
+import { sortIconsByStyleThenName } from '@/lib/icon-utils';
 
 // Get all Boxicons dynamically
 const boxiconsEntries = Object.entries(BiIcons).filter(([name]) => 
   name.startsWith('Bi') && name !== 'BiIconsProps'
 );
 
-export const boxicons: IconItem[] = boxiconsEntries.map(([name, Component]) => {
+const rawBoxicons: IconItem[] = boxiconsEntries.map(([name, Component]) => {
   // Convert PascalCase to kebab-case for search tags
   const kebabName = name.replace(/([A-Z])/g, '-$1').toLowerCase().slice(3); // Remove 'bi-' prefix
   
@@ -54,13 +55,22 @@ export const boxicons: IconItem[] = boxiconsEntries.map(([name, Component]) => {
     'bi'
   ].filter(tag => tag.length > 1);
 
+  // Determine style based on icon name pattern
+  let style = 'outline'; // Default for BoxIcons regular icons
+  if (name.toLowerCase().includes('solid') || name.endsWith('S')) {
+    style = 'solid';
+  }
+
   return {
     id: `boxicons-${kebabName}`,
     name: name.slice(2), // Remove 'Bi' prefix for display name
     svg: Component,
+    style,
     tags,
     category,
   };
 });
+
+export const boxicons: IconItem[] = sortIconsByStyleThenName(rawBoxicons);
 
 export default boxicons;

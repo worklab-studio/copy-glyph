@@ -1,5 +1,6 @@
 import { type IconItem } from '@/types/icon';
 import { iconMap } from '../../Material';
+import { sortIconsByStyleThenName } from '@/lib/icon-utils';
 
 // Material Design Icons data - Complete set imported from Material.ts
 
@@ -97,4 +98,4 @@ const processedMaterialIcons: IconItem[] = Object.entries(iconMap).map(([name, s
   };
 });
 
-export const materialIcons: IconItem[] = processedMaterialIcons;
+export const materialIcons: IconItem[] = sortIconsByStyleThenName(processedMaterialIcons);

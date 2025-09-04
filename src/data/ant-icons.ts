@@ -1,5 +1,6 @@
 import { IconItem } from '../types/icon';
 import { iconMap } from '../../Ant design system';
+import { sortIconsByStyleThenName } from '@/lib/icon-utils';
 
 // Helper function to convert camelCase to title case
 function camelToTitle(str: string): string {
@@ -107,7 +108,7 @@ function processSvg(svgContent: string): string {
 }
 
 // Process all icons from the iconMap
-export const antIcons: IconItem[] = Object.entries(iconMap).map(([key, svgContent]) => {
+const rawAntIcons: IconItem[] = Object.entries(iconMap).map(([key, svgContent]) => {
   const name = camelToTitle(key);
   const processedSvg = processSvg(svgContent);
   
@@ -120,3 +121,5 @@ export const antIcons: IconItem[] = Object.entries(iconMap).map(([key, svgConten
     category: categorizeIcon(name),
   };
 });
+
+export const antIcons: IconItem[] = sortIconsByStyleThenName(rawAntIcons);

@@ -67,3 +67,50 @@ export function isFilledIconLibrary(iconId: string): boolean {
 
   return filledLibraryPrefixes.some(prefix => iconId.startsWith(prefix));
 }
+
+/**
+ * Get style priority for sorting (lower number = higher priority)
+ * Prioritizes outline/line/stroke icons first, then regular, then solid/filled
+ */
+export function getStylePriority(style: string): number {
+  if (!style) return 1; // Default priority for no style
+
+  const styleLower = style.toLowerCase();
+  
+  // Priority 0: outline, line, stroke styles (most preferred)
+  if (['outline', 'line', 'stroke', 'thin', 'light', 'regular'].includes(styleLower)) {
+    return 0;
+  }
+  
+  // Priority 1: default/unknown styles
+  if (['default', 'normal'].includes(styleLower)) {
+    return 1;
+  }
+  
+  // Priority 2: filled, solid, bold styles (less preferred)  
+  if (['solid', 'filled', 'bold', 'bulk', 'fill'].includes(styleLower)) {
+    return 2;
+  }
+  
+  // Priority 3: other styles (animations, etc.)
+  return 3;
+}
+
+/**
+ * Sort icons by style priority first, then alphabetically by name
+ * Ensures outline/line/stroke icons appear before filled/solid icons
+ */
+export function sortIconsByStyleThenName(icons: IconItem[]): IconItem[] {
+  return [...icons].sort((a, b) => {
+    // First sort by style priority
+    const stylePriorityA = getStylePriority(a.style || '');
+    const stylePriorityB = getStylePriority(b.style || '');
+    
+    if (stylePriorityA !== stylePriorityB) {
+      return stylePriorityA - stylePriorityB;
+    }
+    
+    // If same style priority, sort alphabetically by name
+    return a.name.localeCompare(b.name);
+  });
+}

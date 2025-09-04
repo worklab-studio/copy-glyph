@@ -1,5 +1,6 @@
 import * as PhosphorIcons from 'react-icons/pi';
 import { type IconItem } from '@/types/icon';
+import { sortIconsByStyleThenName } from '@/lib/icon-utils';
 
 // Get all Phosphor icons by filtering the exported names  
 const phosphorIconNames = Object.keys(PhosphorIcons).filter(name => name.startsWith('Pi'));
@@ -26,7 +27,7 @@ const getCategoryFromName = (name: string): string => {
   return 'general';
 };
 
-export const phosphorIcons: IconItem[] = phosphorIconNames.map(name => {
+const rawPhosphorIcons: IconItem[] = phosphorIconNames.map(name => {
   const IconComponent = PhosphorIcons[name as keyof typeof PhosphorIcons];
   const displayName = name.slice(2); // Remove 'Pi' prefix
   const category = getCategoryFromName(name);
@@ -59,3 +60,5 @@ export const phosphorIcons: IconItem[] = phosphorIconNames.map(name => {
     tags: [...new Set(tags)]
   };
 });
+
+export const phosphorIcons: IconItem[] = sortIconsByStyleThenName(rawPhosphorIcons);

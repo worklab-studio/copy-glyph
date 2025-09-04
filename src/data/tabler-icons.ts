@@ -1,5 +1,6 @@
 import { type IconItem } from '@/types/icon';
 import { tablerIconMap } from '../../TrablerStroke';
+import { sortIconsByStyleThenName } from '@/lib/icon-utils';
 
 // Helper function to parse metadata from HTML comments
 function parseIconMetadata(svgString: string): { category?: string; tags?: string[] } {
@@ -22,7 +23,7 @@ function cleanSvgContent(svgString: string): string {
 }
 
 // Transform the tablerIconMap into IconItem array
-export const tablerIcons: IconItem[] = Object.entries(tablerIconMap).map(([iconName, svgContent]: [string, string]) => {
+const rawTablerIcons: IconItem[] = Object.entries(tablerIconMap).map(([iconName, svgContent]: [string, string]) => {
   const metadata = parseIconMetadata(svgContent);
   const cleanSvg = cleanSvgContent(svgContent);
 
@@ -35,3 +36,5 @@ export const tablerIcons: IconItem[] = Object.entries(tablerIconMap).map(([iconN
     category: metadata.category || 'General'
   };
 });
+
+export const tablerIcons: IconItem[] = sortIconsByStyleThenName(rawTablerIcons);

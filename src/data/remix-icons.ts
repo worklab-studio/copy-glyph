@@ -1,5 +1,6 @@
 import { type IconItem } from "@/types/icon";
 import * as RemixIcons from "@remixicon/react";
+import { sortIconsByStyleThenName } from '@/lib/icon-utils';
 
 // Category mapping based on Remix Icon naming patterns
 function getCategoryFromName(name: string): string {
@@ -101,7 +102,7 @@ function generateTags(name: string, category: string): string[] {
 }
 
 // Transform Remix Icons into IconItem format
-export const remixIcons: IconItem[] = Object.entries(RemixIcons)
+const rawRemixIcons: IconItem[] = Object.entries(RemixIcons)
   .filter(([name]) => name !== 'default' && typeof RemixIcons[name as keyof typeof RemixIcons] === 'function')
   .map(([name, IconComponent]) => {
     const cleanName = name.replace(/^Ri/, '').replace(/(Line|Fill)$/, '');
@@ -117,16 +118,6 @@ export const remixIcons: IconItem[] = Object.entries(RemixIcons)
       category,
       tags
     };
-  })
-  .sort((a, b) => {
-    // Sort by style first (outline, then solid, then regular)
-    const styleOrder = { outline: 0, solid: 1, regular: 2 };
-    const styleComparison = styleOrder[a.style as keyof typeof styleOrder] - styleOrder[b.style as keyof typeof styleOrder];
-    
-    if (styleComparison !== 0) {
-      return styleComparison;
-    }
-    
-    // Then sort by name
-    return a.name.localeCompare(b.name);
   });
+
+export const remixIcons: IconItem[] = sortIconsByStyleThenName(rawRemixIcons);
