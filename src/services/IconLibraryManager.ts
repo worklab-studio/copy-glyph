@@ -99,7 +99,15 @@ class IconLibraryManager {
         
         case 'tabler':
           const tablerModule = await import('@/data/tabler-icons');
-          return tablerModule.tablerIcons;
+          const tablerIcons = tablerModule.tablerIcons;
+          
+          // Handle both pre-processed icons (array) and runtime processing (promise)
+          if (Array.isArray(tablerIcons)) {
+            return tablerIcons;
+          } else {
+            // Runtime processing - icons are returned as a promise
+            return await tablerIcons;
+          }
         
         case 'bootstrap':
           const bootstrapModule = await import('@/data/bootstrap-icons');
