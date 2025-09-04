@@ -114,28 +114,27 @@ function generateTags(iconName: string, category: string): string[] {
 
 // Helper function to ensure SVG uses currentColor for theming
 function ensureCurrentColor(svg: string): string {
-  // First, replace any existing color attributes
-  let processedSvg = svg
-    .replace(/stroke="(?!none)[^"]*"/g, 'stroke="currentColor"')
-    .replace(/fill="(?!none)[^"]*"/g, 'fill="currentColor"');
+  let processedSvg = svg;
+  
+  // Step 1: First handle elements that have NO stroke/fill attributes at all
+  // Check if this appears to be an outline icon (has path elements)
+  if (processedSvg.includes('<path')) {
+    // Handle self-closing path elements without stroke/fill
+    processedSvg = processedSvg.replace(/<path(?![^>]*(?:stroke|fill)=)([^>]*?)\/>/g, '<path$1 stroke="currentColor" fill="none"/>');
+    // Handle regular path elements without stroke/fill
+    processedSvg = processedSvg.replace(/<path(?![^>]*(?:stroke|fill)=)([^>]*?)>/g, '<path$1 stroke="currentColor" fill="none">');
     
-  // For outline SVGs without explicit stroke attributes, add stroke="currentColor"
-  // This handles Ikonate icons which are pure outline SVGs
-  if (!processedSvg.includes('stroke=') && !processedSvg.includes('fill=')) {
-    // Check if this appears to be an outline icon (has path elements)
-    if (processedSvg.includes('<path')) {
-      // Handle self-closing path elements
-      processedSvg = processedSvg.replace(/<path(?![^>]*stroke=)([^>]*?)\/>/g, '<path$1 stroke="currentColor" fill="none"/>');
-      // Handle regular path elements
-      processedSvg = processedSvg.replace(/<path(?![^>]*stroke=)([^>]*?)>/g, '<path$1 stroke="currentColor" fill="none">');
-      
-      // Also handle other shape elements for outline icons
-      // Self-closing elements
-      processedSvg = processedSvg.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*stroke=)([^>]*?)\/>/g, '<$1$2 stroke="currentColor" fill="none"/>');
-      // Regular elements
-      processedSvg = processedSvg.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*stroke=)([^>]*?)>/g, '<$1$2 stroke="currentColor" fill="none">');
-    }
+    // Also handle other shape elements for outline icons
+    // Self-closing elements without stroke/fill
+    processedSvg = processedSvg.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*(?:stroke|fill)=)([^>]*?)\/>/g, '<$1$2 stroke="currentColor" fill="none"/>');
+    // Regular elements without stroke/fill
+    processedSvg = processedSvg.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*(?:stroke|fill)=)([^>]*?)>/g, '<$1$2 stroke="currentColor" fill="none">');
   }
+  
+  // Step 2: Now replace any existing color attributes with currentColor
+  processedSvg = processedSvg
+    .replace(/stroke="(?!none|currentColor)[^"]*"/g, 'stroke="currentColor"')
+    .replace(/fill="(?!none|currentColor)[^"]*"/g, 'fill="currentColor"');
   
   return processedSvg;
 }
