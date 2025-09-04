@@ -18,7 +18,10 @@ export async function copyIcon(icon: IconItem): Promise<void> {
           .replace(/strokeWidth="[^"]*"/g, 'strokeWidth="2"')
           .replace(/stroke-width:\s*[^;"\s]+/g, 'stroke-width: 2');
         
-        // If no stroke-width exists, inject it into the root SVG element
+        // Add stroke-width to elements that have stroke but no stroke-width
+        svgString = svgString.replace(/(<[^>]*stroke="[^"]*"[^>]*?)(?![^>]*stroke-width)([^>]*>)/g, '$1 stroke-width="2"$2');
+        
+        // If no stroke-width exists anywhere, inject it into the root SVG element
         if (!svgString.includes('stroke-width')) {
           svgString = svgString.replace(/<svg([^>]*?)>/g, '<svg$1 stroke-width="2">');
         }

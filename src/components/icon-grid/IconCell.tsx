@@ -161,7 +161,10 @@ export function IconCell({
           .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${customization.strokeWidth}"`)
           .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${customization.strokeWidth}`);
         
-        // If no stroke-width exists, inject it into the root SVG element
+        // Add stroke-width to elements that have stroke but no stroke-width
+        customizedSVG = customizedSVG.replace(/(<[^>]*stroke="[^"]*"[^>]*?)(?![^>]*stroke-width)([^>]*>)/g, `$1 stroke-width="${customization.strokeWidth}"$2`);
+        
+        // If no stroke-width exists anywhere, inject it into the root SVG element
         if (!customizedSVG.includes('stroke-width')) {
           customizedSVG = customizedSVG.replace(/<svg([^>]*?)>/g, `<svg$1 stroke-width="${customization.strokeWidth}">`);
         }
@@ -254,7 +257,10 @@ export function IconCell({
           .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${iconStrokeWidth}"`)
           .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${iconStrokeWidth}`);
         
-        // If no stroke-width exists, inject it into the root SVG element
+        // Add stroke-width to elements that have stroke but no stroke-width
+        modifiedSvg = modifiedSvg.replace(/(<[^>]*stroke="[^"]*"[^>]*?)(?![^>]*stroke-width)([^>]*>)/g, `$1 stroke-width="${iconStrokeWidth}"$2`);
+        
+        // If no stroke-width exists anywhere, inject it into the root SVG element
         if (!modifiedSvg.includes('stroke-width')) {
           modifiedSvg = modifiedSvg.replace(/<svg([^>]*?)>/g, `<svg$1 stroke-width="${iconStrokeWidth}">`);
         }
