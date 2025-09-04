@@ -137,13 +137,16 @@ export function ColorPicker() {
     }, 8); // Reduced from 16ms to 8ms for smoother updates
   }, [updateColor]);
 
-  const handleCanvasInteraction = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const handleCanvasInteraction = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
     if (!target || isDragging) return; // Prevent interaction if already dragging something else
     
     const rect = target.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const clientX = 'touches' in e ? e.touches[0]?.clientX ?? e.changedTouches[0]?.clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0]?.clientY ?? e.changedTouches[0]?.clientY : e.clientY;
+    
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
     
     const newSaturation = Math.max(0, Math.min(1, x / rect.width));
     const newValue = Math.max(0, Math.min(1, 1 - (y / rect.height)));
@@ -154,22 +157,26 @@ export function ColorPicker() {
     debouncedUpdateColor(hue, newSaturation, newValue);
   }, [hue, isDragging, debouncedUpdateColor]);
 
-  const handleHueSliderInteraction = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const handleHueSliderInteraction = useCallback((e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     const slider = hueSliderRef.current;
     if (!slider || isDragging) return; // Prevent interaction if already dragging something else
     
     const rect = slider.getBoundingClientRect();
-    const x = e.clientX - rect.left;
+    const clientX = 'touches' in e ? e.touches[0]?.clientX ?? e.changedTouches[0]?.clientX : e.clientX;
+    const x = clientX - rect.left;
     const newHue = Math.max(0, Math.min(360, (x / rect.width) * 360));
     
     setHue(newHue);
     debouncedUpdateColor(newHue, saturation, value);
   }, [saturation, value, isDragging, debouncedUpdateColor]);
 
-  // Handle mouse events for smooth dragging
+  // Handle mouse and touch events for smooth dragging
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMove = (e: MouseEvent | TouchEvent) => {
       if (!isDragging || !dragTarget) return;
+      
+      const clientX = 'touches' in e ? e.touches[0]?.clientX ?? e.changedTouches[0]?.clientX : e.clientX;
+      const clientY = 'touches' in e ? e.touches[0]?.clientY ?? e.changedTouches[0]?.clientY : e.clientY;
       
       // Only handle the specific drag target to prevent cross-interaction
       if (dragTarget === 'hue-slider') {
@@ -177,7 +184,7 @@ export function ColorPicker() {
         if (!hueSlider) return;
         
         const hueRect = hueSlider.getBoundingClientRect();
-        const x = e.clientX - hueRect.left;
+        const x = clientX - hueRect.left;
         const newHue = Math.max(0, Math.min(360, (x / hueRect.width) * 360));
         setHue(newHue);
         debouncedUpdateColor(newHue, saturation, value);
@@ -186,8 +193,8 @@ export function ColorPicker() {
         if (!colorArea) return;
         
         const rect = colorArea.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
         
         const newSaturation = Math.max(0, Math.min(1, x / rect.width));
         const newValue = Math.max(0, Math.min(1, 1 - (y / rect.height)));
@@ -198,19 +205,23 @@ export function ColorPicker() {
       }
     };
 
-    const handleMouseUp = () => {
+    const handleEnd = () => {
       setIsDragging(false);
       setDragTarget(null);
     };
 
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove, { passive: false });
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mousemove', handleMove, { passive: false });
+      document.addEventListener('mouseup', handleEnd);
+      document.addEventListener('touchmove', handleMove, { passive: false });
+      document.addEventListener('touchend', handleEnd);
     }
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mousemove', handleMove);
+      document.removeEventListener('mouseup', handleEnd);
+      document.removeEventListener('touchmove', handleMove);
+      document.removeEventListener('touchend', handleEnd);
     };
   }, [isDragging, dragTarget, hue, saturation, value, debouncedUpdateColor]);
 
@@ -241,7 +252,7 @@ export function ColorPicker() {
         <div className="relative select-none">
           <div
             data-color-area
-            className="w-full h-40 rounded-lg cursor-crosshair transition-none"
+            className="w-full h-48 md:h-40 rounded-lg cursor-crosshair touch-none"
             style={{
               background: `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, ${hslColor})`
             }}
@@ -250,11 +261,17 @@ export function ColorPicker() {
               setDragTarget('color-area');
               handleCanvasInteraction(e);
             }}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              setIsDragging(true);
+              setDragTarget('color-area');
+              handleCanvasInteraction(e);
+            }}
             onClick={handleCanvasInteraction}
           />
           {/* Picker indicator */}
           <div
-            className="absolute w-3 h-3 border-2 border-white rounded-full shadow-lg pointer-events-none transition-none"
+            className="absolute w-4 h-4 md:w-3 md:h-3 border-2 border-white rounded-full shadow-lg pointer-events-none"
             style={{
               left: `${saturation * 100}%`,
               top: `${(1 - value) * 100}%`,
@@ -267,7 +284,7 @@ export function ColorPicker() {
         {/* Hue slider */}
         <div
           ref={hueSliderRef}
-          className="relative w-full h-4 rounded-lg cursor-pointer select-none"
+          className="relative w-full h-6 md:h-4 rounded-lg cursor-pointer select-none touch-none"
           style={{
             background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)'
           }}
@@ -276,10 +293,16 @@ export function ColorPicker() {
             setDragTarget('hue-slider');
             handleHueSliderInteraction(e);
           }}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+            setDragTarget('hue-slider');
+            handleHueSliderInteraction(e);
+          }}
           onClick={handleHueSliderInteraction}
         >
           <div
-            className="absolute w-4 h-4 bg-white border-2 border-gray-300 rounded-full shadow-lg transition-none"
+            className="absolute w-6 h-6 md:w-4 md:h-4 bg-white border-2 border-gray-300 rounded-full shadow-lg"
             style={{
               left: `${(hue / 360) * 100}%`,
               transform: 'translateX(-50%)',
@@ -289,8 +312,8 @@ export function ColorPicker() {
         </div>
       </div>
 
-      {/* Color display and hex input */}
-      <div className="space-y-3">
+      {/* Color display - hidden on mobile */}
+      <div className="space-y-3 hidden md:block">
         <div className="flex items-center gap-3">
           <div 
             className="w-10 h-10 rounded-md border border-border shadow-sm flex-shrink-0"
@@ -303,12 +326,6 @@ export function ColorPicker() {
               onChange={(e) => handleHexChange(e.target.value)}
               placeholder="#4F46E5"
               className="text-sm font-mono h-8"
-              readOnly={window.innerWidth <= 768}
-              onFocus={(e) => {
-                if (window.innerWidth <= 768) {
-                  e.target.blur();
-                }
-              }}
             />
           </div>
         </div>
@@ -317,14 +334,14 @@ export function ColorPicker() {
       {/* Presets */}
       <div className="space-y-2">
         <Label className="text-xs text-muted-foreground">Presets</Label>
-        <div className="grid grid-cols-8 gap-1.5">
+        <div className="grid grid-cols-8 gap-2 md:gap-1.5">
           {presetColors.map((color) => (
             <Button
               key={color}
               variant="ghost"
               size="sm"
               onClick={() => handlePresetClick(color)}
-              className="h-7 w-7 p-0 rounded-full border-2 hover:scale-110 transition-transform duration-150"
+              className="h-9 w-9 md:h-7 md:w-7 p-0 rounded-full border-2 hover:scale-110 transition-transform duration-150"
               style={{ 
                 backgroundColor: color,
                 borderColor: customization.color === color ? '#ffffff' : (color === '#FFFFFF' && theme !== 'dark' ? 'rgba(128, 128, 128, 0.5)' : 'transparent'),

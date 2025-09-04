@@ -28,13 +28,6 @@ export function MobileCustomizeSheet({
               <h3 className="text-sm font-medium mb-3">Color</h3>
               <ColorPicker />
             </div>
-            
-            <Separator />
-            
-            <div>
-              <h3 className="text-sm font-medium mb-3">Stroke Width</h3>
-              <StrokeSlider />
-            </div>
           </div>
         </ScrollArea>
       </DrawerContent>
