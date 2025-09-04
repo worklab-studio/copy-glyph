@@ -145,18 +145,18 @@ export const SYNONYM_MAP: Record<string, string[]> = {
   'snow': ['weather', 'cold', 'winter', 'white'],
   'weather': ['climate', 'forecast', 'conditions'],
   
-  // Common synonyms for better matching
-  'car': ['vehicle', 'auto', 'automobile', 'transport'],
-  'bike': ['bicycle', 'cycle', 'ride'],
-  'plane': ['airplane', 'aircraft', 'flight', 'fly'],
-  'train': ['railway', 'subway', 'metro', 'transport'],
-  'bus': ['transport', 'vehicle', 'public'],
-  'book': ['read', 'library', 'literature', 'text'],
-  'game': ['play', 'fun', 'entertainment', 'sport'],
-  'sport': ['game', 'athletic', 'exercise', 'activity'],
-  'food': ['eat', 'meal', 'restaurant', 'cooking'],
-  'drink': ['beverage', 'liquid', 'water', 'coffee'],
-  'coffee': ['drink', 'cafe', 'espresso', 'beverage']
+  // Common synonyms for better matching (made conservative for precision)
+  'car': ['vehicle', 'auto'],
+  'bike': ['bicycle', 'cycle'],
+  'plane': ['airplane', 'aircraft'],
+  'train': ['railway', 'subway'],
+  'bus': ['transport', 'vehicle'],
+  'book': ['notebook'],  // Removed broad synonyms like 'read', 'library'
+  'game': ['play', 'sport'],
+  'sport': ['game', 'athletic'],
+  'food': ['meal', 'eat'],
+  'drink': ['beverage'],
+  'coffee': ['cafe', 'espresso']
 };
 
 // Get all synonyms for a given word

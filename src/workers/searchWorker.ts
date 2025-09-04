@@ -60,18 +60,18 @@ const searchCache = new Map<string, { results: SearchResult[]; timestamp: number
 const MAX_CACHE_SIZE = 200;
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-// Field scoring weights for relevance calculation
+// Tiered scoring system for precise search results  
 const FIELD_WEIGHTS = {
-  nameExact: 10.0,
-  namePrefix: 8.0,
-  nameFuzzy: 6.0,
-  tagExact: 7.0,
-  tagFuzzy: 5.0,
-  categoryExact: 4.0,
-  categoryFuzzy: 3.0,
-  synonymMatch: 3.5,
-  phoneticMatch: 2.5,
-  stemMatch: 4.5
+  nameExact: 100.0,     // Perfect name match gets highest score
+  namePrefix: 50.0,     // Name starts with query
+  nameFuzzy: 10.0,      // Fuzzy name match
+  tagExact: 50.0,       // Exact tag match
+  tagFuzzy: 8.0,        // Fuzzy tag match  
+  categoryExact: 25.0,  // Exact category match
+  categoryFuzzy: 5.0,   // Fuzzy category match
+  synonymMatch: 5.0,    // Synonym match (conservative)
+  phoneticMatch: 3.0,   // Phonetic match
+  stemMatch: 8.0        // Stemmed word match
 };
 
 // Calculate comprehensive search score for an icon
@@ -336,8 +336,8 @@ function searchIcons(
 ): SearchResult[] {
   const {
     fuzzy = true,
-    maxResults = 1000,
-    minScore = 2.0, // Increased for better precision
+    maxResults = 500,      // Reduced to prioritize best matches
+    minScore = 8.0,        // Significantly increased for precision
     enableSynonyms = false, // Disabled by default for exact results
     enablePhonetic = true,
     libraryId
