@@ -14,7 +14,7 @@ import { useSearchWorker } from "@/hooks/useSearchWorker";
 import { useFirstTimeUser } from "@/hooks/useFirstTimeUser";
 import { showFirstCopyNudge } from "@/components/ui/first-copy-nudge";
 import { Skeleton } from "@/components/ui/skeleton";
-import LoadingAnimation from "@/components/LoadingAnimation";
+import LoadingWithTagline from "@/components/LoadingWithTagline";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { iconLibraryManager } from "@/services/IconLibraryManager";
@@ -355,10 +355,7 @@ function IconGridPage() {
           <main className="flex-1 overflow-hidden">
             {showLoadingAnimation || !loaded ? (
               <div className="flex-1 flex items-center justify-center h-full">
-                <div className="flex flex-col items-center space-y-4">
-                  <LoadingAnimation />
-                  <p className="text-muted-foreground">Loading icons...</p>
-                </div>
+                <LoadingWithTagline />
               </div>
             ) : error ? (
               <div className="flex h-64 items-center justify-center text-center px-6">

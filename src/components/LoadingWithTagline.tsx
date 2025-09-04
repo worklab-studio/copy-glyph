@@ -1,0 +1,53 @@
+import React, { useState, useEffect } from 'react';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+
+const taglines = [
+  "56,800+ icons. One stack.",
+  "All your favorite libraries. One place.",
+  "Search less. Design faster.",
+  "Every icon you need, stacked.",
+  "Icons, customized your way."
+];
+
+const LoadingWithTagline = () => {
+  const [currentTagline, setCurrentTagline] = useState('');
+
+  useEffect(() => {
+    // Get the last shown tagline from localStorage
+    const lastTaglineIndex = localStorage.getItem('lastTaglineIndex');
+    const lastIndex = lastTaglineIndex ? parseInt(lastTaglineIndex, 10) : -1;
+    
+    // Get available indices (excluding the last shown one)
+    const availableIndices = taglines
+      .map((_, index) => index)
+      .filter(index => index !== lastIndex);
+    
+    // If all taglines have been used, reset and use all indices
+    const indicesToChooseFrom = availableIndices.length > 0 ? availableIndices : taglines.map((_, index) => index);
+    
+    // Randomly select from available indices
+    const randomIndex = indicesToChooseFrom[Math.floor(Math.random() * indicesToChooseFrom.length)];
+    
+    // Set the tagline and remember it in localStorage
+    setCurrentTagline(taglines[randomIndex]);
+    localStorage.setItem('lastTaglineIndex', randomIndex.toString());
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center justify-center space-y-6">
+      <DotLottieReact
+        src="https://lottie.host/48a3d687-d94b-4ef9-aa77-049a95f15af7/O2PsD2POjh.lottie"
+        loop
+        autoplay
+        className="w-32 h-32"
+      />
+      <div className="text-center">
+        <p className="text-lg font-medium text-foreground/80 animate-fade-in">
+          {currentTagline}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default LoadingWithTagline;
