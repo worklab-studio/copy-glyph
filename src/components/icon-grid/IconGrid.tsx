@@ -83,11 +83,9 @@ export function IconGrid({
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, 80px)',
-            justifyContent: 'center',
+            justifyContent: 'start',
             gap: 0,
-            padding: '0 1rem',
           }}
-          className="md:justify-start md:px-0"
         >
           {items.map((icon) => (
             <IconCell
