@@ -5,6 +5,11 @@ import { type IconItem } from "@/types/icon";
  * Excludes filled, solid, bold, bulk icons and BoxIcons (which are primarily filled)
  */
 export function supportsStrokeWidth(icon: IconItem): boolean {
+  // Special handling for Solar icons - only outline variants support stroke
+  if (icon.id.startsWith('solar-')) {
+    return icon.style === 'outline';
+  }
+
   // If no style is defined, check against known filled library prefixes
   if (!icon.style) {
     // Exception: BoxIcons and Ant icons don't have explicit style but are primarily filled

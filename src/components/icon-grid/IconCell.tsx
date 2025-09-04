@@ -250,10 +250,7 @@ export function IconCell({
         .replace(/fill="currentColor"([^>]*?)stroke="currentColor"/gi, 'fill="none"$1stroke="currentColor"');
       
       // Apply stroke width to SVG string only for icons that support it
-      if (supportsStroke) {
-        console.log('🔧 Original SVG:', modifiedSvg.substring(0, 200));
-        console.log('🔧 Applying stroke width:', iconStrokeWidth);
-        
+      if (supportsStroke) {        
         // Replace existing stroke-width attributes
         modifiedSvg = modifiedSvg
           .replace(/stroke-width="[^"]*"/g, `stroke-width="${iconStrokeWidth}"`)
@@ -267,8 +264,6 @@ export function IconCell({
         if (!modifiedSvg.includes('stroke-width')) {
           modifiedSvg = modifiedSvg.replace(/<svg([^>]*?)>/g, `<svg$1 stroke-width="${iconStrokeWidth}">`);
         }
-        
-        console.log('🔧 Modified SVG:', modifiedSvg.substring(0, 200));
       }
       
       return (
