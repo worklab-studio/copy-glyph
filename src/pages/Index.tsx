@@ -25,7 +25,6 @@ import { teenyIcons } from "@/data/teeny-icons";
 import { antIcons } from "@/data/ant-icons";
 import { fluentIcons } from "@/data/fluent-icons";
 import { iconnoirIcons } from "@/data/iconnoir-icons";
-import { ikonateIcons } from "@/data/ikonate-icons";
 import { octiconsIcons } from "@/data/octicons-icons";
 import { radixIcons } from "@/data/radix-icons";
 import { materialIcons } from "@/data/material-icons";
@@ -50,7 +49,6 @@ const allIcons: IconItem[] = [
   ...antIcons,
   ...fluentIcons,
   ...iconnoirIcons,
-  ...ikonateIcons,
   ...octiconsIcons,
   ...radixIcons,
   ...solarIcons,
@@ -108,7 +106,6 @@ function IconGridPage() {
       'ant': 'ant-',
       'fluent': 'fluent-',
       'iconnoir': 'iconnoir-',
-      'ikonate': 'ikonate-',
       'octicons': 'octicons-',
       'radix': 'radix-',
       'solar': 'solar-',
@@ -191,7 +188,7 @@ function IconGridPage() {
             <div className="space-y-3">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="space-y-1">
-                  <h2 className="text-2xl font-semibold">
+                    <h2 className="text-2xl font-semibold">
                     {selectedSet === "all" ? "All icons" : 
                      selectedSet === "favorites" ? "Favorites" : 
                      selectedSet === "material" ? "Material Design Icons" :

@@ -1,4 +1,4 @@
-import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, Play, Globe, Minus, Hash, Bug, Workflow, Target, GitBranch, Component, Sparkles, Sun } from "lucide-react";
+import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, Play, Globe, Minus, Hash, Bug, Workflow, GitBranch, Component, Sparkles, Sun } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { AnimatedPlayIcon } from "@/components/animated-play-icon";
@@ -19,14 +19,13 @@ import { teenyIcons } from "@/data/teeny-icons";
 import { antIcons } from "@/data/ant-icons";
 import { fluentIcons } from "@/data/fluent-icons";
 import { iconnoirIcons } from "@/data/iconnoir-icons";
-import { ikonateIcons } from "@/data/ikonate-icons";
 import { octiconsIcons } from "@/data/octicons-icons";
 import { radixIcons } from "@/data/radix-icons";
 import { materialIcons } from "@/data/material-icons";
 import { solarIcons } from "@/data/solar-icons";
 
 // Calculate total icons count
-const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length + iconsaxIcons.length + atlasIcons.length + lineIcons.length + pixelartIcons.length + teenyIcons.length + antIcons.length + fluentIcons.length + iconnoirIcons.length + ikonateIcons.length + octiconsIcons.length + radixIcons.length + materialIcons.length + solarIcons.length;
+const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length + iconsaxIcons.length + atlasIcons.length + lineIcons.length + pixelartIcons.length + teenyIcons.length + antIcons.length + fluentIcons.length + iconnoirIcons.length + octiconsIcons.length + radixIcons.length + materialIcons.length + solarIcons.length;
 
 // Fixed top navigation items  
 const topNavItems = [
@@ -66,7 +65,6 @@ const activeLibraries = [
   { name: "Octicons", id: "octicons", count: octiconsIcons.length, icon: GitBranch },
   { name: "Teeny Icons", id: "teeny", count: teenyIcons.length, icon: Circle },
   { name: "Radix Icons", id: "radix", count: radixIcons.length, icon: Component },
-  { name: "Ikonate", id: "ikonate", count: ikonateIcons.length, icon: Target },
 ];
 
 // Placeholder libraries (coming soon)
