@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useMemo, memo } from "react";
 import { Copy } from "lucide-react";
 import { type IconItem } from "@/types/icon";
 import { copyIcon } from "@/lib/copy";
@@ -19,7 +19,7 @@ interface IconCellProps {
   onIconClick?: (icon: IconItem) => void;
 }
 
-export function IconCell({ 
+const IconCellComponent = function IconCell({ 
   icon, 
   isSelected = false, 
   color = "#666", 
@@ -35,51 +35,32 @@ export function IconCell({
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  // Convert hex color to RGB for background opacity
-  const hexToRgb = (hex: string) => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : { r: 102, g: 79, b: 194 }; // fallback to default purple
-  };
+  // Memoize expensive color calculations
+  const colorStyles = useMemo(() => {
+    const hexToRgb = (hex: string) => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : { r: 102, g: 79, b: 194 };
+    };
 
-  const selectedColor = customization.color;
-  const rgb = hexToRgb(selectedColor);
-  
-  // Special case: light mode + white color should use gray hover
-  const isLightModeWhite = theme === 'light' && selectedColor.toLowerCase() === '#ffffff';
-  // Special case: dark mode + black color should use whitish grey hover
-  const isDarkModeBlack = theme === 'dark' && selectedColor.toLowerCase() === '#000000';
-  
-  const backgroundStyle = isLightModeWhite 
-    ? 'rgba(128, 128, 128, 0.1)' // slight gray for white icons in light mode
-    : isDarkModeBlack
-    ? 'rgba(200, 200, 200, 0.1)' // whitish grey for black icons in dark mode
-    : `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)`;
-  const borderStyle = isLightModeWhite
-    ? 'rgba(128, 128, 128, 0.2)' // slight gray border for white icons in light mode
-    : isDarkModeBlack
-    ? 'rgba(200, 200, 200, 0.2)' // whitish grey border for black icons in dark mode
-    : `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`;
-  const cornerStyle = isLightModeWhite
-    ? 'rgba(128, 128, 128, 0.4)' // slight gray corners for white icons in light mode
-    : isDarkModeBlack
-    ? 'rgba(200, 200, 200, 0.4)' // whitish grey corners for black icons in dark mode
-    : `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.4)`;
-
-  // Create dynamic corner gradients using the selected color
-  const cornerGradients = [
-    `linear-gradient(to right, ${cornerStyle} 0 12px, transparent 12px)`,
-    `linear-gradient(to left, ${cornerStyle} 0 12px, transparent 12px)`,
-    `linear-gradient(to right, ${cornerStyle} 0 12px, transparent 12px)`,
-    `linear-gradient(to left, ${cornerStyle} 0 12px, transparent 12px)`,
-    `linear-gradient(to bottom, ${cornerStyle} 0 12px, transparent 12px)`,
-    `linear-gradient(to bottom, ${cornerStyle} 0 12px, transparent 12px)`,
-    `linear-gradient(to top, ${cornerStyle} 0 12px, transparent 12px)`,
-    `linear-gradient(to top, ${cornerStyle} 0 12px, transparent 12px)`
-  ].join(', ');
+    const selectedColor = customization.color;
+    const rgb = hexToRgb(selectedColor);
+    
+    const isLightModeWhite = theme === 'light' && selectedColor.toLowerCase() === '#ffffff';
+    const isDarkModeBlack = theme === 'dark' && selectedColor.toLowerCase() === '#000000';
+    
+    return {
+      '--icon-bg': isLightModeWhite 
+        ? '128, 128, 128' 
+        : isDarkModeBlack
+        ? '200, 200, 200' 
+        : `${rgb.r}, ${rgb.g}, ${rgb.b}`,
+      '--icon-color': selectedColor
+    } as React.CSSProperties;
+  }, [customization.color, theme]);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -204,24 +185,21 @@ export function IconCell({
     }
   }, [handleClick]);
 
-  const renderIcon = () => {
-    // Use customization context values for consistency
+  // Memoize icon rendering for performance
+  const renderedIcon = useMemo(() => {
     const iconColor = customization.color;
     const iconStrokeWidth = customization.strokeWidth;
     
-    // Check if icon.svg exists and is valid
     if (!icon.svg) {
       console.warn('Icon svg is undefined for icon:', icon.id, icon.name);
       return (
-        <div className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] flex items-center justify-center">
+        <div className="icon-loading">
           <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
         </div>
       );
     }
     
-    // Check if this icon supports stroke width customization
     const supportsStroke = supportsStrokeWidth(icon);
-    // Check if this is an animated icon
     const isAnimatedIcon = icon.style === 'animated';
     
     if (typeof icon.svg === 'string') {
@@ -279,10 +257,9 @@ export function IconCell({
       return (
         <div 
           dangerouslySetInnerHTML={{ __html: modifiedSvg }}
-          className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors"
+          className="icon-svg"
           style={{ 
             color: iconColor,
-            // Force color inheritance for Atlas icons that use currentColor
             ['--icon-color' as any]: iconColor,
           }}
         />
@@ -290,19 +267,17 @@ export function IconCell({
     } else {
       const IconComponent = icon.svg as React.ComponentType<any>;
       
-      // Additional safety check for component validity
       if (typeof IconComponent !== 'function' && typeof IconComponent !== 'object') {
         console.warn('Icon component is invalid for icon:', icon.id, icon.name, 'Type:', typeof IconComponent, 'Value:', IconComponent);
         return (
-          <div className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] flex items-center justify-center">
+          <div className="icon-loading">
             <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
           </div>
         );
       }
       
-      // Standardized props for all icon libraries
       const iconProps: any = {
-        className: "h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors",
+        className: "icon-component",
         style: { color: iconColor },
       };
       
@@ -327,13 +302,32 @@ export function IconCell({
       } catch (error) {
         console.error('Error rendering icon component:', icon.id, error);
         return (
-          <div className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] flex items-center justify-center text-muted-foreground">
+          <div className="icon-error">
             <span className="text-xs">⚠</span>
           </div>
         );
       }
     }
-  };
+  }, [icon, customization.color, customization.strokeWidth, isHovered]);
+
+  // Cleanup timeout on unmount
+  const cleanupTimeout = useCallback(() => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+  }, []);
+
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true);
+    hoverTimeoutRef.current = setTimeout(() => setShowTooltip(true), 500);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovered(false);
+    setShowTooltip(false);
+    cleanupTimeout();
+  }, [cleanupTimeout]);
 
   return (
     <CopyTooltip showCopied={showCopied}>
@@ -341,66 +335,35 @@ export function IconCell({
         ref={buttonRef}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
-        onMouseEnter={() => {
-          setIsHovered(true);
-          hoverTimeoutRef.current = setTimeout(() => setShowTooltip(true), 500);
-        }}
-        onMouseLeave={() => {
-          setIsHovered(false);
-          setShowTooltip(false);
-          if (hoverTimeoutRef.current) {
-            clearTimeout(hoverTimeoutRef.current);
-            hoverTimeoutRef.current = null;
-          }
-        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         onDoubleClick={handleDoubleClick}
         tabIndex={0}
         role="button"
         aria-label={getIconAriaLabel(icon.name, isSelected)}
         aria-pressed={isSelected}
         data-selected={isSelected}
-        className={cn(
-          "group relative flex items-center justify-center transition-all duration-200 m-0 p-0 border-0",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-        )}
-        style={{
-          width: '100%',
-          height: '80px',
-          willChange: 'transform, opacity',
-          backgroundColor: (isHovered || isSelected) ? backgroundStyle : 'transparent',
-          borderColor: (isHovered || isSelected) ? borderStyle : 'transparent',
-          borderWidth: (isHovered || isSelected) ? '1px' : '0px',
-          borderStyle: 'solid',
-        }}
+        data-hovered={isHovered}
+        data-selected-state={isSelected}
+        className="icon-cell"
+        style={colorStyles}
       >
-        {/* Dynamic corner highlights */}
-        <div 
-          className={cn(
-            "absolute inset-0 transition-opacity duration-200",
-            (isHovered || isSelected) ? "opacity-100" : "opacity-0"
-          )}
-          style={{
-            backgroundImage: cornerGradients,
-            backgroundPosition: 'left top, right top, left bottom, right bottom, left top, right top, left bottom, right bottom',
-            backgroundSize: '12px 2px, 12px 2px, 12px 2px, 12px 2px, 2px 12px, 2px 12px, 2px 12px, 2px 12px',
-            backgroundRepeat: 'no-repeat'
-          }}
-        />
+        <div className={cn(
+          "icon-highlight",
+          (isHovered || isSelected) && "icon-highlight--active"
+        )} />
         
-        {renderIcon()}
+        {renderedIcon}
         
-        {/* Tooltip - shows after 0.5s hover, using exact same styling as copied tooltip */}
         {showTooltip && (
-          <div 
-            className="absolute left-1/2 transform -translate-x-1/2 bg-foreground text-background text-xs py-1 px-2 rounded whitespace-nowrap pointer-events-none z-50"
-            style={{ 
-              bottom: 'calc(100% + 4px)'
-            }}
-          >
+          <div className="icon-tooltip">
             Double click to copy icon
           </div>
         )}
       </button>
     </CopyTooltip>
   );
-}
+};
+
+// Memoize the component to prevent unnecessary re-renders
+export const IconCell = memo(IconCellComponent);

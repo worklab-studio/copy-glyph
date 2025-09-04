@@ -1,5 +1,5 @@
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useCallback, useRef } from 'react';
 import { type IconItem } from '@/types/icon';
 
 interface UseVirtualGridProps {
@@ -10,12 +10,18 @@ interface UseVirtualGridProps {
 
 export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtualGridProps) {
   const [containerWidth, setContainerWidth] = useState(0);
+  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Calculate columns based on container width (80px per icon)
-  const columnsCount = Math.floor(Math.max(containerWidth, 320) / 80) || 4;
+  // Memoize column calculation
+  const columnsCount = useMemo(() => 
+    Math.floor(Math.max(containerWidth, 320) / 80) || 4, 
+    [containerWidth]
+  );
 
-  // Group items into rows with calculated column count
+  // Memoize row grouping with better performance
   const rows = useMemo(() => {
+    if (!items.length) return [];
+    
     const result: IconItem[][] = [];
     for (let i = 0; i < items.length; i += columnsCount) {
       result.push(items.slice(i, i + columnsCount));
@@ -23,7 +29,19 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
     return result;
   }, [items, columnsCount]);
 
-  // Update container width on resize
+  // Debounced resize handler for better performance
+  const debouncedUpdateWidth = useCallback(() => {
+    if (resizeTimeoutRef.current) {
+      clearTimeout(resizeTimeoutRef.current);
+    }
+    
+    resizeTimeoutRef.current = setTimeout(() => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.clientWidth);
+      }
+    }, 150); // 150ms debounce
+  }, [containerRef]);
+
   useEffect(() => {
     const updateWidth = () => {
       if (containerRef.current) {
@@ -31,17 +49,28 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
       }
     };
 
+    // Initial width update
     updateWidth();
-    window.addEventListener('resize', updateWidth);
-    return () => window.removeEventListener('resize', updateWidth);
-  }, [containerRef]);
+    
+    // Add debounced resize listener
+    window.addEventListener('resize', debouncedUpdateWidth, { passive: true });
+    
+    return () => {
+      window.removeEventListener('resize', debouncedUpdateWidth);
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+    };
+  }, [containerRef, debouncedUpdateWidth]);
 
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => containerRef.current,
-    estimateSize: () => 80, // Match cell width for no spacing
-    overscan: 5,
+    estimateSize: () => 80,
+    overscan: 3, // Reduced for better performance
     enabled,
+    // Add scroll margin for smoother scrolling
+    scrollMargin: containerRef.current?.offsetTop ?? 0,
   });
 
   return {

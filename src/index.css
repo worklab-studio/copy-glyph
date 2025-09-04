@@ -143,4 +143,81 @@
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
+
+  /* Icon Cell Performance Optimizations */
+  .icon-cell {
+    @apply relative flex items-center justify-center transition-all duration-200 m-0 p-0 border-0;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+    width: 100%;
+    height: 80px;
+    will-change: transform;
+    contain: layout style;
+    transform: translate3d(0, 0, 0); /* Hardware acceleration */
+  }
+
+  .icon-cell[data-hovered="true"],
+  .icon-cell[data-selected-state="true"] {
+    background-color: rgba(var(--icon-bg), 0.1);
+    border: 1px solid rgba(var(--icon-bg), 0.2);
+    transform: translate3d(0, 0, 0) scale(1.02); /* Subtle scale on hover */
+  }
+
+  .icon-highlight {
+    @apply absolute inset-0 transition-opacity duration-200 opacity-0;
+    background-image: 
+      linear-gradient(to right, rgba(var(--icon-bg), 0.4) 0 12px, transparent 12px),
+      linear-gradient(to left, rgba(var(--icon-bg), 0.4) 0 12px, transparent 12px),
+      linear-gradient(to right, rgba(var(--icon-bg), 0.4) 0 12px, transparent 12px),
+      linear-gradient(to left, rgba(var(--icon-bg), 0.4) 0 12px, transparent 12px),
+      linear-gradient(to bottom, rgba(var(--icon-bg), 0.4) 0 12px, transparent 12px),
+      linear-gradient(to bottom, rgba(var(--icon-bg), 0.4) 0 12px, transparent 12px),
+      linear-gradient(to top, rgba(var(--icon-bg), 0.4) 0 12px, transparent 12px),
+      linear-gradient(to top, rgba(var(--icon-bg), 0.4) 0 12px, transparent 12px);
+    background-position: left top, right top, left bottom, right bottom, left top, right top, left bottom, right bottom;
+    background-size: 12px 2px, 12px 2px, 12px 2px, 12px 2px, 2px 12px, 2px 12px, 2px 12px, 2px 12px;
+    background-repeat: no-repeat;
+  }
+
+  .icon-highlight--active {
+    @apply opacity-100;
+  }
+
+  .icon-svg,
+  .icon-component {
+    height: clamp(24px, 32%, 40px);
+    width: clamp(24px, 32%, 40px);
+    transition: color 0.2s ease;
+    contain: layout;
+  }
+
+  .icon-loading,
+  .icon-error {
+    @apply flex items-center justify-center;
+    height: clamp(24px, 32%, 40px);
+    width: clamp(24px, 32%, 40px);
+  }
+
+  .icon-error {
+    @apply text-muted-foreground;
+  }
+
+  .icon-tooltip {
+    @apply absolute left-1/2 transform -translate-x-1/2 bg-foreground text-background text-xs py-1 px-2 rounded whitespace-nowrap pointer-events-none;
+    bottom: calc(100% + 4px);
+    z-index: 10000;
+    position: fixed;
+    will-change: transform, opacity;
+  }
+
+  /* Grid Performance Optimizations */
+  [role="grid"] {
+    contain: layout style;
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* Virtual grid container */
+  .virtual-grid-container {
+    will-change: scroll-position;
+    contain: layout;
+  }
 }
