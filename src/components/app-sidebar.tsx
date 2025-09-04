@@ -68,9 +68,9 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
               <Crown className="h-4 w-4 text-primary-foreground" />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-semibold">Icon Library</span>
+              <span className="text-sm font-semibold">Iconstack</span>
               <span className="text-xs text-muted-foreground">
-                {totalCount.toLocaleString()}+ icons
+                50,000+ icons
               </span>
             </div>
           </div>
