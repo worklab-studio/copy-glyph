@@ -32,8 +32,8 @@ function IconGridPage() {
   const [loadingTimeout, setLoadingTimeout] = useState(false);
   const { customization } = useIconCustomization();
 
-  // Essential libraries that must load first
-  const essentialLibraries = ['material', 'lucide', 'feather'];
+  // Load Tabler first as priority
+  const priorityLibrary = 'tabler';
   
   // Async icon loading
   const { 
@@ -66,7 +66,7 @@ function IconGridPage() {
   useEffect(() => {
     // Hide loading only when both conditions are met:
     // 1. Minimum duration has passed
-    // 2. Essential icons are loaded
+    // 2. Tabler icons are loaded (priority library)
     if (minDurationComplete && loaded && icons.length > 0) {
       setShowLoadingAnimation(false);
     }
@@ -82,10 +82,23 @@ function IconGridPage() {
     return () => clearTimeout(timeoutTimer);
   }, []);
 
-  // Preload all icons immediately on component mount
+  // Load Tabler first, then load remaining libraries in background
   useEffect(() => {
-    loadAllLibrariesSectionedProgressive();
-  }, [loadAllLibrariesSectionedProgressive]);
+    const loadIcons = async () => {
+      try {
+        // Load Tabler first
+        await loadLibrary(priorityLibrary);
+        // Then load all libraries in background
+        loadAllLibrariesSectionedProgressive();
+      } catch (error) {
+        console.error('Failed to load priority library:', error);
+        // Fallback to loading all libraries
+        loadAllLibrariesSectionedProgressive();
+      }
+    };
+    
+    loadIcons();
+  }, [loadLibrary, loadAllLibrariesSectionedProgressive, priorityLibrary]);
 
   // Load specific library when selection changes (after initial load)
   useEffect(() => {
