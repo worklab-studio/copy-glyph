@@ -19,6 +19,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { iconLibraryManager } from "@/services/IconLibraryManager";
 import { type LibrarySection } from "@/types/icon";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileHeader } from "@/components/mobile/MobileHeader";
+import { MobileLibraryDrawer } from "@/components/mobile/MobileLibraryDrawer";
+import { MobileCustomizeSheet } from "@/components/mobile/MobileCustomizeSheet";
+import { MobileIconActions } from "@/components/mobile/MobileIconActions";
 
 function IconGridPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,6 +35,12 @@ function IconGridPage() {
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(true);
   const [minDurationComplete, setMinDurationComplete] = useState(false);
   const { customization } = useIconCustomization();
+
+  // Mobile state
+  const isMobile = useIsMobile();
+  const [showLibraryDrawer, setShowLibraryDrawer] = useState(false);
+  const [showCustomizeSheet, setShowCustomizeSheet] = useState(false);
+  const [showIconActions, setShowIconActions] = useState(false);
 
   // Load Tabler first as priority
   const priorityLibrary = 'tabler';
@@ -290,10 +301,125 @@ function IconGridPage() {
   };
 
   const handleIconClick = (icon: IconItem) => {
-    // Toggle selection - if already selected, deselect; otherwise select
-    setSelectedId(prevId => prevId === icon.id ? null : icon.id);
+    if (isMobile) {
+      // On mobile, select and show actions sheet
+      setSelectedId(icon.id);
+      setShowIconActions(true);
+    } else {
+      // Desktop behavior: toggle selection
+      setSelectedId(prevId => prevId === icon.id ? null : icon.id);
+    }
   };
 
+  const handleMobileSetChange = (setId: string) => {
+    setSelectedSet(setId);
+    setShowLibraryDrawer(false);
+  };
+
+  // Mobile layout
+  if (isMobile) {
+    return (
+      <>
+        <div className="flex flex-col h-screen w-full overflow-hidden">
+          <MobileHeader
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onSearchClear={() => setSearchQuery("")}
+            onCustomizeClick={() => setShowCustomizeSheet(true)}
+            onLibraryClick={() => setShowLibraryDrawer(true)}
+          />
+
+          {/* Content area */}
+          <main className="flex-1 overflow-hidden">
+            {showLoadingAnimation ? (
+              <div className="flex-1 flex items-center justify-center h-full">
+                <LoadingWithTagline 
+                  minDuration={3000}
+                  onMinDurationComplete={() => setMinDurationComplete(true)}
+                />
+              </div>
+            ) : error ? (
+              <div className="flex h-64 items-center justify-center text-center px-6">
+                <Alert className="max-w-md">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription className="mt-2">
+                    <p className="font-medium">Failed to load icons</p>
+                    <p className="text-sm text-muted-foreground mt-1">{error}</p>
+                    <button
+                      onClick={clearError}
+                      className="mt-3 text-sm text-primary hover:text-primary/80 underline"
+                    >
+                      Try again
+                    </button>
+                  </AlertDescription>
+                </Alert>
+              </div>
+            ) : displayedIcons.length === 0 && !loading ? (
+              <div className="flex h-64 items-center justify-center text-center px-6">
+                <div className="space-y-2">
+                  <p className="text-lg text-muted-foreground">
+                    {selectedSet === "favorites" ? "No favorites yet" : 
+                     searchQuery ? "No icons found" : "No icons available"}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedSet === "favorites" 
+                      ? "Tap library menu to browse icons"
+                      : searchQuery
+                      ? "Try a different search term"
+                      : "Tap library menu to select icons"
+                    }
+                  </p>
+                </div>
+              </div>
+            ) : (
+              // Mobile icon grid
+              (selectedSet === "all" && !searchQuery.trim() && sections.length > 0) || 
+              (selectedSet === "all" && searchQuery.trim() && groupedSearchSections.length > 0) ? (
+                <SectionedIconGrid
+                  sections={searchQuery.trim() ? groupedSearchSections : sections}
+                  selectedId={selectedId}
+                  onCopy={handleCopy}
+                  onIconClick={handleIconClick}
+                  color={customization.color}
+                  strokeWidth={customization.strokeWidth}
+                />
+              ) : (
+                <IconGrid
+                  items={displayedIcons}
+                  selectedId={selectedId}
+                  onCopy={handleCopy}
+                  onIconClick={handleIconClick}
+                  color={customization.color}
+                  strokeWidth={customization.strokeWidth}
+                />
+              )
+            )}
+          </main>
+        </div>
+
+        {/* Mobile drawers and sheets */}
+        <MobileLibraryDrawer
+          isOpen={showLibraryDrawer}
+          onClose={() => setShowLibraryDrawer(false)}
+          selectedSet={selectedSet}
+          onSetChange={handleMobileSetChange}
+        />
+        
+        <MobileCustomizeSheet
+          isOpen={showCustomizeSheet}
+          onClose={() => setShowCustomizeSheet(false)}
+        />
+        
+        <MobileIconActions
+          isOpen={showIconActions}
+          onClose={() => setShowIconActions(false)}
+          selectedIcon={selectedIcon}
+        />
+      </>
+    );
+  }
+  
+  // Desktop layout
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full overflow-hidden">{/* Fixed viewport height */}
