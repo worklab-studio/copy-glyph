@@ -155,11 +155,16 @@ export function IconCell({
         .replace(new RegExp(`fill="${customization.color}"([^>]*?)stroke="${customization.color}"`, 'gi'), `fill="none"$1stroke="${customization.color}"`);
       
       if (supportsStroke) {
-        // More comprehensive stroke-width replacement for all icon libraries
+        // Replace existing stroke-width attributes
         customizedSVG = customizedSVG
           .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`)
           .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${customization.strokeWidth}"`)
           .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${customization.strokeWidth}`);
+        
+        // If no stroke-width exists, inject it into the root SVG element
+        if (!customizedSVG.includes('stroke-width')) {
+          customizedSVG = customizedSVG.replace(/<svg([^>]*?)>/g, `<svg$1 stroke-width="${customization.strokeWidth}">`);
+        }
       }
 
       await navigator.clipboard.writeText(customizedSVG);
@@ -243,13 +248,16 @@ export function IconCell({
       
       // Apply stroke width to SVG string only for icons that support it
       if (supportsStroke) {
-        // More comprehensive stroke-width replacement for all icon libraries
+        // Replace existing stroke-width attributes
         modifiedSvg = modifiedSvg
           .replace(/stroke-width="[^"]*"/g, `stroke-width="${iconStrokeWidth}"`)
           .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${iconStrokeWidth}"`)
-          .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${iconStrokeWidth}`)
-          // Handle cases where stroke-width doesn't exist - add it to svg tag
-          .replace(/<svg([^>]*?)(?<!stroke-width="[^"]*")>/g, `<svg$1 stroke-width="${iconStrokeWidth}">`);
+          .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${iconStrokeWidth}`);
+        
+        // If no stroke-width exists, inject it into the root SVG element
+        if (!modifiedSvg.includes('stroke-width')) {
+          modifiedSvg = modifiedSvg.replace(/<svg([^>]*?)>/g, `<svg$1 stroke-width="${iconStrokeWidth}">`);
+        }
       }
       
       return (

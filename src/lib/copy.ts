@@ -9,6 +9,20 @@ export async function copyIcon(icon: IconItem): Promise<void> {
 
     if (typeof icon.svg === 'string') {
       svgString = icon.svg;
+      
+      // Apply stroke width to SVG string for icons that support it
+      if (supportsStrokeWidth(icon)) {
+        // Replace existing stroke-width attributes
+        svgString = svgString
+          .replace(/stroke-width="[^"]*"/g, 'stroke-width="2"')
+          .replace(/strokeWidth="[^"]*"/g, 'strokeWidth="2"')
+          .replace(/stroke-width:\s*[^;"\s]+/g, 'stroke-width: 2');
+        
+        // If no stroke-width exists, inject it into the root SVG element
+        if (!svgString.includes('stroke-width')) {
+          svgString = svgString.replace(/<svg([^>]*?)>/g, '<svg$1 stroke-width="2">');
+        }
+      }
     } else {
       // Render the React component to SVG string
       const IconComponent = icon.svg as React.ComponentType<any>;

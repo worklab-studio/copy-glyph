@@ -67,10 +67,16 @@ export function ControlPanel({
         .replace(new RegExp(`fill="${customization.color}"([^>]*?)stroke="${customization.color}"`, 'gi'), `fill="none"$1stroke="${customization.color}"`);
       
       if (supportsStroke) {
+        // Replace existing stroke-width attributes
         customizedSVG = customizedSVG
           .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`)
           .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${customization.strokeWidth}"`)
           .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${customization.strokeWidth}`);
+        
+        // If no stroke-width exists, inject it into the root SVG element
+        if (!customizedSVG.includes('stroke-width')) {
+          customizedSVG = customizedSVG.replace(/<svg([^>]*?)>/g, `<svg$1 stroke-width="${customization.strokeWidth}">`);
+        }
       }
 
       // Create and download the file
@@ -199,10 +205,16 @@ export function ControlPanel({
       .replace(new RegExp(`fill="${customization.color}"([^>]*?)stroke="${customization.color}"`, 'gi'), `fill="none"$1stroke="${customization.color}"`);
     
     if (supportsStroke) {
+      // Replace existing stroke-width attributes
       customizedSVG = customizedSVG
         .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`)
         .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${customization.strokeWidth}"`)
         .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${customization.strokeWidth}`);
+      
+      // If no stroke-width exists, inject it into the root SVG element
+      if (!customizedSVG.includes('stroke-width')) {
+        customizedSVG = customizedSVG.replace(/<svg([^>]*?)>/g, `<svg$1 stroke-width="${customization.strokeWidth}">`);
+      }
     }
     
     return customizedSVG;
