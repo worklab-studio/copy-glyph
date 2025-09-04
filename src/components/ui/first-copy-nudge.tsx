@@ -7,14 +7,20 @@ interface FirstCopyNudgeProps {
 
 export function showFirstCopyNudge({ keyboardShortcut }: FirstCopyNudgeProps) {
   toast({
-    title: "🎉 First Icon Stacked!",
     description: (
-      <div className="flex items-center gap-3 text-base">
-        <AnimatedBookmarkIcon className="text-primary w-5 h-5" />
-        <span className="font-medium">Bookmark Iconstack ({keyboardShortcut}) to come back anytime.</span>
+      <div className="flex flex-col items-center gap-3 py-2">
+        <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 border border-primary/20">
+          <AnimatedBookmarkIcon className="text-primary/70 w-6 h-6" />
+        </div>
+        <div className="text-center">
+          <div className="font-semibold text-base mb-1">🎉 First Icon Stacked!</div>
+          <div className="text-sm text-muted-foreground">
+            Bookmark Iconstack ({keyboardShortcut}) to come back anytime.
+          </div>
+        </div>
       </div>
     ),
     duration: 7000,
-    className: "min-h-[80px] text-lg"
+    className: "min-h-[120px] p-4"
   });
 }
