@@ -24,6 +24,7 @@ export type IconGridProps = {
   color?: string;        // CSS color value, applied as currentColor
   strokeWidth?: number;  // 0.25–3.0
   ariaLabel?: string;    // e.g., "Icon results grid"
+  libraryName?: string;  // Display library name header when provided
 };
 
 export type SectionedIconGridProps = {

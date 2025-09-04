@@ -322,6 +322,23 @@ function IconGridPage() {
                   onIconClick={handleIconClick}
                   color={customization.color}
                   strokeWidth={customization.strokeWidth}
+                  libraryName={selectedSet !== "all" ? (
+                    selectedSet === "favorites" ? "Favorites" : 
+                    selectedSet === "material" ? "Material Design Icons" :
+                    selectedSet === "animated" ? "Animated Icons" :
+                    selectedSet === "lucide" ? "Lucide Icons" :
+                    selectedSet === "feather" ? "Feather Icons" :
+                    selectedSet === "phosphor" ? "Phosphor Icons" :
+                    selectedSet === "tabler" ? "Tabler Icons" :
+                    selectedSet === "bootstrap" ? "Bootstrap Icons" :
+                    selectedSet === "remix" ? "Remix Icons" :
+                    selectedSet === "boxicons" ? "Boxicons" :
+                    selectedSet === "css-gg" ? "CSS.GG Icons" :
+                    selectedSet === "iconsax" ? "Iconsax Icons" :
+                    selectedSet === "atlas" ? "Atlas Icons" :
+                    selectedSet === "solar" ? "Solar Icons" :
+                    selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)
+                  ) : undefined}
                 />
               )
             )}
