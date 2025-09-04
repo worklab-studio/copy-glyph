@@ -138,7 +138,7 @@ export function useSearchWorker(): SearchWorkerHook {
         query: query.trim(),
         libraryId: options.libraryId,
         options: {
-          maxResults: 1000,
+          maxResults: 10000, // Increase limit to show more results
           fuzzy: true,
           enableSynonyms: true,
           enablePhonetic: true,

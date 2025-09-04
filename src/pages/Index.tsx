@@ -80,7 +80,7 @@ function IconGridPage() {
         // Try worker search with comprehensive options including library filter
         if (searchReady && loaded) {
           const searchResult = await search(searchQuery, {
-            maxResults: 1000,
+            maxResults: 10000, // Increase limit to show more results
             fuzzy: true,
             enableSynonyms: true,
             enablePhonetic: true,
@@ -95,7 +95,7 @@ function IconGridPage() {
           const { fallbackSearch } = require('@/lib/fallback-search');
           const fallbackResult = fallbackSearch(icons, searchQuery, {
             fuzzy: true,
-            maxResults: 1000,
+            maxResults: 10000, // Increase limit to show more results
             minScore: 0.1,
             enableSynonyms: true,
             enablePhonetic: true,
@@ -110,7 +110,7 @@ function IconGridPage() {
         const { fallbackSearch } = require('@/lib/fallback-search');
         const fallbackResult = fallbackSearch(icons, searchQuery, {
           fuzzy: true,
-          maxResults: 1000,
+          maxResults: 10000, // Increase limit to show more results
           minScore: 0.1,
           enableSynonyms: true,
           enablePhonetic: true,
