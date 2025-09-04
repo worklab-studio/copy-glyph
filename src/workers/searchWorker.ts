@@ -82,7 +82,7 @@ function calculateIconScore(
   queryWords: string[],
   options: SearchMessage['options'] = {}
 ): SearchResult | null {
-  const { fuzzy = true, enableSynonyms = true, enablePhonetic = true } = options;
+  const { fuzzy = true, enableSynonyms = false, enablePhonetic = true } = options;
   
   let bestScore = 0;
   let matchedFields: string[] = [];
@@ -337,8 +337,8 @@ function searchIcons(
   const {
     fuzzy = true,
     maxResults = 1000,
-    minScore = 0.1,
-    enableSynonyms = true,
+    minScore = 2.0, // Increased for better precision
+    enableSynonyms = false, // Disabled by default for exact results
     enablePhonetic = true,
     libraryId
   } = options;
