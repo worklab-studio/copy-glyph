@@ -2,14 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const taglines = [
-  "56,800+ icons. One stack.",
+  "50,000+ icons. One stack.",
   "All your favorite libraries. One place.",
   "Search less. Design faster.",
   "Every icon you need, stacked.",
   "Icons, customized your way."
 ];
 
-const LoadingWithTagline = () => {
+interface LoadingWithTaglineProps {
+  minDuration?: number;
+  onMinDurationComplete?: () => void;
+}
+
+const LoadingWithTagline: React.FC<LoadingWithTaglineProps> = ({ 
+  minDuration = 4000, 
+  onMinDurationComplete 
+}) => {
   const [currentTagline, setCurrentTagline] = useState('');
 
   useEffect(() => {
@@ -32,6 +40,16 @@ const LoadingWithTagline = () => {
     setCurrentTagline(taglines[randomIndex]);
     localStorage.setItem('lastTaglineIndex', randomIndex.toString());
   }, []);
+
+  useEffect(() => {
+    if (onMinDurationComplete) {
+      const timer = setTimeout(() => {
+        onMinDurationComplete();
+      }, minDuration);
+
+      return () => clearTimeout(timer);
+    }
+  }, [minDuration, onMinDurationComplete]);
 
   return (
     <div className="flex flex-col items-center justify-center space-y-6">

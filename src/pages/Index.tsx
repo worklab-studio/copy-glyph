@@ -28,7 +28,12 @@ function IconGridPage() {
   const [searchResults, setSearchResults] = useState<IconItem[]>([]);
   const [searchTotalCount, setSearchTotalCount] = useState<number>(0);
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(true);
+  const [minDurationComplete, setMinDurationComplete] = useState(false);
+  const [loadingTimeout, setLoadingTimeout] = useState(false);
   const { customization } = useIconCustomization();
+
+  // Essential libraries that must load first
+  const essentialLibraries = ['material', 'lucide', 'feather'];
   
   // Async icon loading
   const { 
@@ -57,13 +62,24 @@ function IconGridPage() {
     isSearching 
   } = useSearchWorker();
 
-  // Show loading animation for 4 seconds
+  // Control loading animation visibility
   useEffect(() => {
-    const timer = setTimeout(() => {
+    // Hide loading only when both conditions are met:
+    // 1. Minimum duration has passed
+    // 2. Essential icons are loaded
+    if (minDurationComplete && loaded && icons.length > 0) {
       setShowLoadingAnimation(false);
-    }, 4000);
+    }
+  }, [minDurationComplete, loaded, icons.length]);
 
-    return () => clearTimeout(timer);
+  // Fallback timeout to prevent infinite loading
+  useEffect(() => {
+    const timeoutTimer = setTimeout(() => {
+      setLoadingTimeout(true);
+      setShowLoadingAnimation(false);
+    }, 20000);
+
+    return () => clearTimeout(timeoutTimer);
   }, []);
 
   // Preload all icons immediately on component mount
@@ -353,9 +369,30 @@ function IconGridPage() {
 
           {/* Scrollable main content */}
           <main className="flex-1 overflow-hidden">
-            {showLoadingAnimation || !loaded ? (
+            {showLoadingAnimation ? (
               <div className="flex-1 flex items-center justify-center h-full">
-                <LoadingWithTagline />
+                <LoadingWithTagline 
+                  minDuration={4000}
+                  onMinDurationComplete={() => setMinDurationComplete(true)}
+                />
+              </div>
+            ) : loadingTimeout ? (
+              <div className="flex h-64 items-center justify-center text-center px-6">
+                <Alert className="max-w-md">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription className="mt-2">
+                    <p className="font-medium">Taking longer than expected</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      The icons are taking a while to load. Please check your connection.
+                    </p>
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="mt-3 text-sm text-primary hover:text-primary/80 underline"
+                    >
+                      Reload page
+                    </button>
+                  </AlertDescription>
+                </Alert>
               </div>
             ) : error ? (
               <div className="flex h-64 items-center justify-center text-center px-6">
