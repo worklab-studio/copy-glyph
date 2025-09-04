@@ -57,28 +57,26 @@ function IconGridPage() {
     isSearching 
   } = useSearchWorker();
 
-  // Show loading animation for 3 seconds
+  // Show loading animation for 4 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoadingAnimation(false);
-    }, 3000);
+    }, 4000);
 
     return () => clearTimeout(timer);
   }, []);
 
-  // Load initial library progressively and start background loading immediately
+  // Preload all icons immediately on component mount
   useEffect(() => {
-    if (selectedSet === "all") {
-      loadAllLibrariesSectionedProgressive();
-    } else {
+    loadAllLibrariesSectionedProgressive();
+  }, [loadAllLibrariesSectionedProgressive]);
+
+  // Load specific library when selection changes (after initial load)
+  useEffect(() => {
+    if (loaded && selectedSet !== "all") {
       loadLibraryProgressive(selectedSet);
     }
-    
-    // Start background loading of all libraries immediately for better UX
-    if (!loaded) {
-      loadAllLibrariesSectionedProgressive();
-    }
-  }, [selectedSet, loadLibraryProgressive, loadAllLibrariesSectionedProgressive, loaded]);
+  }, [selectedSet, loadLibraryProgressive, loaded]);
 
   // Index loaded icons for search - with error handling
   useEffect(() => {
