@@ -1,5 +1,4 @@
 import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, Play, Globe, Minus, Hash, Bug, Workflow, Target, GitBranch, Component, Sparkles, Sun } from "lucide-react";
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 // Removed AnimatedPlayIcon since animated icons are removed
 import { featherIcons } from "@/data/feather-icons";
@@ -77,9 +76,9 @@ interface AppSidebarProps {
 
 export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
   return (
-    <Sidebar className="border-r flex flex-col">
+    <div className="w-72 border-r flex flex-col bg-background">
       {/* Fixed Header - Logo Area */}
-      <SidebarHeader className="flex-shrink-0 border-b h-16">
+      <div className="flex-shrink-0 border-b h-16">
         <div className="flex items-center px-3 h-full">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
@@ -93,69 +92,63 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
             </div>
           </div>
         </div>
-      </SidebarHeader>
+      </div>
 
       {/* Fixed Browse Section */}
       <div className="flex-shrink-0">
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        <div className="p-3">
+          <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
             Browse
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {topNavItems.map((item) => (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton 
-                    onClick={() => onSetChange(item.id)}
-                    className={cn(
-                      "w-full justify-start gap-3 text-sm",
-                      selectedSet === item.id && "bg-accent text-accent-foreground font-medium"
-                    )}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span className="flex-1 text-left">{item.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {item.count.toLocaleString()}
-                    </span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarSeparator />
+          </div>
+          <div className="space-y-1">
+            {topNavItems.map((item) => (
+              <button 
+                key={item.id}
+                onClick={() => onSetChange(item.id)}
+                className={cn(
+                  "w-full flex items-center gap-3 text-sm px-2 py-1.5 rounded-md transition-colors hover:bg-accent hover:text-accent-foreground",
+                  selectedSet === item.id && "bg-accent text-accent-foreground font-medium"
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                <span className="flex-1 text-left">{item.name}</span>
+                <span className="text-xs text-muted-foreground">
+                  {item.count.toLocaleString()}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="border-t border-border" />
       </div>
 
       {/* Scrollable Content Area */}
-      <SidebarContent className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto">
         {/* Icon Libraries */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        <div className="p-3">
+          <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
             Libraries
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {activeLibraries.map((library) => (
-                <SidebarMenuItem key={library.id}>
-                  <SidebarMenuButton 
-                    onClick={() => onSetChange(library.id)}
-                    className={cn(
-                      "w-full justify-start gap-3 text-sm",
-                      selectedSet === library.id && "bg-accent text-accent-foreground font-medium"
-                    )}
-                  >
-                    <library.icon className="h-4 w-4" />
-                    <span className="flex-1 text-left">{library.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {library.count.toLocaleString()}
-                    </span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+          </div>
+          <div className="space-y-1">
+            {activeLibraries.map((library) => (
+              <button 
+                key={library.id}
+                onClick={() => onSetChange(library.id)}
+                className={cn(
+                  "w-full flex items-center gap-3 text-sm px-2 py-1.5 rounded-md transition-colors hover:bg-accent hover:text-accent-foreground",
+                  selectedSet === library.id && "bg-accent text-accent-foreground font-medium"
+                )}
+              >
+                <library.icon className="h-4 w-4" />
+                <span className="flex-1 text-left">{library.name}</span>
+                <span className="text-xs text-muted-foreground">
+                  {library.count.toLocaleString()}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
