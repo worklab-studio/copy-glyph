@@ -229,7 +229,69 @@ class IconLibraryManager {
     return results;
   }
 
-  // Load all libraries (for "all" view)
+  // Load initial batch (100 icons from popular libraries)
+  async loadInitialBatch(): Promise<IconItem[]> {
+    const initialIcons: IconItem[] = [];
+    
+    // Load from popular libraries first
+    for (const libraryId of this.popularLibraries) {
+      try {
+        const icons = await this.loadLibrary(libraryId);
+        initialIcons.push(...icons);
+        
+        // Stop when we have enough icons
+        if (initialIcons.length >= 100) {
+          break;
+        }
+      } catch (error) {
+        console.warn(`Failed to load popular library ${libraryId}:`, error);
+      }
+    }
+    
+    // If we don't have enough, load from other libraries
+    if (initialIcons.length < 100) {
+      const remainingLibraries = this.libraries
+        .map(lib => lib.id)
+        .filter(id => !this.popularLibraries.includes(id));
+      
+      for (const libraryId of remainingLibraries) {
+        try {
+          const icons = await this.loadLibrary(libraryId);
+          initialIcons.push(...icons);
+          
+          if (initialIcons.length >= 100) {
+            break;
+          }
+        } catch (error) {
+          console.warn(`Failed to load library ${libraryId}:`, error);
+        }
+      }
+    }
+    
+    // Return first 100 icons
+    return initialIcons.slice(0, 100);
+  }
+
+  // Load remaining icons after initial batch
+  async loadRemainingIcons(excludeIds: string[]): Promise<IconItem[]> {
+    const libraryIds = this.libraries.map(lib => lib.id);
+    const libraryMap = await this.loadLibraries(libraryIds);
+    
+    const allIcons: IconItem[] = [];
+    const excludeSet = new Set(excludeIds);
+    
+    for (const [, icons] of libraryMap) {
+      for (const icon of icons) {
+        if (!excludeSet.has(icon.id)) {
+          allIcons.push(icon);
+        }
+      }
+    }
+    
+    return allIcons;
+  }
+
+  // Load all libraries (for "all" view) - now uses staged loading
   async loadAllLibraries(): Promise<IconItem[]> {
     const libraryIds = this.libraries.map(lib => lib.id);
     const libraryMap = await this.loadLibraries(libraryIds);
