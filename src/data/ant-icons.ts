@@ -1,54 +1,122 @@
-import { type IconItem } from '@/types/icon';
-import { iconMap } from './raw/ant-icons-raw';
+import { IconItem } from '../types/icon';
+import { iconMap } from '../../Ant design system';
 
-// Helper function to format icon names from kebab-case to Title Case
-function formatIconName(key: string): string {
-  return key
-    .split(/[-_]/)
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+// Helper function to convert camelCase to title case
+function camelToTitle(str: string): string {
+  return str
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, (char) => char.toUpperCase())
+    .trim();
+}
+
+// Helper function to generate tags from icon name
+function generateTags(name: string): string[] {
+  const words = name.toLowerCase().split(/[\s-_]+/);
+  const tags = [...words];
+  
+  // Add common synonyms and related terms
+  if (words.some(w => ['home', 'house'].includes(w))) tags.push('main', 'start');
+  if (words.some(w => ['user', 'person', 'profile'].includes(w))) tags.push('account', 'avatar');
+  if (words.some(w => ['setting', 'config', 'gear'].includes(w))) tags.push('preferences', 'options');
+  if (words.some(w => ['search', 'find'].includes(w))) tags.push('lookup', 'query');
+  if (words.some(w => ['edit', 'pencil'].includes(w))) tags.push('modify', 'update');
+  if (words.some(w => ['delete', 'remove', 'trash'].includes(w))) tags.push('bin', 'clear');
+  if (words.some(w => ['arrow', 'direction'].includes(w))) tags.push('navigation', 'pointer');
+  
+  return [...new Set(tags)]; // Remove duplicates
 }
 
 // Helper function to categorize icons based on their names
-function categorizeIcon(iconName: string): string {
-  const name = iconName.toLowerCase();
+function categorizeIcon(name: string): string {
+  const lowerName = name.toLowerCase();
   
-  if (name.includes('arrow') || name.includes('direction') || name.includes('navigate')) return 'navigation';
-  if (name.includes('user') || name.includes('person') || name.includes('profile')) return 'user';
-  if (name.includes('home') || name.includes('house') || name.includes('building')) return 'places';
-  if (name.includes('file') || name.includes('document') || name.includes('folder')) return 'files';
-  if (name.includes('setting') || name.includes('config') || name.includes('gear')) return 'system';
-  if (name.includes('phone') || name.includes('mail') || name.includes('message')) return 'communication';
-  if (name.includes('play') || name.includes('music') || name.includes('video')) return 'media';
-  if (name.includes('cart') || name.includes('shop') || name.includes('store')) return 'commerce';
-  if (name.includes('calendar') || name.includes('clock') || name.includes('time')) return 'time';
-  if (name.includes('weather') || name.includes('sun') || name.includes('cloud')) return 'weather';
+  // Navigation
+  if (/home|house|arrow|direction|navigation|menu|back|forward|up|down|left|right|chevron|caret/.test(lowerName)) {
+    return 'navigation';
+  }
   
+  // User & People
+  if (/user|person|profile|account|avatar|people|team|contact|face/.test(lowerName)) {
+    return 'user';
+  }
+  
+  // System & Settings
+  if (/setting|config|gear|system|preference|option|control|admin|tool/.test(lowerName)) {
+    return 'system';
+  }
+  
+  // Communication
+  if (/message|chat|mail|email|phone|call|notification|bell|alert|comment/.test(lowerName)) {
+    return 'communication';
+  }
+  
+  // Media & Files
+  if (/file|document|folder|image|video|audio|music|photo|picture|camera|play|pause|stop/.test(lowerName)) {
+    return 'media';
+  }
+  
+  // Business & Finance
+  if (/money|dollar|bank|card|payment|shop|cart|business|finance|chart|graph/.test(lowerName)) {
+    return 'business';
+  }
+  
+  // Security
+  if (/lock|unlock|key|security|shield|protect|safe|password/.test(lowerName)) {
+    return 'security';
+  }
+  
+  // Social & Brand
+  if (/like|heart|star|share|social|brand|twitter|facebook|github|google/.test(lowerName)) {
+    return 'social';
+  }
+  
+  // Design & Development
+  if (/code|api|database|server|cloud|design|color|palette|brush/.test(lowerName)) {
+    return 'development';
+  }
+  
+  // Time & Calendar
+  if (/time|clock|calendar|date|schedule|event/.test(lowerName)) {
+    return 'time';
+  }
+  
+  // Default category
   return 'general';
 }
 
-// Helper function to generate tags for icons
-function generateTags(iconName: string): string[] {
-  const category = categorizeIcon(iconName);
-  const words = iconName.toLowerCase().split(/[-_\s]/);
-  return [category, ...words, iconName];
+// Helper function to process SVG content for theming
+function processSvg(svgContent: string): string {
+  return svgContent
+    // Remove XML declarations and DOCTYPE
+    .replace(/<\?xml[^>]*\?>/g, '')
+    .replace(/<!DOCTYPE[^>]*>/g, '')
+    // Standardize the SVG opening tag
+    .replace(/<svg[^>]*>/g, (match) => {
+      // Extract viewBox if it exists, or use default
+      const viewBoxMatch = match.match(/viewBox="([^"]*)"/);
+      const viewBox = viewBoxMatch ? viewBoxMatch[1] : '0 0 1024 1024';
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" fill="currentColor">`;
+    })
+    // Replace hardcoded colors with currentColor for theming
+    .replace(/fill="[^"]*"/g, 'fill="currentColor"')
+    .replace(/stroke="[^"]*"/g, 'stroke="currentColor"')
+    // Clean up extra whitespace and newlines
+    .replace(/\s+/g, ' ')
+    .replace(/>\s+</g, '><')
+    .trim();
 }
 
-// Helper function to ensure SVG uses currentColor
-function processSvg(svg: string): string {
-  return svg
-    .replace(/fill="(?!none|currentColor)[^"]*"/g, 'fill="currentColor"')
-    .replace(/stroke="(?!none|currentColor)[^"]*"/g, 'stroke="currentColor"');
-}
-
-// Transform the iconMap into IconItem array
-export const antIcons: IconItem[] = Object.entries(iconMap).map(([iconName, svgContent]) => {
+// Process all icons from the iconMap
+export const antIcons: IconItem[] = Object.entries(iconMap).map(([key, svgContent]) => {
+  const name = camelToTitle(key);
+  const processedSvg = processSvg(svgContent);
+  
   return {
-    id: `ant-${iconName}`,
-    name: formatIconName(iconName),
-    svg: processSvg(svgContent as string),
-    tags: generateTags(iconName),
-    style: 'mixed',
-    category: categorizeIcon(iconName)
+    id: `ant-${key.toLowerCase().replace(/([A-Z])/g, '-$1').replace(/^-/, '')}`,
+    name,
+    svg: processedSvg,
+    tags: generateTags(name),
+    style: 'outline',
+    category: categorizeIcon(name),
   };
 });

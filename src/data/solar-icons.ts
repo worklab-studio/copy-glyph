@@ -1,5 +1,5 @@
-import { type IconItem } from '@/types/icon';
-import { iconMap } from './raw/solar-icons-raw';
+import { type IconItem } from "@/types/icon";
+import { iconMap } from "../../solar";
 
 function formatIconName(key: string): string {
   // Remove svg prefix and convert to readable name

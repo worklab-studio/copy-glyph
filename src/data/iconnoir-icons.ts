@@ -1,5 +1,5 @@
-import { type IconItem } from '@/types/icon';
-import { iconMap } from './raw/iconnoir-icons-raw';
+import { IconItem } from '../types/icon';
+import { iconMap } from '../../IconNoir icons';
 
 // IconNoir Icons - Complete collection from https://iconoir.com/
 // All 1,671 professional icons imported and processed

@@ -1,8 +1,13 @@
-import { IconItem } from '../types/icon';
-import { ICON_LIBRARIES, INITIAL_BATCH_SIZE, type IconLibraryConfig } from '../data/config';
+import { type IconItem } from '@/types/icon';
 
-// Metadata for lightweight library information
-export interface IconLibraryMetadata extends IconLibraryConfig {}
+// Lightweight metadata structure for initial load
+export interface IconLibraryMetadata {
+  id: string;
+  name: string;
+  count: number;
+  style: string;
+  description?: string;
+}
 
 // Cache configuration
 const CACHE_KEY_PREFIX = 'icon-library-';
@@ -21,8 +26,30 @@ class IconLibraryManager {
   private loadingPromises = new Map<string, Promise<IconItem[]>>();
   private searchIndex = new Map<string, Set<string>>();
 
-  // Library metadata from config
-  public readonly libraries: IconLibraryMetadata[] = Object.values(ICON_LIBRARIES);
+  // Library metadata - loaded synchronously for initial UI
+  public readonly libraries: IconLibraryMetadata[] = [
+    { id: 'material', name: 'Material Design', count: 7000, style: 'filled' },
+    { id: 'atlas', name: 'Atlas Icons', count: 300, style: 'outline' },
+    { id: 'lucide', name: 'Lucide', count: 1500, style: 'outline' },
+    { id: 'feather', name: 'Feather', count: 287, style: 'outline' },
+    { id: 'solar', name: 'Solar', count: 7000, style: 'mixed' },
+    { id: 'phosphor', name: 'Phosphor', count: 9000, style: 'mixed' },
+    { id: 'tabler', name: 'Tabler', count: 5000, style: 'outline' },
+    { id: 'bootstrap', name: 'Bootstrap', count: 2000, style: 'filled' },
+    { id: 'remix', name: 'Remix', count: 2800, style: 'mixed' },
+    { id: 'boxicons', name: 'BoxIcons', count: 1600, style: 'mixed' },
+    { id: 'css-gg', name: 'CSS.gg', count: 700, style: 'outline' },
+    { id: 'iconsax', name: 'Iconsax', count: 6000, style: 'mixed' },
+    { id: 'line', name: 'Line Icons', count: 500, style: 'outline' },
+    { id: 'pixelart', name: 'Pixelart Icons', count: 400, style: 'pixel' },
+    { id: 'teeny', name: 'Teeny Icons', count: 2000, style: 'outline' },
+    { id: 'ant', name: 'Ant Design', count: 800, style: 'mixed' },
+    { id: 'fluent', name: 'Fluent UI', count: 2000, style: 'mixed' },
+    { id: 'iconnoir', name: 'IconNoir', count: 1400, style: 'outline' },
+    { id: 'octicons', name: 'Octicons', count: 600, style: 'filled' },
+    { id: 'radix', name: 'Radix Icons', count: 300, style: 'filled' },
+    { id: 'animated', name: 'Animated', count: 31, style: 'animated' },
+  ];
 
   // Preload popular libraries in background
   private readonly popularLibraries = ['material', 'lucide', 'feather'];
@@ -49,6 +76,10 @@ class IconLibraryManager {
         case 'material':
           const materialModule = await import('@/data/material-icons');
           return materialModule.materialIcons;
+        
+        case 'atlas':
+          const atlasModule = await import('@/data/atlas-icons');
+          return atlasModule.atlasIcons;
         
         case 'lucide':
           const lucideModule = await import('@/data/lucide-icons');
@@ -86,6 +117,18 @@ class IconLibraryManager {
           const cssGgModule = await import('@/data/css-gg-icons');
           return cssGgModule.default;
         
+        case 'iconsax':
+          const iconsaxModule = await import('@/data/iconsax-icons');
+          return iconsaxModule.iconsaxIcons;
+        
+        case 'line':
+          const lineModule = await import('@/data/line-icons');
+          return lineModule.lineIcons;
+        
+        case 'pixelart':
+          const pixelartModule = await import('@/data/pixelart-icons');
+          return pixelartModule.pixelartIcons;
+        
         case 'teeny':
           const teenyModule = await import('@/data/teeny-icons');
           return teenyModule.teenyIcons;
@@ -101,6 +144,10 @@ class IconLibraryManager {
         case 'iconnoir':
           const iconnoirModule = await import('@/data/iconnoir-icons');
           return iconnoirModule.iconnoirIcons;
+        
+        case 'octicons':
+          const octiconsModule = await import('@/data/octicons-icons');
+          return octiconsModule.octiconsIcons;
         
         case 'radix':
           const radixModule = await import('@/data/radix-icons');
@@ -182,7 +229,69 @@ class IconLibraryManager {
     return results;
   }
 
-  // Load all libraries (for "all" view)
+  // Load initial batch (100 icons from popular libraries)
+  async loadInitialBatch(): Promise<IconItem[]> {
+    const initialIcons: IconItem[] = [];
+    
+    // Load from popular libraries first
+    for (const libraryId of this.popularLibraries) {
+      try {
+        const icons = await this.loadLibrary(libraryId);
+        initialIcons.push(...icons);
+        
+        // Stop when we have enough icons
+        if (initialIcons.length >= 100) {
+          break;
+        }
+      } catch (error) {
+        console.warn(`Failed to load popular library ${libraryId}:`, error);
+      }
+    }
+    
+    // If we don't have enough, load from other libraries
+    if (initialIcons.length < 100) {
+      const remainingLibraries = this.libraries
+        .map(lib => lib.id)
+        .filter(id => !this.popularLibraries.includes(id));
+      
+      for (const libraryId of remainingLibraries) {
+        try {
+          const icons = await this.loadLibrary(libraryId);
+          initialIcons.push(...icons);
+          
+          if (initialIcons.length >= 100) {
+            break;
+          }
+        } catch (error) {
+          console.warn(`Failed to load library ${libraryId}:`, error);
+        }
+      }
+    }
+    
+    // Return first 100 icons
+    return initialIcons.slice(0, 100);
+  }
+
+  // Load remaining icons after initial batch
+  async loadRemainingIcons(excludeIds: string[]): Promise<IconItem[]> {
+    const libraryIds = this.libraries.map(lib => lib.id);
+    const libraryMap = await this.loadLibraries(libraryIds);
+    
+    const allIcons: IconItem[] = [];
+    const excludeSet = new Set(excludeIds);
+    
+    for (const [, icons] of libraryMap) {
+      for (const icon of icons) {
+        if (!excludeSet.has(icon.id)) {
+          allIcons.push(icon);
+        }
+      }
+    }
+    
+    return allIcons;
+  }
+
+  // Load all libraries (for "all" view) - now uses staged loading
   async loadAllLibraries(): Promise<IconItem[]> {
     const libraryIds = this.libraries.map(lib => lib.id);
     const libraryMap = await this.loadLibraries(libraryIds);

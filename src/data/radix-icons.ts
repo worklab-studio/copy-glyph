@@ -1,5 +1,5 @@
 import { IconItem } from '../types/icon';
-import { iconMap } from './raw/radix-icons-raw';
+import { iconMap } from '../../Radix icons';
 
 // Radix Icons - Complete collection from https://www.radix-ui.com/icons
 // All 318 professional icons imported and processed

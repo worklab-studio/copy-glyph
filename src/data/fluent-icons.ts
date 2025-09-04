@@ -94,7 +94,7 @@ const processSvg = (svg: string): string => {
 };
 
 // Import the raw icon data
-import { iconMap } from './raw/fluent-icons-raw';
+import iconMap from '../../Fluent  Icons.ts';
 
 // Process all valid Fluent icons (starting from icFluent prefix)
 export const fluentIcons: IconItem[] = Object.entries(iconMap)
