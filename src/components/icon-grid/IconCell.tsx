@@ -360,10 +360,12 @@ export function IconCell({
         aria-pressed={isSelected}
         data-selected={isSelected}
         className={cn(
-          "group relative w-full h-full aspect-square flex items-center justify-center transition-all duration-200 m-0 p-0 border-0",
+          "group relative flex items-center justify-center transition-all duration-200 m-0 p-0 border-0",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         )}
         style={{
+          width: '100%',
+          height: '80px',
           willChange: 'transform, opacity',
           backgroundColor: (isHovered || isSelected) ? backgroundStyle : 'transparent',
           borderColor: (isHovered || isSelected) ? borderStyle : 'transparent',
