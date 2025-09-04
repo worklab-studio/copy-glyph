@@ -1,13 +1,8 @@
-import { type IconItem } from '@/types/icon';
+import { IconItem } from '../types/icon';
+import { ICON_LIBRARIES, INITIAL_BATCH_SIZE, type IconLibraryConfig } from '../data/config';
 
-// Lightweight metadata structure for initial load
-export interface IconLibraryMetadata {
-  id: string;
-  name: string;
-  count: number;
-  style: string;
-  description?: string;
-}
+// Metadata for lightweight library information
+export interface IconLibraryMetadata extends IconLibraryConfig {}
 
 // Cache configuration
 const CACHE_KEY_PREFIX = 'icon-library-';
@@ -26,30 +21,8 @@ class IconLibraryManager {
   private loadingPromises = new Map<string, Promise<IconItem[]>>();
   private searchIndex = new Map<string, Set<string>>();
 
-  // Library metadata - loaded synchronously for initial UI
-  public readonly libraries: IconLibraryMetadata[] = [
-    { id: 'material', name: 'Material Design', count: 7000, style: 'filled' },
-    { id: 'atlas', name: 'Atlas Icons', count: 300, style: 'outline' },
-    { id: 'lucide', name: 'Lucide', count: 1500, style: 'outline' },
-    { id: 'feather', name: 'Feather', count: 287, style: 'outline' },
-    { id: 'solar', name: 'Solar', count: 7000, style: 'mixed' },
-    { id: 'phosphor', name: 'Phosphor', count: 9000, style: 'mixed' },
-    { id: 'tabler', name: 'Tabler', count: 5000, style: 'outline' },
-    { id: 'bootstrap', name: 'Bootstrap', count: 2000, style: 'filled' },
-    { id: 'remix', name: 'Remix', count: 2800, style: 'mixed' },
-    { id: 'boxicons', name: 'BoxIcons', count: 1600, style: 'mixed' },
-    { id: 'css-gg', name: 'CSS.gg', count: 700, style: 'outline' },
-    { id: 'iconsax', name: 'Iconsax', count: 6000, style: 'mixed' },
-    { id: 'line', name: 'Line Icons', count: 500, style: 'outline' },
-    { id: 'pixelart', name: 'Pixelart Icons', count: 400, style: 'pixel' },
-    { id: 'teeny', name: 'Teeny Icons', count: 2000, style: 'outline' },
-    { id: 'ant', name: 'Ant Design', count: 800, style: 'mixed' },
-    { id: 'fluent', name: 'Fluent UI', count: 2000, style: 'mixed' },
-    { id: 'iconnoir', name: 'IconNoir', count: 1400, style: 'outline' },
-    { id: 'octicons', name: 'Octicons', count: 600, style: 'filled' },
-    { id: 'radix', name: 'Radix Icons', count: 300, style: 'filled' },
-    { id: 'animated', name: 'Animated', count: 31, style: 'animated' },
-  ];
+  // Library metadata from config
+  public readonly libraries: IconLibraryMetadata[] = Object.values(ICON_LIBRARIES);
 
   // Preload popular libraries in background
   private readonly popularLibraries = ['material', 'lucide', 'feather'];

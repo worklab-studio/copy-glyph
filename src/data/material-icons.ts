@@ -1,5 +1,5 @@
 import { type IconItem } from '@/types/icon';
-import { iconMap } from '../../Material';
+import { iconMap } from './raw/material-icons-raw';
 
 // Material Design Icons data - Complete set imported from Material.ts
 
