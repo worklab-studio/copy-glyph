@@ -90,12 +90,17 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
                   <SidebarMenuButton 
                     onClick={() => onSetChange(item.id)}
                     className={cn(
-                      "w-full justify-start gap-3 text-sm",
+                      "w-full justify-between gap-3 text-sm",
                       selectedSet === item.id && "bg-accent text-accent-foreground font-medium"
                     )}
                   >
-                    <item.icon className="h-4 w-4" />
-                        <span className="flex-1 text-left">{item.name}</span>
+                    <div className="flex items-center gap-3">
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.name}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground tabular-nums">
+                      {item.count.toLocaleString()}
+                    </span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -123,12 +128,17 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
                       <SidebarMenuButton 
                         onClick={() => onSetChange(library.id)}
                         className={cn(
-                          "w-full justify-start gap-3 text-sm",
+                          "w-full justify-between gap-3 text-sm",
                           selectedSet === library.id && "bg-accent text-accent-foreground font-medium"
                         )}
                       >
-                        <IconComponent className="h-4 w-4" />
-                        <span className="flex-1 text-left">{library.name}</span>
+                        <div className="flex items-center gap-3">
+                          <IconComponent className="h-4 w-4" />
+                          <span>{library.name}</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground tabular-nums">
+                          {library.count.toLocaleString()}
+                        </span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );
