@@ -124,10 +124,16 @@ function ensureCurrentColor(svg: string): string {
   if (!processedSvg.includes('stroke=') && !processedSvg.includes('fill=')) {
     // Check if this appears to be an outline icon (has path elements)
     if (processedSvg.includes('<path')) {
-      // Add stroke="currentColor" and stroke-width to path elements for outline icons
-      processedSvg = processedSvg.replace(/<path(?![^>]*stroke=)([^>]*)>/g, '<path$1 stroke="currentColor" fill="none">');
+      // Handle self-closing path elements
+      processedSvg = processedSvg.replace(/<path(?![^>]*stroke=)([^>]*?)\/>/g, '<path$1 stroke="currentColor" fill="none"/>');
+      // Handle regular path elements
+      processedSvg = processedSvg.replace(/<path(?![^>]*stroke=)([^>]*?)>/g, '<path$1 stroke="currentColor" fill="none">');
+      
       // Also handle other shape elements for outline icons
-      processedSvg = processedSvg.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*stroke=)([^>]*)>/g, '<$1$2 stroke="currentColor" fill="none">');
+      // Self-closing elements
+      processedSvg = processedSvg.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*stroke=)([^>]*?)\/>/g, '<$1$2 stroke="currentColor" fill="none"/>');
+      // Regular elements
+      processedSvg = processedSvg.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*stroke=)([^>]*?)>/g, '<$1$2 stroke="currentColor" fill="none">');
     }
   }
   
