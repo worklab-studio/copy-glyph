@@ -59,7 +59,10 @@ const LoadingWithTagline: React.FC<LoadingWithTaglineProps> = ({
         autoplay
         className="w-32 h-32"
       />
-      <div className="text-center">
+      <div className="text-center space-y-2">
+        <h1 className="text-2xl font-bold text-foreground">
+          Iconstack
+        </h1>
         <p className="text-lg font-medium text-foreground/80 animate-fade-in">
           {currentTagline}
         </p>
