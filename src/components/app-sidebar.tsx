@@ -44,29 +44,29 @@ const topNavItems = [
   }
 ];
 
-// Active icon libraries
+// Active icon libraries - ordered per user preference
 const activeLibraries = [
-  { name: "Material Design", id: "material", count: materialIcons.length, icon: Sparkles },
-  { name: "Ant Design", id: "ant", count: antIcons.length, icon: Bug },
-  { name: "Atlas Icons", id: "atlas", count: atlasIcons.length, icon: Globe },
-  { name: "Line Icons", id: "line", count: lineIcons.length, icon: Minus },
-  { name: "Pixelart Icons", id: "pixelart", count: pixelartIcons.length, icon: Hash },
-  { name: "Teeny Icons", id: "teeny", count: teenyIcons.length, icon: Circle },
+  { name: "Solar", id: "solar", count: solarIcons.length, icon: Sun },
   { name: "Tabler", id: "tabler", count: tablerIcons.length, icon: Table },
+  { name: "Ant Design", id: "ant", count: antIcons.length, icon: Bug },
   { name: "Lucide", id: "lucide", count: lucideIcons.length, icon: Zap },
+  { name: "Fluent UI", id: "fluent", count: fluentIcons.length, icon: Workflow },
+  { name: "Atlas Icons", id: "atlas", count: atlasIcons.length, icon: Globe },
   { name: "Feather", id: "feather", count: featherIcons.length, icon: Feather },
-  { name: "Phosphor", id: "phosphor", count: phosphorIcons.length, icon: Atom },
-  { name: "Remix", id: "remix", count: remixIcons.length, icon: Music },
   { name: "Bootstrap", id: "bootstrap", count: bootstrapIcons.length, icon: Layers },
-  { name: "BoxIcons", id: "boxicons", count: boxicons.length, icon: Package2 },
+  { name: "Remix", id: "remix", count: remixIcons.length, icon: Music },
+  { name: "Material Design", id: "material", count: materialIcons.length, icon: Sparkles },
+  { name: "Pixelart Icons", id: "pixelart", count: pixelartIcons.length, icon: Hash },
+  { name: "Line Icons", id: "line", count: lineIcons.length, icon: Minus },
+  { name: "Phosphor", id: "phosphor", count: phosphorIcons.length, icon: Atom },
+  { name: "IconNoir", id: "iconnoir", count: iconnoirIcons.length, icon: Palette },
   { name: "CSS.gg", id: "css-gg", count: cssGgIcons.length, icon: Code2 },
   { name: "Iconsax", id: "iconsax", count: iconsaxIcons.length, icon: Crown },
-  { name: "Fluent UI", id: "fluent", count: fluentIcons.length, icon: Workflow },
-  { name: "IconNoir", id: "iconnoir", count: iconnoirIcons.length, icon: Palette },
-  { name: "Ikonate", id: "ikonate", count: ikonateIcons.length, icon: Target },
+  { name: "BoxIcons", id: "boxicons", count: boxicons.length, icon: Package2 },
   { name: "Octicons", id: "octicons", count: octiconsIcons.length, icon: GitBranch },
+  { name: "Teeny Icons", id: "teeny", count: teenyIcons.length, icon: Circle },
   { name: "Radix Icons", id: "radix", count: radixIcons.length, icon: Component },
-  { name: "Solar", id: "solar", count: solarIcons.length, icon: Sun },
+  { name: "Ikonate", id: "ikonate", count: ikonateIcons.length, icon: Target },
 ];
 
 // Placeholder libraries (coming soon)
