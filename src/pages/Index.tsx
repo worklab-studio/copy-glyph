@@ -28,6 +28,7 @@ function IconGridPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<IconItem[]>([]);
   const [searchTotalCount, setSearchTotalCount] = useState<number>(0);
+  const [showLoadingAnimation, setShowLoadingAnimation] = useState(true);
   const { customization } = useIconCustomization();
   
   // Async icon loading
@@ -56,6 +57,15 @@ function IconGridPage() {
     isReady: searchReady, 
     isSearching 
   } = useSearchWorker();
+
+  // Show loading animation for 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoadingAnimation(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Load initial library progressively
   useEffect(() => {
@@ -341,7 +351,7 @@ function IconGridPage() {
 
           {/* Scrollable main content */}
           <main className="flex-1 overflow-hidden">
-            {!loaded ? (
+            {showLoadingAnimation || !loaded ? (
               <div className="flex-1 flex items-center justify-center h-full">
                 <div className="flex flex-col items-center space-y-4">
                   <Lottie 
