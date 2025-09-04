@@ -2,70 +2,32 @@ import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, 
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { AnimatedPlayIcon } from "@/components/animated-play-icon";
-import { featherIcons } from "@/data/feather-icons";
-import { phosphorIcons } from "@/data/phosphor-icons";
-import { lucideIcons } from "@/data/lucide-icons";
-import { tablerIcons } from "@/data/tabler-icons";
-import { remixIcons } from "@/data/remix-icons";
-import { bootstrapIcons } from "@/data/bootstrap-icons";
-import { boxicons } from "@/data/boxicons";
-import cssGgIcons from "@/data/css-gg-icons";
-import { animatedIcons } from "@/data/animated-icons";
-import { iconsaxIcons } from "@/data/iconsax-icons";
-import { atlasIcons } from "@/data/atlas-icons";
-import { lineIcons } from "@/data/line-icons";
-import { pixelartIcons } from "@/data/pixelart-icons";
-import { teenyIcons } from "@/data/teeny-icons";
-import { antIcons } from "@/data/ant-icons";
-import { fluentIcons } from "@/data/fluent-icons";
-import { iconnoirIcons } from "@/data/iconnoir-icons";
-import { octiconsIcons } from "@/data/octicons-icons";
-import { radixIcons } from "@/data/radix-icons";
-import { materialIcons } from "@/data/material-icons";
-import { solarIcons } from "@/data/solar-icons";
+import { useIconLibraryMetadata } from "@/hooks/useAsyncIconLibrary";
 
-// Calculate total icons count
-const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length + iconsaxIcons.length + atlasIcons.length + lineIcons.length + pixelartIcons.length + teenyIcons.length + antIcons.length + fluentIcons.length + iconnoirIcons.length + octiconsIcons.length + radixIcons.length + materialIcons.length + solarIcons.length;
-
-// Fixed top navigation items  
-const topNavItems = [
-  {
-    name: "All Icons",
-    id: "all",
-    count: totalIconsCount,
-    icon: Home
-  },
-  {
-    name: "Animated",
-    id: "animated",
-    count: animatedIcons.length,
-    icon: AnimatedPlayIcon
-  }
-];
-
-// Active icon libraries - ordered per user preference
-const activeLibraries = [
-  { name: "Material Design", id: "material", count: materialIcons.length, icon: Sparkles },
-  { name: "Atlas Icons", id: "atlas", count: atlasIcons.length, icon: Globe },
-  { name: "Lucide", id: "lucide", count: lucideIcons.length, icon: Zap },
-  { name: "Feather", id: "feather", count: featherIcons.length, icon: Feather },
-  { name: "Solar", id: "solar", count: solarIcons.length, icon: Sun },
-  { name: "Phosphor", id: "phosphor", count: phosphorIcons.length, icon: Atom },
-  { name: "Tabler", id: "tabler", count: tablerIcons.length, icon: Table },
-  { name: "Bootstrap", id: "bootstrap", count: bootstrapIcons.length, icon: Layers },
-  { name: "Remix", id: "remix", count: remixIcons.length, icon: Music },
-  { name: "BoxIcons", id: "boxicons", count: boxicons.length, icon: Package2 },
-  { name: "CSS.gg", id: "css-gg", count: cssGgIcons.length, icon: Code2 },
-  { name: "Iconsax", id: "iconsax", count: iconsaxIcons.length, icon: Crown },
-  { name: "Line Icons", id: "line", count: lineIcons.length, icon: Minus },
-  { name: "Pixelart Icons", id: "pixelart", count: pixelartIcons.length, icon: Hash },
-  { name: "Teeny Icons", id: "teeny", count: teenyIcons.length, icon: Circle },
-  { name: "Ant Design", id: "ant", count: antIcons.length, icon: Bug },
-  { name: "Fluent UI", id: "fluent", count: fluentIcons.length, icon: Workflow },
-  { name: "IconNoir", id: "iconnoir", count: iconnoirIcons.length, icon: Palette },
-  { name: "Octicons", id: "octicons", count: octiconsIcons.length, icon: GitBranch },
-  { name: "Radix Icons", id: "radix", count: radixIcons.length, icon: Component },
-];
+// Icon mappings for UI
+const iconMap = {
+  material: Sparkles,
+  atlas: Globe,
+  lucide: Zap,
+  feather: Feather,
+  solar: Sun,
+  phosphor: Atom,
+  tabler: Table,
+  bootstrap: Layers,
+  remix: Music,
+  boxicons: Package2,
+  'css-gg': Code2,
+  iconsax: Crown,
+  line: Minus,
+  pixelart: Hash,
+  teeny: Circle,
+  ant: Bug,
+  fluent: Workflow,
+  iconnoir: Palette,
+  octicons: GitBranch,
+  radix: Component,
+  animated: AnimatedPlayIcon,
+};
 
 // Placeholder libraries (coming soon)
 const placeholderLibraries = [
@@ -78,6 +40,24 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
+  const { libraries, totalCount } = useIconLibraryMetadata();
+  
+  // Create top navigation items
+  const topNavItems = [
+    {
+      name: "All Icons",
+      id: "all",
+      count: totalCount,
+      icon: Home
+    },
+    {
+      name: "Animated",
+      id: "animated", 
+      count: libraries.find(lib => lib.id === 'animated')?.count || 0,
+      icon: AnimatedPlayIcon
+    }
+  ];
+
   return (
     <Sidebar className="border-r flex flex-col">
       {/* Fixed Header - Logo Area */}
@@ -90,7 +70,7 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
             <div className="flex flex-col">
               <span className="text-sm font-semibold">Icon Library</span>
               <span className="text-xs text-muted-foreground">
-                {totalIconsCount.toLocaleString()}+ icons
+                {totalCount.toLocaleString()}+ icons
               </span>
             </div>
           </div>
@@ -137,23 +117,28 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {activeLibraries.map((library) => (
-                <SidebarMenuItem key={library.id}>
-                  <SidebarMenuButton 
-                    onClick={() => onSetChange(library.id)}
-                    className={cn(
-                      "w-full justify-start gap-3 text-sm",
-                      selectedSet === library.id && "bg-accent text-accent-foreground font-medium"
-                    )}
-                  >
-                    <library.icon className="h-4 w-4" />
-                    <span className="flex-1 text-left">{library.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {library.count.toLocaleString()}
-                    </span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {libraries
+                .filter(lib => lib.id !== 'animated') // Exclude animated from main libraries
+                .map((library) => {
+                  const IconComponent = iconMap[library.id as keyof typeof iconMap] || Box;
+                  return (
+                    <SidebarMenuItem key={library.id}>
+                      <SidebarMenuButton 
+                        onClick={() => onSetChange(library.id)}
+                        className={cn(
+                          "w-full justify-start gap-3 text-sm",
+                          selectedSet === library.id && "bg-accent text-accent-foreground font-medium"
+                        )}
+                      >
+                        <IconComponent className="h-4 w-4" />
+                        <span className="flex-1 text-left">{library.name}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {library.count.toLocaleString()}
+                        </span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

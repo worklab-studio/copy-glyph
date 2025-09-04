@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Header } from "@/components/header";
 import { AppSidebar } from "@/components/app-sidebar";
@@ -8,129 +8,115 @@ import { CategoryFilter } from "@/components/CategoryFilter";
 import { IconCustomizationProvider, useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { type IconItem } from "@/types/icon";
 import { toast } from "@/hooks/use-toast";
-import { featherIcons } from "@/data/feather-icons";
-import { phosphorIcons } from "@/data/phosphor-icons";
-import { lucideIcons } from "@/data/lucide-icons";
-import { tablerIcons } from "@/data/tabler-icons";
-import { remixIcons } from "@/data/remix-icons";
-import { bootstrapIcons } from "@/data/bootstrap-icons";
-import { boxicons } from "@/data/boxicons";
-import cssGgIcons from "@/data/css-gg-icons";
-import { animatedIcons } from "@/data/animated-icons";
-import { iconsaxIcons } from "@/data/iconsax-icons";
-import { atlasIcons } from "@/data/atlas-icons";
-import { lineIcons } from "@/data/line-icons";
-import { pixelartIcons } from "@/data/pixelart-icons";
-import { teenyIcons } from "@/data/teeny-icons";
-import { antIcons } from "@/data/ant-icons";
-import { fluentIcons } from "@/data/fluent-icons";
-import { iconnoirIcons } from "@/data/iconnoir-icons";
-import { octiconsIcons } from "@/data/octicons-icons";
-import { radixIcons } from "@/data/radix-icons";
-import { materialIcons } from "@/data/material-icons";
-import { solarIcons } from "@/data/solar-icons";
-// Combine all icon libraries
-const allIcons: IconItem[] = [
-  ...materialIcons,
-  ...atlasIcons,
-  ...animatedIcons,
-  ...lucideIcons,
-  ...featherIcons,
-  ...solarIcons,
-  ...phosphorIcons,
-  ...tablerIcons,
-  ...bootstrapIcons,
-  ...remixIcons,
-  ...boxicons,
-  ...cssGgIcons,
-  ...iconsaxIcons,
-  ...lineIcons,
-  ...pixelartIcons,
-  ...teenyIcons,
-  ...antIcons,
-  ...fluentIcons,
-  ...iconnoirIcons,
-  ...octiconsIcons,
-  ...radixIcons,
-];
+import { useAsyncIconLibrary } from "@/hooks/useAsyncIconLibrary";
+import { useSearchWorker } from "@/hooks/useSearchWorker";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 function IconGridPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSet, setSelectedSet] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [searchResults, setSearchResults] = useState<IconItem[]>([]);
   const { customization } = useIconCustomization();
+  
+  // Async icon loading
+  const { 
+    icons, 
+    loading, 
+    error, 
+    loaded,
+    loadLibrary, 
+    loadAllLibraries,
+    clearError 
+  } = useAsyncIconLibrary();
+  
+  // Search worker
+  const { 
+    search, 
+    indexLibrary, 
+    isReady: searchReady, 
+    isSearching 
+  } = useSearchWorker();
+
+  // Load initial library
+  useEffect(() => {
+    if (selectedSet === "all") {
+      loadAllLibraries();
+    } else {
+      loadLibrary(selectedSet);
+    }
+  }, [selectedSet, loadLibrary, loadAllLibraries]);
+
+  // Index loaded icons for search
+  useEffect(() => {
+    if (loaded && icons.length > 0 && searchReady) {
+      indexLibrary(selectedSet, icons).catch(console.error);
+    }
+  }, [loaded, icons, searchReady, selectedSet, indexLibrary]);
 
   // Get the selected icon object
   const selectedIcon = useMemo(() => {
     if (!selectedId) return null;
-    return allIcons.find(icon => icon.id === selectedId) || null;
-  }, [selectedId]);
+    return icons.find(icon => icon.id === selectedId) || null;
+  }, [selectedId, icons]);
 
-  // Filter icons based on search query
-  const filteredIcons = useMemo(() => {
-    if (!searchQuery) return allIcons;
-    
-    const query = searchQuery.toLowerCase();
-    return allIcons.filter(icon =>
-      icon.name.toLowerCase().includes(query) ||
-      icon.tags?.some(tag => tag.includes(query))
-    );
-  }, [searchQuery]);
+  // Handle search with worker or fallback
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
 
-  // Filter by selected set  
-  const libraryFilteredIcons = useMemo(() => {
-    if (selectedSet === "favorites") {
-      return []; // Empty for now - would load from localStorage
+    if (searchReady && loaded) {
+      search(searchQuery, { maxResults: 1000, fuzzy: true })
+        .then(setSearchResults)
+        .catch(error => {
+          console.error('Search failed:', error);
+          // Fallback to client-side search
+          const query = searchQuery.toLowerCase();
+          const fallbackResults = icons.filter(icon =>
+            icon.name.toLowerCase().includes(query) ||
+            icon.tags?.some(tag => tag.toLowerCase().includes(query)) ||
+            icon.category?.toLowerCase().includes(query)
+          );
+          setSearchResults(fallbackResults);
+        });
+    } else if (loaded) {
+      // Fallback search when worker isn't ready
+      const query = searchQuery.toLowerCase();
+      const fallbackResults = icons.filter(icon =>
+        icon.name.toLowerCase().includes(query) ||
+        icon.tags?.some(tag => tag.toLowerCase().includes(query)) ||
+        icon.category?.toLowerCase().includes(query)
+      );
+      setSearchResults(fallbackResults);
     }
-    if (selectedSet === "all") {
-      return filteredIcons;
+  }, [searchQuery, search, searchReady, loaded, icons]);
+
+  // Get current icon set to display
+  const currentIcons = useMemo(() => {
+    if (searchQuery.trim()) {
+      return searchResults;
     }
-    
-    const setMappings: Record<string, string> = {
-      'material': 'material-',
-      'animated': 'animated-',
-      'lucide': 'lucide-',
-      'feather': 'feather-',
-      'phosphor': 'phosphor-',
-      'tabler': 'tabler-',
-      'remix': 'remix-',
-      'bootstrap': 'bootstrap-',
-      'boxicons': 'boxicons-',
-      'css-gg': 'css-gg-',
-      'iconsax': 'iconsax-',
-      'atlas': 'atlas-',
-      'line': 'line-',
-      'pixelart': 'pixelart-',
-      'teeny': 'teeny-',
-      'ant': 'ant-',
-      'fluent': 'fluent-',
-      'iconnoir': 'iconnoir-',
-      'octicons': 'octicons-',
-      'radix': 'radix-',
-      'solar': 'solar-',
-    };
-    
-    const prefix = setMappings[selectedSet];
-    if (prefix) {
-      return filteredIcons.filter(icon => icon.id.startsWith(prefix));
-    }
-    
-    return [];
-  }, [selectedSet, filteredIcons]);
+    return icons;
+  }, [searchQuery, searchResults, icons]);
+
 
   // Get available categories from current icon set
   const availableCategories = useMemo(() => {
     const categories = new Set<string>();
-    libraryFilteredIcons.forEach(icon => {
+    currentIcons.forEach(icon => {
       if (icon.category) categories.add(icon.category);
     });
     return Array.from(categories).sort();
-  }, [libraryFilteredIcons]);
+  }, [currentIcons]);
 
   // Filter by category and sort to show outline icons first
   const displayedIcons = useMemo(() => {
-    let filtered = libraryFilteredIcons;
+    let filtered = currentIcons;
     
     if (selectedCategory) {
       filtered = filtered.filter(icon => icon.category === selectedCategory);
@@ -148,7 +134,7 @@ function IconGridPage() {
       // Then sort alphabetically by name
       return a.name.localeCompare(b.name);
     });
-  }, [libraryFilteredIcons, selectedCategory]);
+  }, [currentIcons, selectedCategory]);
 
   // Reset category when library changes
   React.useEffect(() => {
@@ -226,29 +212,62 @@ function IconGridPage() {
 
           {/* Scrollable main content */}
           <main className="flex-1 overflow-hidden">
-            {displayedIcons.length === 0 ? (
+            {error ? (
+              <div className="flex h-64 items-center justify-center text-center px-6">
+                <Alert className="max-w-md">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription className="mt-2">
+                    <p className="font-medium">Failed to load icons</p>
+                    <p className="text-sm text-muted-foreground mt-1">{error}</p>
+                    <button
+                      onClick={clearError}
+                      className="mt-3 text-sm text-primary hover:text-primary/80 underline"
+                    >
+                      Try again
+                    </button>
+                  </AlertDescription>
+                </Alert>
+              </div>
+            ) : loading ? (
+              <div className="flex flex-col items-center justify-center h-64 px-6">
+                <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+                <p className="text-lg font-medium">Loading icons...</p>
+                <p className="text-sm text-muted-foreground">This may take a moment</p>
+              </div>
+            ) : displayedIcons.length === 0 ? (
               <div className="flex h-64 items-center justify-center text-center px-6">
                 <div className="space-y-2">
                   <p className="text-lg text-muted-foreground">
-                    {selectedSet === "favorites" ? "No favorites yet" : "No icons found"}
+                    {selectedSet === "favorites" ? "No favorites yet" : 
+                     searchQuery ? "No icons found" : "No icons available"}
                   </p>
                   <p className="text-sm text-muted-foreground">
                     {selectedSet === "favorites" 
                       ? "Star some icons to see them here"
-                      : "Try a different search term or select a different library"
+                      : searchQuery
+                      ? `Try a different search term or select a different library`
+                      : "Select a library from the sidebar to get started"
                     }
                   </p>
                 </div>
               </div>
             ) : (
-                <IconGrid
-                  items={displayedIcons}
-                  selectedId={selectedId}
-                  onCopy={handleCopy}
-                  onIconClick={handleIconClick}
-                  color={customization.color}
-                  strokeWidth={customization.strokeWidth}
-                />
+              <IconGrid
+                items={displayedIcons}
+                selectedId={selectedId}
+                onCopy={handleCopy}
+                onIconClick={handleIconClick}
+                color={customization.color}
+                strokeWidth={customization.strokeWidth}
+              />
+            )}
+            
+            {/* Loading indicator for search */}
+            {isSearching && (
+              <div className="fixed bottom-4 right-4 bg-primary text-primary-foreground px-3 py-2 rounded-md shadow-lg flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-sm">Searching...</span>
+              </div>
             )}
           </main>
           
