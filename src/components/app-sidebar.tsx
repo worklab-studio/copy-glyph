@@ -2,6 +2,7 @@ import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, 
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { AnimatedPlayIcon } from "@/components/animated-play-icon";
+import { IconstackLogo } from "@/components/iconstack-logo";
 import { useIconLibraryMetadata } from "@/hooks/useAsyncIconLibrary";
 
 // Icon mappings for UI
@@ -65,7 +66,7 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
         <div className="flex items-center px-3 h-full">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
-              <Crown className="h-4 w-4 text-primary-foreground" />
+              <IconstackLogo className="h-4 w-4 text-primary-foreground" />
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-semibold">Iconstack</span>
