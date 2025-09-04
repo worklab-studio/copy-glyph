@@ -10,6 +10,8 @@ const LoadingAnimation = () => {
     ? { filter: 'brightness(0)' } // Makes it black
     : { filter: 'brightness(0) invert(1)' }; // Makes it white
 
+  console.log('LoadingAnimation rendering with theme:', theme);
+
   return (
     <div className="flex items-center justify-center w-full h-full" style={filterStyle}>
       <DotLottieReact
@@ -17,6 +19,8 @@ const LoadingAnimation = () => {
         loop
         autoplay
         className="w-32 h-32"
+        onLoad={() => console.log('DotLottie animation loaded')}
+        onError={(error) => console.error('DotLottie error:', error)}
       />
     </div>
   );
