@@ -10,6 +10,8 @@ import { type IconItem } from "@/types/icon";
 import { toast } from "@/hooks/use-toast";
 import { useAsyncIconLibrary } from "@/hooks/useAsyncIconLibrary";
 import { useSearchWorker } from "@/hooks/useSearchWorker";
+import { useFirstTimeUser } from "@/hooks/useFirstTimeUser";
+import { showFirstCopyNudge } from "@/components/ui/first-copy-nudge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
@@ -171,12 +173,21 @@ function IconGridPage() {
     setSelectedCategory(null);
   }, [selectedSet]);
 
+  const { isFirstCopy, markFirstCopyComplete, getKeyboardShortcut } = useFirstTimeUser();
+
   const handleCopy = (icon: IconItem) => {
     setSelectedId(icon.id);
-    toast({
-      description: `${icon.name} icon copied to clipboard!`,
-      duration: 2000,
-    });
+    
+    // Show first copy nudge if this is their first copy
+    if (isFirstCopy) {
+      showFirstCopyNudge({ keyboardShortcut: getKeyboardShortcut() });
+      markFirstCopyComplete();
+    } else {
+      toast({
+        description: `${icon.name} icon copied to clipboard!`,
+        duration: 2000,
+      });
+    }
   };
 
   const handleIconClick = (icon: IconItem) => {
