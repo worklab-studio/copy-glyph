@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { useTheme } from "next-themes";
 import { renderToStaticMarkup } from "react-dom/server";
+import { supportsStrokeWidth } from "@/lib/icon-utils";
 
 interface IconCellProps {
   icon: IconItem;
@@ -98,8 +99,8 @@ export function IconCell({
       hoverTimeoutRef.current = null;
     }
     
-    // Check if this is a solid icon (solid icons don't use stroke width)
-    const isSolidIcon = icon.style === 'solid';
+    // Check if this icon supports stroke width customization
+    const supportsStroke = supportsStrokeWidth(icon);
     
     try {
       let svgString: string;
@@ -114,8 +115,8 @@ export function IconCell({
           color: customization.color
         };
         
-        // Only add strokeWidth for outline icons
-        if (!isSolidIcon) {
+        // Only add strokeWidth for icons that support it
+        if (supportsStroke) {
           iconProps.strokeWidth = customization.strokeWidth;
         }
         
@@ -153,7 +154,7 @@ export function IconCell({
         // Preserve fill="none" and stroke="none"
         .replace(new RegExp(`fill="${customization.color}"([^>]*?)stroke="${customization.color}"`, 'gi'), `fill="none"$1stroke="${customization.color}"`);
       
-      if (!isSolidIcon) {
+      if (supportsStroke) {
         // More comprehensive stroke-width replacement for all icon libraries
         customizedSVG = customizedSVG
           .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`)
@@ -200,8 +201,8 @@ export function IconCell({
     const iconColor = customization.color;
     const iconStrokeWidth = customization.strokeWidth;
     
-    // Check if this is a solid icon (solid icons don't use stroke width)
-    const isSolidIcon = icon.style === 'solid';
+    // Check if this icon supports stroke width customization
+    const supportsStroke = supportsStrokeWidth(icon);
     // Check if this is an animated icon
     const isAnimatedIcon = icon.style === 'animated';
     
@@ -240,8 +241,8 @@ export function IconCell({
         // Preserve fill="none" and stroke="none"
         .replace(/fill="currentColor"([^>]*?)stroke="currentColor"/gi, 'fill="none"$1stroke="currentColor"');
       
-      // Apply stroke width to SVG string only for outline icons
-      if (!isSolidIcon) {
+      // Apply stroke width to SVG string only for icons that support it
+      if (supportsStroke) {
         // More comprehensive stroke-width replacement for all icon libraries
         modifiedSvg = modifiedSvg
           .replace(/stroke-width="[^"]*"/g, `stroke-width="${iconStrokeWidth}"`)
@@ -274,8 +275,8 @@ export function IconCell({
       // Apply size as number (32px equivalent for consistent sizing)
       iconProps.size = 32;
       
-      // Apply strokeWidth only for outline icons
-      if (!isSolidIcon) {
+      // Apply strokeWidth only for icons that support it
+      if (supportsStroke) {
         iconProps.strokeWidth = iconStrokeWidth;
       }
       

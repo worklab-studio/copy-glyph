@@ -8,6 +8,7 @@ import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { toast } from "@/hooks/use-toast";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { supportsStrokeWidth } from "@/lib/icon-utils";
 
 // Force HMR refresh - no Card components used in this file
 
@@ -30,7 +31,7 @@ export function ControlPanel({
   const handleDownloadSVG = async () => {
     if (!selectedIcon) return;
     
-    const isSolidIcon = selectedIcon.style === 'solid';
+    const supportsStroke = supportsStrokeWidth(selectedIcon);
     
     try {
       let svgContent = '';
@@ -44,8 +45,8 @@ export function ControlPanel({
           color: customization.color
         };
         
-        // Only add strokeWidth for outline icons
-        if (!isSolidIcon) {
+        // Only add strokeWidth for icons that support it
+        if (supportsStroke) {
           iconProps.strokeWidth = customization.strokeWidth;
         }
         
@@ -53,11 +54,23 @@ export function ControlPanel({
         svgContent = renderToStaticMarkup(element);
       }
 
-      // Apply current customizations to the SVG (skip stroke-width for solid icons)
-      let customizedSVG = svgContent.replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`);
+      // Apply current customizations to the SVG - comprehensive approach
+      let customizedSVG = svgContent
+        // Replace comprehensive color attributes
+        .replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`)
+        .replace(/fill="#[0-9A-Fa-f]{3,6}"/gi, `fill="${customization.color}"`)
+        .replace(/stroke="#[0-9A-Fa-f]{3,6}"/gi, `stroke="${customization.color}"`)
+        // Handle CSS style attributes
+        .replace(/style="([^"]*?)fill:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1fill: ${customization.color}$2"`)
+        .replace(/style="([^"]*?)stroke:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1stroke: ${customization.color}$2"`)
+        // Preserve fill="none"
+        .replace(new RegExp(`fill="${customization.color}"([^>]*?)stroke="${customization.color}"`, 'gi'), `fill="none"$1stroke="${customization.color}"`);
       
-      if (!isSolidIcon) {
-        customizedSVG = customizedSVG.replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+      if (supportsStroke) {
+        customizedSVG = customizedSVG
+          .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`)
+          .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${customization.strokeWidth}"`)
+          .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${customization.strokeWidth}`);
       }
 
       // Create and download the file
@@ -151,7 +164,7 @@ export function ControlPanel({
   const getCustomizedSVG = () => {
     if (!selectedIcon) return '';
     
-    const isSolidIcon = selectedIcon.style === 'solid';
+    const supportsStroke = supportsStrokeWidth(selectedIcon);
     
     let svgContent = '';
     if (typeof selectedIcon.svg === 'string') {
@@ -164,8 +177,8 @@ export function ControlPanel({
         color: customization.color
       };
       
-      // Only add strokeWidth for outline icons
-      if (!isSolidIcon) {
+      // Only add strokeWidth for icons that support it
+      if (supportsStroke) {
         iconProps.strokeWidth = customization.strokeWidth;
       }
       
@@ -173,11 +186,23 @@ export function ControlPanel({
       svgContent = renderToStaticMarkup(element);
     }
 
-    // Apply current customizations to the SVG (skip stroke-width for solid icons)
-    let customizedSVG = svgContent.replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`);
+    // Apply current customizations to the SVG - comprehensive approach
+    let customizedSVG = svgContent
+      // Replace comprehensive color attributes
+      .replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`)
+      .replace(/fill="#[0-9A-Fa-f]{3,6}"/gi, `fill="${customization.color}"`)
+      .replace(/stroke="#[0-9A-Fa-f]{3,6}"/gi, `stroke="${customization.color}"`)
+      // Handle CSS style attributes
+      .replace(/style="([^"]*?)fill:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1fill: ${customization.color}$2"`)
+      .replace(/style="([^"]*?)stroke:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1stroke: ${customization.color}$2"`)
+      // Preserve fill="none"
+      .replace(new RegExp(`fill="${customization.color}"([^>]*?)stroke="${customization.color}"`, 'gi'), `fill="none"$1stroke="${customization.color}"`);
     
-    if (!isSolidIcon) {
-      customizedSVG = customizedSVG.replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`);
+    if (supportsStroke) {
+      customizedSVG = customizedSVG
+        .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`)
+        .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${customization.strokeWidth}"`)
+        .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${customization.strokeWidth}`);
     }
     
     return customizedSVG;
@@ -252,8 +277,8 @@ export function ControlPanel({
             
             <Separator />
             
-            {/* Always show stroke slider, but hide when solid icon is selected */}
-            {(!selectedIcon || selectedIcon.style !== 'solid') && (
+            {/* Show stroke slider only for icons that support stroke width */}
+            {(!selectedIcon || supportsStrokeWidth(selectedIcon)) && (
               <>
                 <StrokeSlider />
                 <Separator />

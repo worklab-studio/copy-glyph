@@ -1,6 +1,7 @@
 import { type IconItem } from "@/types/icon";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { supportsStrokeWidth } from "./icon-utils";
 
 export async function copyIcon(icon: IconItem): Promise<void> {
   try {
@@ -11,12 +12,17 @@ export async function copyIcon(icon: IconItem): Promise<void> {
     } else {
       // Render the React component to SVG string
       const IconComponent = icon.svg as React.ComponentType<any>;
-      const element = React.createElement(IconComponent, {
+      const iconProps: any = {
         size: 24,
-        strokeWidth: 2,
         color: "currentColor"
-      });
+      };
       
+      // Only add strokeWidth for icons that support it
+      if (supportsStrokeWidth(icon)) {
+        iconProps.strokeWidth = 2;
+      }
+      
+      const element = React.createElement(IconComponent, iconProps);
       svgString = renderToStaticMarkup(element);
     }
 
