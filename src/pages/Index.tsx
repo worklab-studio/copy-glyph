@@ -31,9 +31,6 @@ function IconGridPage() {
     loading, 
     error, 
     loaded,
-    initialLoaded,
-    loadingRemaining,
-    totalLoadProgress,
     loadLibrary, 
     loadAllLibraries,
     clearError 
@@ -281,11 +278,11 @@ function IconGridPage() {
                   </AlertDescription>
                 </Alert>
               </div>
-            ) : loading && !initialLoaded ? (
+            ) : loading ? (
               <div className="flex flex-col items-center justify-center h-64 px-6">
                 <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-                <p className="text-lg font-medium">Loading initial icons...</p>
-                <p className="text-sm text-muted-foreground">Getting first 100 icons ready</p>
+                <p className="text-lg font-medium">Loading icons...</p>
+                <p className="text-sm text-muted-foreground">This may take a moment</p>
               </div>
             ) : displayedIcons.length === 0 ? (
               <div className="flex h-64 items-center justify-center text-center px-6">
@@ -312,23 +309,14 @@ function IconGridPage() {
                 onIconClick={handleIconClick}
                 color={customization.color}
                 strokeWidth={customization.strokeWidth}
-                totalExpected={selectedSet === "all" ? 30000 : undefined}
-                isLoadingRemaining={loadingRemaining}
               />
             )}
             
-            {/* Loading indicators */}
+            {/* Loading indicator for search */}
             {isSearching && (
               <div className="fixed bottom-4 right-4 bg-primary text-primary-foreground px-3 py-2 rounded-md shadow-lg flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <span className="text-sm">Searching...</span>
-              </div>
-            )}
-            
-            {loadingRemaining && (
-              <div className="fixed bottom-4 left-4 bg-muted text-muted-foreground px-3 py-2 rounded-md shadow-lg flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span className="text-sm">Loading more icons... ({Math.round(totalLoadProgress)}%)</span>
               </div>
             )}
           </main>
