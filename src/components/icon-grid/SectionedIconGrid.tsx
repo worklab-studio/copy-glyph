@@ -167,6 +167,13 @@ export function SectionedIconGrid({
             const item = virtualItems[virtualItem.index];
             
             if (item?.type === 'header') {
+              // Hide this header if it's the same as the sticky header
+              const shouldHideHeader = stickyHeader && stickyHeader.sectionIndex === item.sectionIndex;
+              
+              if (shouldHideHeader) {
+                return null;
+              }
+              
               return (
                 <div
                   key={`header-${item.sectionIndex}`}
