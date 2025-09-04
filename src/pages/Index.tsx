@@ -376,7 +376,7 @@ function IconGridPage() {
             {showLoadingAnimation ? (
               <div className="flex-1 flex items-center justify-center h-full">
                 <LoadingWithTagline 
-                  minDuration={4000}
+                  minDuration={3000}
                   onMinDurationComplete={() => setMinDurationComplete(true)}
                 />
               </div>
