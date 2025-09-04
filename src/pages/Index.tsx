@@ -29,7 +29,6 @@ function IconGridPage() {
   const [searchTotalCount, setSearchTotalCount] = useState<number>(0);
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(true);
   const [minDurationComplete, setMinDurationComplete] = useState(false);
-  const [loadingTimeout, setLoadingTimeout] = useState(false);
   const { customization } = useIconCustomization();
 
   // Load Tabler first as priority
@@ -72,33 +71,25 @@ function IconGridPage() {
     }
   }, [minDurationComplete, loaded, icons.length]);
 
-  // Fallback timeout to prevent infinite loading
-  useEffect(() => {
-    const timeoutTimer = setTimeout(() => {
-      setLoadingTimeout(true);
-      setShowLoadingAnimation(false);
-    }, 20000);
+  // Fallback timeout removed - just keep loading until ready
 
-    return () => clearTimeout(timeoutTimer);
-  }, []);
-
-  // Load Tabler first, then load remaining libraries in background
+  // Load Tabler first for immediate display, then load all libraries
   useEffect(() => {
     const loadIcons = async () => {
       try {
-        // Load Tabler first
+        // Load Tabler first for immediate display
         await loadLibrary(priorityLibrary);
-        // Then load all libraries in background
-        loadAllLibrariesSectionedProgressive();
+        // Load all other libraries in parallel for faster loading
+        loadAllLibrariesSectioned();
       } catch (error) {
         console.error('Failed to load priority library:', error);
         // Fallback to loading all libraries
-        loadAllLibrariesSectionedProgressive();
+        loadAllLibrariesSectioned();
       }
     };
     
     loadIcons();
-  }, [loadLibrary, loadAllLibrariesSectionedProgressive, priorityLibrary]);
+  }, [loadLibrary, loadAllLibrariesSectioned, priorityLibrary]);
 
   // Load specific library when selection changes (after initial load)
   useEffect(() => {
@@ -388,24 +379,6 @@ function IconGridPage() {
                   minDuration={4000}
                   onMinDurationComplete={() => setMinDurationComplete(true)}
                 />
-              </div>
-            ) : loadingTimeout ? (
-              <div className="flex h-64 items-center justify-center text-center px-6">
-                <Alert className="max-w-md">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription className="mt-2">
-                    <p className="font-medium">Taking longer than expected</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      The icons are taking a while to load. Please check your connection.
-                    </p>
-                    <button
-                      onClick={() => window.location.reload()}
-                      className="mt-3 text-sm text-primary hover:text-primary/80 underline"
-                    >
-                      Reload page
-                    </button>
-                  </AlertDescription>
-                </Alert>
               </div>
             ) : error ? (
               <div className="flex h-64 items-center justify-center text-center px-6">
