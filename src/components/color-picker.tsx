@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { useTheme } from "next-themes";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const presetColors = [
   // Row 1 - Grayscale
@@ -85,6 +86,7 @@ const rgbToHex = (r: number, g: number, b: number) => {
 export function ColorPicker() {
   const { customization, updateColor } = useIconCustomization();
   const { theme } = useTheme();
+  const isMobile = useIsMobile();
   const [hexInput, setHexInput] = useState(customization.color);
   
   // Initialize HSV values based on the current customization color
@@ -172,16 +174,18 @@ export function ColorPicker() {
     handleHueSliderInteraction(e.clientX, slider);
   }, [isDragging, handleHueSliderInteraction]);
 
-  // Touch event handlers
+  // Touch event handlers (mobile only)
   const handleCanvasTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (!isMobile) return;
     e.preventDefault();
     const touch = e.touches[0];
     setIsDragging(true);
     setDragTarget('color-area');
     handleCanvasInteraction(touch.clientX, touch.clientY, e.currentTarget);
-  }, [handleCanvasInteraction]);
+  }, [isMobile, handleCanvasInteraction]);
 
   const handleHueTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (!isMobile) return;
     e.preventDefault();
     const slider = hueSliderRef.current;
     if (!slider) return;
@@ -189,7 +193,7 @@ export function ColorPicker() {
     setIsDragging(true);
     setDragTarget('hue-slider');
     handleHueSliderInteraction(touch.clientX, slider);
-  }, [handleHueSliderInteraction]);
+  }, [isMobile, handleHueSliderInteraction]);
 
   // Handle mouse and touch events for smooth dragging
   useEffect(() => {
@@ -240,15 +244,19 @@ export function ColorPicker() {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove, { passive: false });
       document.addEventListener('mouseup', handleEnd);
-      document.addEventListener('touchmove', handleTouchMove, { passive: false });
-      document.addEventListener('touchend', handleEnd);
+      if (isMobile) {
+        document.addEventListener('touchmove', handleTouchMove, { passive: false });
+        document.addEventListener('touchend', handleEnd);
+      }
     }
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleEnd);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleEnd);
+      if (isMobile) {
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleEnd);
+      }
     };
   }, [isDragging, dragTarget, hue, saturation, value, debouncedUpdateColor]);
 
@@ -288,7 +296,7 @@ export function ColorPicker() {
               setDragTarget('color-area');
               handleCanvasMouseInteraction(e);
             }}
-            onTouchStart={handleCanvasTouchStart}
+            {...(isMobile && { onTouchStart: handleCanvasTouchStart })}
             onClick={handleCanvasMouseInteraction}
           />
           {/* Picker indicator */}
@@ -315,7 +323,7 @@ export function ColorPicker() {
             setDragTarget('hue-slider');
             handleHueSliderMouseInteraction(e);
           }}
-          onTouchStart={handleHueTouchStart}
+          {...(isMobile && { onTouchStart: handleHueTouchStart })}
           onClick={handleHueSliderMouseInteraction}
         >
           <div
