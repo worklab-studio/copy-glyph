@@ -19,14 +19,14 @@ interface IconCellProps {
   onIconClick?: (icon: IconItem) => void;
 }
 
-const IconCellComponent = function IconCell({ 
+const IconCellComponent = ({ 
   icon, 
   isSelected = false, 
   color = "#666", 
   strokeWidth = 1.5,
   onCopy,
   onIconClick
-}: IconCellProps) {
+}: IconCellProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
