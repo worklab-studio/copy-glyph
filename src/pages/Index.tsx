@@ -9,7 +9,7 @@ import { CategoryFilter } from "@/components/CategoryFilter";
 import { IconCustomizationProvider, useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { type IconItem } from "@/types/icon";
 import { toast } from "@/hooks/use-toast";
-import { useAsyncIconLibrary } from "@/hooks/useAsyncIconLibrary";
+import { useAsyncIconLibrary, useIconLibraryMetadata } from "@/hooks/useAsyncIconLibrary";
 import { useSearchWorker } from "@/hooks/useSearchWorker";
 import { useFirstTimeUser } from "@/hooks/useFirstTimeUser";
 import { showFirstCopyNudge } from "@/components/ui/first-copy-nudge";
@@ -43,6 +43,9 @@ function IconGridPage() {
     loadAllLibrariesSectionedProgressive,
     clearError 
   } = useAsyncIconLibrary();
+  
+  // Library metadata for total counts
+  const { libraries, totalCount } = useIconLibraryMetadata();
   
   // Search worker
   const { 
@@ -301,10 +304,22 @@ function IconGridPage() {
                           Showing {groupedSearchSections.length > 0 ? groupedSearchSections.reduce((total, section) => total + section.icons.length, 0).toLocaleString() : displayedIcons.length.toLocaleString()} of {searchTotalCount.toLocaleString()} icons matching "{searchQuery}"
                           {selectedCategory && ` in ${selectedCategory}`}
                         </>
+                      ) : searchQuery ? (
+                        <>
+                          {groupedSearchSections.length > 0 ? groupedSearchSections.reduce((total, section) => total + section.icons.length, 0).toLocaleString() : displayedIcons.length.toLocaleString()} icons matching "{searchQuery}"
+                          {selectedCategory && ` in ${selectedCategory}`}
+                        </>
                       ) : (
                         <>
-                          {groupedSearchSections.length > 0 ? groupedSearchSections.reduce((total, section) => total + section.icons.length, 0).toLocaleString() : displayedIcons.length.toLocaleString()} icons
-                          {searchQuery && ` matching "${searchQuery}"`}
+                          {(() => {
+                            if (selectedSet === "all") return totalCount.toLocaleString();
+                            if (selectedSet === "animated") {
+                              const animatedLib = libraries.find(lib => lib.id === "animated");
+                              return animatedLib ? animatedLib.count.toLocaleString() : "0";
+                            }
+                            const selectedLib = libraries.find(lib => lib.id === selectedSet);
+                            return selectedLib ? selectedLib.count.toLocaleString() : "0";
+                          })()} icons
                           {selectedCategory && ` in ${selectedCategory}`}
                         </>
                       )}
@@ -396,22 +411,6 @@ function IconGridPage() {
                   ) : undefined}
                 />
               )
-            )}
-            
-            {/* Background loading indicator */}
-            {backgroundLoading && (
-              <div className="fixed bottom-4 right-4 bg-muted text-muted-foreground px-3 py-2 rounded-md shadow-lg flex items-center gap-2 text-xs">
-                <Loader2 className="h-3 w-3 animate-spin" />
-                <span>Loading more icons...</span>
-              </div>
-            )}
-            
-            {/* Search loading indicator */}
-            {isSearching && (
-              <div className="fixed bottom-4 right-4 bg-primary text-primary-foreground px-3 py-2 rounded-md shadow-lg flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span className="text-sm">Searching...</span>
-              </div>
             )}
           </main>
           
