@@ -158,7 +158,6 @@
   .icon-cell[data-hovered="true"],
   .icon-cell[data-selected-state="true"] {
     background-color: rgba(var(--icon-bg), 0.1);
-    border: 1px solid rgba(var(--icon-bg), 0.2);
     transform: translate3d(0, 0, 0) scale(1.02); /* Subtle scale on hover */
   }
 

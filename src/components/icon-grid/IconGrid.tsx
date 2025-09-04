@@ -29,15 +29,9 @@ export function IconGrid({
   return (
     <div 
       ref={containerRef}
-      className={cn(
-        "h-full overflow-y-auto overflow-x-hidden"
-      )}
+      className="h-full overflow-y-auto overflow-x-hidden"
       role="grid"
       aria-label={computedAriaLabel}
-      style={{
-        scrollBehavior: 'smooth',
-        WebkitOverflowScrolling: 'touch'
-      }}
     >
       {items.length > 100 ? (
         // Virtualized rendering for large lists
