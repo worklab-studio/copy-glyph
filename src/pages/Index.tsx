@@ -267,11 +267,7 @@ function IconGridPage() {
 }
 
 const Index = () => {
-  return (
-    <IconCustomizationProvider>
-      <IconGridPage />
-    </IconCustomizationProvider>
-  );
+  return <IconGridPage />;
 };
 
 export default Index;
