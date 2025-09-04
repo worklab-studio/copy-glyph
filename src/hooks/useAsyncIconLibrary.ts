@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { type IconItem } from '@/types/icon';
+import { type IconItem, type LibrarySection } from '@/types/icon';
 import { iconLibraryManager } from '@/services/IconLibraryManager';
 
 interface UseAsyncIconLibraryState {
   icons: IconItem[];
+  sections: LibrarySection[]; // For sectioned "all" view
   loading: boolean;
   error: string | null;
   loaded: boolean;
@@ -12,6 +13,7 @@ interface UseAsyncIconLibraryState {
 interface UseAsyncIconLibraryReturn extends UseAsyncIconLibraryState {
   loadLibrary: (libraryId: string) => Promise<void>;
   loadAllLibraries: () => Promise<void>;
+  loadAllLibrariesSectioned: () => Promise<void>;
   searchIcons: (query: string, libraryIds?: string[]) => IconItem[];
   clearError: () => void;
 }
@@ -19,6 +21,7 @@ interface UseAsyncIconLibraryReturn extends UseAsyncIconLibraryState {
 export function useAsyncIconLibrary(): UseAsyncIconLibraryReturn {
   const [state, setState] = useState<UseAsyncIconLibraryState>({
     icons: [],
+    sections: [],
     loading: false,
     error: null,
     loaded: false
@@ -32,6 +35,7 @@ export function useAsyncIconLibrary(): UseAsyncIconLibraryReturn {
       const icons = await iconLibraryManager.loadLibrary(libraryId);
       setState({
         icons,
+        sections: [], // Reset sections for single library view
         loading: false,
         error: null,
         loaded: true
@@ -54,6 +58,33 @@ export function useAsyncIconLibrary(): UseAsyncIconLibraryReturn {
       const icons = await iconLibraryManager.loadAllLibraries();
       setState({
         icons,
+        sections: [],
+        loading: false,
+        error: null,
+        loaded: true
+      });
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Failed to load libraries',
+        loaded: false
+      }));
+    }
+  }, []);
+
+  // Load all libraries sectioned (for "All Icons" view with headers)
+  const loadAllLibrariesSectioned = useCallback(async () => {
+    setState(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      const sections = await iconLibraryManager.loadAllLibrariesGrouped();
+      // Also create flat array for search compatibility
+      const allIcons = sections.flatMap(section => section.icons);
+      
+      setState({
+        icons: allIcons,
+        sections,
         loading: false,
         error: null,
         loaded: true
@@ -82,6 +113,7 @@ export function useAsyncIconLibrary(): UseAsyncIconLibraryReturn {
     ...state,
     loadLibrary,
     loadAllLibraries,
+    loadAllLibrariesSectioned,
     searchIcons,
     clearError
   };

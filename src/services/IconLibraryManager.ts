@@ -1,4 +1,4 @@
-import { type IconItem } from '@/types/icon';
+import { type IconItem, type LibrarySection } from '@/types/icon';
 
 // Lightweight metadata structure for initial load
 export interface IconLibraryMetadata {
@@ -240,6 +240,28 @@ class IconLibraryManager {
     }
     
     return allIcons;
+  }
+
+  // Load all libraries grouped by library (for sectioned "all" view)
+  async loadAllLibrariesGrouped(): Promise<LibrarySection[]> {
+    const libraryIds = this.libraries.map(lib => lib.id);
+    const libraryMap = await this.loadLibraries(libraryIds);
+    
+    const sections: LibrarySection[] = [];
+    for (const libraryId of libraryIds) {
+      const libraryMeta = this.libraries.find(lib => lib.id === libraryId);
+      const icons = libraryMap.get(libraryId) || [];
+      
+      if (icons.length > 0 && libraryMeta) {
+        sections.push({
+          libraryId,
+          libraryName: libraryMeta.name,
+          icons
+        });
+      }
+    }
+    
+    return sections;
   }
 
   // Search across loaded libraries

@@ -3,6 +3,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { Header } from "@/components/header";
 import { AppSidebar } from "@/components/app-sidebar";
 import { IconGrid } from "@/components/icon-grid/IconGrid";
+import { SectionedIconGrid } from "@/components/icon-grid/SectionedIconGrid";
 import { ControlPanel } from "@/components/control-panel";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { IconCustomizationProvider, useIconCustomization } from "@/contexts/IconCustomizationContext";
@@ -28,11 +29,13 @@ function IconGridPage() {
   // Async icon loading
   const { 
     icons, 
+    sections,
     loading, 
     error, 
     loaded,
     loadLibrary, 
     loadAllLibraries,
+    loadAllLibrariesSectioned,
     clearError 
   } = useAsyncIconLibrary();
   
@@ -47,11 +50,11 @@ function IconGridPage() {
   // Load initial library
   useEffect(() => {
     if (selectedSet === "all") {
-      loadAllLibraries();
+      loadAllLibrariesSectioned();
     } else {
       loadLibrary(selectedSet);
     }
-  }, [selectedSet, loadLibrary, loadAllLibraries]);
+  }, [selectedSet, loadLibrary, loadAllLibrariesSectioned]);
 
   // Index loaded icons for search - with error handling
   useEffect(() => {
@@ -302,14 +305,25 @@ function IconGridPage() {
                 </div>
               </div>
             ) : (
-              <IconGrid
-                items={displayedIcons}
-                selectedId={selectedId}
-                onCopy={handleCopy}
-                onIconClick={handleIconClick}
-                color={customization.color}
-                strokeWidth={customization.strokeWidth}
-              />
+              selectedSet === "all" && !searchQuery.trim() && sections.length > 0 ? (
+                <SectionedIconGrid
+                  sections={sections}
+                  selectedId={selectedId}
+                  onCopy={handleCopy}
+                  onIconClick={handleIconClick}
+                  color={customization.color}
+                  strokeWidth={customization.strokeWidth}
+                />
+              ) : (
+                <IconGrid
+                  items={displayedIcons}
+                  selectedId={selectedId}
+                  onCopy={handleCopy}
+                  onIconClick={handleIconClick}
+                  color={customization.color}
+                  strokeWidth={customization.strokeWidth}
+                />
+              )
             )}
             
             {/* Loading indicator for search */}

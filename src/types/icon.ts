@@ -9,6 +9,12 @@ export type IconItem = {
   category?: string; // navigation, communication, system, etc.
 };
 
+export type LibrarySection = {
+  libraryId: string;
+  libraryName: string;
+  icons: IconItem[];
+};
+
 export type IconGridProps = {
   items: IconItem[];
   selectedId?: string | null;        // to highlight one "featured" tile
@@ -18,4 +24,14 @@ export type IconGridProps = {
   color?: string;        // CSS color value, applied as currentColor
   strokeWidth?: number;  // 0.25–3.0
   ariaLabel?: string;    // e.g., "Icon results grid"
+};
+
+export type SectionedIconGridProps = {
+  sections: LibrarySection[];
+  selectedId?: string | null;
+  onCopy?: (icon: IconItem) => void;
+  onIconClick?: (icon: IconItem) => void;
+  color?: string;
+  strokeWidth?: number;
+  ariaLabel?: string;
 };
