@@ -194,6 +194,8 @@ export function IconCell({
     const iconColor = customization.color;
     const iconStrokeWidth = customization.strokeWidth;
     
+    console.log('Rendering icon:', icon.id, 'svg type:', typeof icon.svg, 'svg value:', icon.svg);
+    
     if (!icon.svg) {
       console.warn('Icon svg is undefined for icon:', icon.id, icon.name);
       return (
@@ -271,6 +273,8 @@ export function IconCell({
     } else {
       const IconComponent = icon.svg as React.ComponentType<any>;
       
+      console.log('Trying to render icon component:', icon.id, 'Component:', IconComponent, 'Type:', typeof IconComponent);
+      
       if (typeof IconComponent !== 'function' && typeof IconComponent !== 'object') {
         console.warn('Icon component is invalid for icon:', icon.id, icon.name, 'Type:', typeof IconComponent, 'Value:', IconComponent);
         return (
@@ -302,7 +306,10 @@ export function IconCell({
       }
       
       try {
-        return <IconComponent {...iconProps} />;
+        console.log('About to render IconComponent with props:', iconProps);
+        const result = <IconComponent {...iconProps} />;
+        console.log('Successfully rendered IconComponent:', result);
+        return result;
       } catch (error) {
         console.error('Error rendering icon component:', icon.id, error);
         return (
@@ -333,40 +340,47 @@ export function IconCell({
     cleanupTimeout();
   }, [cleanupTimeout]);
 
-  return (
-    <CopyTooltip showCopied={showCopied}>
-      <button
-        ref={buttonRef}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onDoubleClick={handleDoubleClick}
-        tabIndex={0}
-        role="button"
-        aria-label={getIconAriaLabel(icon.name, isSelected)}
-        aria-pressed={isSelected}
-        data-selected={isSelected}
-        data-hovered={isHovered}
-        data-selected-state={isSelected}
-        className="icon-cell"
-        style={colorStyles}
-      >
-        <div className={cn(
-          "icon-highlight",
-          (isHovered || isSelected) && "icon-highlight--active"
-        )} />
-        
-        {renderedIcon}
-        
-        {showTooltip && (
-          <div className="icon-tooltip">
-            Double click to copy icon
-          </div>
-        )}
-      </button>
-    </CopyTooltip>
-  );
+  console.log('About to render IconCell JSX for icon:', icon.id);
+  
+  try {
+    return (
+      <CopyTooltip showCopied={showCopied}>
+        <button
+          ref={buttonRef}
+          onClick={handleClick}
+          onKeyDown={handleKeyDown}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onDoubleClick={handleDoubleClick}
+          tabIndex={0}
+          role="button"
+          aria-label={getIconAriaLabel(icon.name, isSelected)}
+          aria-pressed={isSelected}
+          data-selected={isSelected}
+          data-hovered={isHovered}
+          data-selected-state={isSelected}
+          className="icon-cell"
+          style={colorStyles}
+        >
+          <div className={cn(
+            "icon-highlight",
+            (isHovered || isSelected) && "icon-highlight--active"
+          )} />
+          
+          {renderedIcon}
+          
+          {showTooltip && (
+            <div className="icon-tooltip">
+              Double click to copy icon
+            </div>
+          )}
+        </button>
+      </CopyTooltip>
+    );
+  } catch (error) {
+    console.error('Error in IconCell JSX return:', error);
+    return <div>Error rendering icon: {icon.id}</div>;
+  }
 }
 
 console.log('IconCell exported successfully');

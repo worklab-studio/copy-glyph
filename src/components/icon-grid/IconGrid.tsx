@@ -1,6 +1,6 @@
 import React, { useRef, useMemo } from "react";
 import { type IconGridProps } from "@/types/icon";
-import { IconCell } from "./IconCell";
+import { IconCellSimple } from "./IconCell.simple";
 import { useVirtualGrid } from "./useVirtualGrid";
 import { getGridAriaLabel } from "@/lib/a11y";
 import { cn } from "@/lib/utils";
@@ -63,7 +63,7 @@ export function IconGrid({
                 }}
               >
                 {row.map((icon) => (
-                  <IconCell
+                  <IconCellSimple
                     key={icon.id}
                     icon={icon}
                     isSelected={icon.id === selectedId}
@@ -88,7 +88,7 @@ export function IconGrid({
           }}
         >
           {items.map((icon) => (
-            <IconCell
+            <IconCellSimple
               key={icon.id}
               icon={icon}
               isSelected={selectedId === icon.id}
