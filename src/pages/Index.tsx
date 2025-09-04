@@ -36,6 +36,7 @@ const allIcons: IconItem[] = [
   ...animatedIcons,
   ...lucideIcons,
   ...featherIcons,
+  ...solarIcons,
   ...phosphorIcons,
   ...tablerIcons,
   ...bootstrapIcons,
@@ -51,7 +52,6 @@ const allIcons: IconItem[] = [
   ...iconnoirIcons,
   ...octiconsIcons,
   ...radixIcons,
-  ...solarIcons,
 ];
 
 function IconGridPage() {
