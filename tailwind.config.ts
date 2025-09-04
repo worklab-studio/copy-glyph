@@ -101,13 +101,22 @@ export default {
 				'slide-up': {
 					from: { opacity: '0', transform: 'translateY(10px)' },
 					to: { opacity: '1', transform: 'translateY(0)' }
+				},
+				'smooth-bounce': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-4px)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.15s ease-out',
-				'slide-up': 'slide-up 0.2s ease-out'
+				'slide-up': 'slide-up 0.2s ease-out',
+				'smooth-bounce': 'smooth-bounce 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+			},
+			transitionTimingFunction: {
+				'smooth-scroll': 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+				'momentum': 'cubic-bezier(0.165, 0.84, 0.44, 1)'
 			}
 		}
 	},

@@ -29,7 +29,7 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
     return result;
   }, [items, columnsCount]);
 
-  // Debounced resize handler for better performance
+  // Enhanced debounced resize handler for better performance
   const debouncedUpdateWidth = useCallback(() => {
     if (resizeTimeoutRef.current) {
       clearTimeout(resizeTimeoutRef.current);
@@ -37,9 +37,14 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
     
     resizeTimeoutRef.current = setTimeout(() => {
       if (containerRef.current) {
-        setContainerWidth(containerRef.current.clientWidth);
+        // Use requestAnimationFrame for smoother updates
+        requestAnimationFrame(() => {
+          if (containerRef.current) {
+            setContainerWidth(containerRef.current.clientWidth);
+          }
+        });
       }
-    }, 150); // 150ms debounce
+    }, 100); // Reduced debounce for faster responsiveness
   }, [containerRef]);
 
   useEffect(() => {
@@ -67,10 +72,14 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
     count: rows.length,
     getScrollElement: () => containerRef.current,
     estimateSize: () => 80,
-    overscan: 3, // Reduced for better performance
+    overscan: enabled && rows.length > 100 ? 2 : 5, // Dynamic overscan for performance
     enabled,
-    // Add scroll margin for smoother scrolling
     scrollMargin: containerRef.current?.offsetTop ?? 0,
+    // Enhanced scrolling options for smoother experience
+    initialOffset: 0,
+    scrollPaddingStart: 0,
+    scrollPaddingEnd: 0,
+    measureElement: undefined, // Let browser handle measurements for speed
   });
 
   return {

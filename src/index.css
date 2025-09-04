@@ -211,13 +211,35 @@
 
   /* Grid Performance Optimizations */
   [role="grid"] {
-    contain: layout style;
+    contain: strict;
     transform: translate3d(0, 0, 0);
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+    will-change: scroll-position, transform;
   }
 
-  /* Virtual grid container */
+  /* Virtual grid container with smooth scrolling */
   .virtual-grid-container {
+    will-change: scroll-position, transform;
+    contain: strict;
+    scroll-behavior: smooth;
+    scroll-snap-type: y proximity;
+    overscroll-behavior: contain;
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* Smooth scroll momentum */
+  .smooth-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    transition: scroll-position 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Enhanced scroll performance */
+  .scroll-optimized {
+    transform: translateZ(0);
     will-change: scroll-position;
-    contain: layout;
+    contain: layout style paint;
   }
 }

@@ -25,13 +25,20 @@ export function IconGrid({
     return ariaLabel || getGridAriaLabel(items.length);
   }, [ariaLabel, items.length]);
 
-  // Fixed size container matching Lucide's exact dimensions
+  // Enhanced smooth scrolling container
   return (
     <div 
       ref={containerRef}
-      className="w-full h-full overflow-auto"
+      className={cn(
+        "w-full h-full overflow-auto",
+        "virtual-grid-container smooth-scroll scroll-optimized"
+      )}
       role="grid"
       aria-label={computedAriaLabel}
+      style={{
+        scrollBehavior: 'smooth',
+        WebkitOverflowScrolling: 'touch'
+      }}
     >
       {items.length > 100 ? (
         // Virtualized rendering for large lists
