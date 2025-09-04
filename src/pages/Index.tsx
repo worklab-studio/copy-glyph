@@ -14,6 +14,8 @@ import { useSearchWorker } from "@/hooks/useSearchWorker";
 import { useFirstTimeUser } from "@/hooks/useFirstTimeUser";
 import { showFirstCopyNudge } from "@/components/ui/first-copy-nudge";
 import { Skeleton } from "@/components/ui/skeleton";
+import Lottie from "lottie-react";
+import loadingAnimation from "@/assets/loading-animation.json";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { iconLibraryManager } from "@/services/IconLibraryManager";
@@ -339,7 +341,18 @@ function IconGridPage() {
 
           {/* Scrollable main content */}
           <main className="flex-1 overflow-hidden">
-            {error ? (
+            {!loaded ? (
+              <div className="flex-1 flex items-center justify-center h-full">
+                <div className="flex flex-col items-center space-y-4">
+                  <Lottie 
+                    animationData={loadingAnimation} 
+                    className="w-32 h-32"
+                    loop={true}
+                  />
+                  <p className="text-muted-foreground">Loading icons...</p>
+                </div>
+              </div>
+            ) : error ? (
               <div className="flex h-64 items-center justify-center text-center px-6">
                 <Alert className="max-w-md">
                   <AlertCircle className="h-4 w-4" />
