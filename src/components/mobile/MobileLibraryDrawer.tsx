@@ -48,7 +48,8 @@ export function MobileLibraryDrawer({
           </DrawerHeader>
         </div>
         
-        <ScrollArea className="flex-1 px-4">
+        <div className="flex-1 px-4 flex flex-col">
+          <div className="flex-1"></div>
           <div className="space-y-1 pb-6 pt-4">
             {/* Browse Section */}
             <div className="pb-2">
@@ -105,7 +106,7 @@ export function MobileLibraryDrawer({
               </div>
             </div>
           </div>
-        </ScrollArea>
+        </div>
       </DrawerContent>
     </Drawer>
   );

@@ -1,4 +1,4 @@
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Copy, Download, FileCode, Braces, Image } from "lucide-react";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
@@ -187,67 +187,71 @@ export function MobileIconActions({
   if (!selectedIcon) return null;
 
   return (
-    <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="bottom" className="h-[500px]">
-        <div className="sticky top-0 bg-background border-b -mx-6 px-6 pb-4 mb-6 z-10">
-          <SheetHeader>
-            <SheetTitle className="text-left text-lg font-semibold">
+    <Drawer open={isOpen} onOpenChange={onClose}>
+      <DrawerContent className="max-h-[85vh]">
+        <div className="sticky top-0 bg-background border-b z-10">
+          <DrawerHeader>
+            <DrawerTitle className="text-left text-lg font-semibold">
               {selectedIcon.name}
-            </SheetTitle>
-          </SheetHeader>
+            </DrawerTitle>
+          </DrawerHeader>
         </div>
         
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-            Export
-          </h3>
-          
-          <div className="space-y-2">
-            <div className="grid grid-cols-2 gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleCopySVG} 
-                disabled={!selectedIcon} 
-                className="text-xs"
-              >
-                <Copy className="h-3 w-3 mr-1" />
-                Copy SVG
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleCopyXML} 
-                disabled={!selectedIcon} 
-                className="text-xs"
-              >
-                <Copy className="h-3 w-3 mr-1" />
-                Copy XML
-              </Button>
+        <div className="flex-1 px-4">
+          <div className="flex flex-col justify-end h-full pb-6 pt-4">
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                Export
+              </h3>
+              
+              <div className="space-y-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleCopySVG} 
+                    disabled={!selectedIcon} 
+                    className="text-xs"
+                  >
+                    <Copy className="h-3 w-3 mr-1" />
+                    Copy SVG
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleCopyXML} 
+                    disabled={!selectedIcon} 
+                    className="text-xs"
+                  >
+                    <Copy className="h-3 w-3 mr-1" />
+                    Copy XML
+                  </Button>
+                </div>
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  onClick={handleDownloadSVG} 
+                  disabled={!selectedIcon} 
+                  className="w-full text-xs"
+                >
+                  <Download className="h-3 w-3 mr-1" />
+                  Download SVG
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleDownloadPNG} 
+                  disabled={!selectedIcon} 
+                  className="w-full text-xs"
+                >
+                  <Download className="h-3 w-3 mr-1" />
+                  Download PNG
+                </Button>
+              </div>
             </div>
-            <Button 
-              variant="default" 
-              size="sm" 
-              onClick={handleDownloadSVG} 
-              disabled={!selectedIcon} 
-              className="w-full text-xs"
-            >
-              <Download className="h-3 w-3 mr-1" />
-              Download SVG
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleDownloadPNG} 
-              disabled={!selectedIcon} 
-              className="w-full text-xs"
-            >
-              <Download className="h-3 w-3 mr-1" />
-              Download PNG
-            </Button>
           </div>
         </div>
-      </SheetContent>
-    </Sheet>
+      </DrawerContent>
+    </Drawer>
   );
 }

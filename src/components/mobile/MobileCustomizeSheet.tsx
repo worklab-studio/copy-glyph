@@ -1,4 +1,5 @@
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { ColorPicker } from "@/components/color-picker";
 import { StrokeSlider } from "@/components/stroke-slider";
 import { Separator } from "@/components/ui/separator";
@@ -13,26 +14,30 @@ export function MobileCustomizeSheet({
   onClose,
 }: MobileCustomizeSheetProps) {
   return (
-    <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="bottom" className="h-[80vh]">
-        <SheetHeader className="pb-4">
-          <SheetTitle>Customize Icons</SheetTitle>
-        </SheetHeader>
-        
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-sm font-medium mb-3">Color</h3>
-            <ColorPicker />
-          </div>
-          
-          <Separator />
-          
-          <div>
-            <h3 className="text-sm font-medium mb-3">Stroke Width</h3>
-            <StrokeSlider />
-          </div>
+    <Drawer open={isOpen} onOpenChange={onClose}>
+      <DrawerContent className="max-h-[85vh]">
+        <div className="sticky top-0 bg-background border-b z-10">
+          <DrawerHeader>
+            <DrawerTitle>Customize Icons</DrawerTitle>
+          </DrawerHeader>
         </div>
-      </SheetContent>
-    </Sheet>
+        
+        <ScrollArea className="flex-1 px-4">
+          <div className="space-y-6 pb-6 pt-4">
+            <div>
+              <h3 className="text-sm font-medium mb-3">Color</h3>
+              <ColorPicker />
+            </div>
+            
+            <Separator />
+            
+            <div>
+              <h3 className="text-sm font-medium mb-3">Stroke Width</h3>
+              <StrokeSlider />
+            </div>
+          </div>
+        </ScrollArea>
+      </DrawerContent>
+    </Drawer>
   );
 }

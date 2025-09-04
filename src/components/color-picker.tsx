@@ -303,6 +303,12 @@ export function ColorPicker() {
               onChange={(e) => handleHexChange(e.target.value)}
               placeholder="#4F46E5"
               className="text-sm font-mono h-8"
+              readOnly={window.innerWidth <= 768}
+              onFocus={(e) => {
+                if (window.innerWidth <= 768) {
+                  e.target.blur();
+                }
+              }}
             />
           </div>
         </div>
