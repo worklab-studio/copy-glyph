@@ -29,21 +29,9 @@ export function IconGrid({
   // Enhanced smooth scrolling container with consistent styling
   return (
     <div className="relative h-full">
-      {/* Fixed header to match SectionedIconGrid - shows library name when provided */}
-      {libraryName && (
-        <div className="absolute top-0 left-0 right-0 z-30 h-[60px] bg-background/95 backdrop-blur-sm border-b border-border/50">
-          <div className="flex items-center pl-4 py-4 h-full">
-            <h3 className="text-lg font-semibold text-foreground">
-              {libraryName}
-            </h3>
-          </div>
-        </div>
-      )}
-      
       <div 
         ref={containerRef}
         className="h-full overflow-y-auto overflow-x-hidden"
-        style={{ paddingTop: libraryName ? '60px' : '0' }}
         role="grid"
         aria-label={computedAriaLabel}
       >
