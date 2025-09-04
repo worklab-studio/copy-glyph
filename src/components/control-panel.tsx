@@ -551,7 +551,7 @@ ${getCustomizedSVG().split('\n').map(line => `    ${line}`).join('\n')}
           {/* Animated Icon Export Options */}
           {selectedSet === "animated" ? (
             <div className="space-y-2">
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -560,7 +560,7 @@ ${getCustomizedSVG().split('\n').map(line => `    ${line}`).join('\n')}
                   className="text-xs"
                 >
                   <Braces className="h-3 w-3 mr-1" />
-                  JSON
+                  Copy JSON
                 </Button>
                 <Button 
                   variant="outline" 
@@ -570,19 +570,19 @@ ${getCustomizedSVG().split('\n').map(line => `    ${line}`).join('\n')}
                   className="text-xs"
                 >
                   <FileCode className="h-3 w-3 mr-1" />
-                  TSX
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleDownloadGIF} 
-                  disabled={!selectedIcon} 
-                  className="text-xs"
-                >
-                  <Image className="h-3 w-3 mr-1" />
-                  GIF
+                  Copy TSX
                 </Button>
               </div>
+              <Button 
+                variant="default" 
+                size="sm" 
+                onClick={handleDownloadGIF} 
+                disabled={!selectedIcon} 
+                className="w-full text-xs"
+              >
+                <Image className="h-3 w-3 mr-1" />
+                Download GIF
+              </Button>
             </div>
           ) : (
             /* Regular Icon Export Options */  
