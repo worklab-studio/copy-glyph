@@ -59,7 +59,7 @@ export const ICON_LIBRARIES: Record<string, IconLibraryConfig> = {
     id: 'tabler',
     name: 'Tabler Icons',
     description: 'Free SVG icons for web interfaces',
-    count: 4000,
+    count: 4968,
     style: 'outline',
     priority: 70,
     source: 'dynamic'
@@ -113,7 +113,7 @@ export const ICON_LIBRARIES: Record<string, IconLibraryConfig> = {
     id: 'ant',
     name: 'Ant Design',
     description: 'Enterprise-class UI design icons',
-    count: 789,
+    count: 1500,
     style: 'mixed',
     priority: 40,
     source: 'dynamic'
