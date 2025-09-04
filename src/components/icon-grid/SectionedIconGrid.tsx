@@ -152,7 +152,7 @@ export function SectionedIconGrid({
       
       <div
         ref={containerRef}
-        className="h-full overflow-auto"
+        className="h-full overflow-y-auto overflow-x-hidden w-full"
         role="grid"
         aria-label={computedAriaLabel}
       >
@@ -208,7 +208,7 @@ export function SectionedIconGrid({
                   }}
                   className=""
                 >
-                  <div className="grid h-full" style={{ gridTemplateColumns: `repeat(${columnsCount}, 1fr)` }}>
+                  <div className="grid h-full w-full min-w-0" style={{ gridTemplateColumns: `repeat(${columnsCount}, minmax(0, 1fr))` }}>
                     {item.icons.map((icon) => (
                       <IconCell
                         key={icon.id}
