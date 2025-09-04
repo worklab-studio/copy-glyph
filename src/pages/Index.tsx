@@ -75,13 +75,14 @@ function IconGridPage() {
 
     const performSearch = async () => {
       try {
-        // Try worker search with comprehensive options
+        // Try worker search with comprehensive options including library filter
         if (searchReady && loaded) {
           const results = await search(searchQuery, {
             maxResults: 1000,
             fuzzy: true,
             enableSynonyms: true,
-            enablePhonetic: true
+            enablePhonetic: true,
+            libraryId: selectedSet // Filter by selected library
           });
           // Filter out any invalid results
           const validResults = results.filter(icon => icon && icon.svg);
@@ -94,7 +95,8 @@ function IconGridPage() {
             maxResults: 1000,
             minScore: 0.1,
             enableSynonyms: true,
-            enablePhonetic: true
+            enablePhonetic: true,
+            libraryId: selectedSet // Filter by selected library
           });
           setSearchResults(fallbackResults);
         }
@@ -107,14 +109,15 @@ function IconGridPage() {
           maxResults: 1000,
           minScore: 0.1,
           enableSynonyms: true,
-          enablePhonetic: true
+          enablePhonetic: true,
+          libraryId: selectedSet // Filter by selected library
         });
         setSearchResults(fallbackResults);
       }
     };
 
     performSearch();
-  }, [searchQuery, search, searchReady, loaded, icons]);
+  }, [searchQuery, search, searchReady, loaded, icons, selectedSet]);
 
   // Get current icon set to display
   const currentIcons = useMemo(() => {

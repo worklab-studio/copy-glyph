@@ -12,14 +12,15 @@ import { expandQueryWithSynonyms } from '../lib/search-synonyms';
 interface SearchMessage {
   type: 'search' | 'index' | 'clear';
   query?: string;
-  icons?: SearchableIcon[];
   libraryId?: string;
+  icons?: SearchableIcon[];
   options?: {
     fuzzy?: boolean;
     maxResults?: number;
     minScore?: number;
     enableSynonyms?: boolean;
     enablePhonetic?: boolean;
+    libraryId?: string;
   };
 }
 
@@ -322,13 +323,24 @@ function cleanCache() {
 }
 
 // Enhanced search function with comprehensive scoring
-function searchIcons(query: string, options: SearchMessage['options'] = {}): SearchResult[] {
+function searchIcons(
+  query: string, 
+  options: {
+    fuzzy?: boolean;
+    maxResults?: number;
+    minScore?: number;
+    enableSynonyms?: boolean;
+    enablePhonetic?: boolean;
+    libraryId?: string;
+  } = {}
+): SearchResult[] {
   const {
     fuzzy = true,
     maxResults = 1000,
     minScore = 0.1,
     enableSynonyms = true,
-    enablePhonetic = true
+    enablePhonetic = true,
+    libraryId
   } = options;
   
   if (!query?.trim()) return [];
@@ -356,8 +368,14 @@ function searchIcons(query: string, options: SearchMessage['options'] = {}): Sea
   const results: SearchResult[] = [];
   const seen = new Set<string>();
   
-  // Search across all indexed libraries
-  for (const [, index] of searchIndex) {
+  // Filter search by library if specified
+  const librariesToSearch = libraryId && libraryId !== 'all' ? [libraryId] : Array.from(searchIndex.keys());
+  
+  // Search across specified libraries
+  for (const currentLibraryId of librariesToSearch) {
+    const index = searchIndex.get(currentLibraryId);
+    if (!index) continue;
+    
     const candidates = new Set<SearchableIcon>();
     
     // Collect candidates from all relevant indexes
@@ -456,7 +474,8 @@ self.onmessage = function(event: MessageEvent<SearchMessage>) {
         
       case 'search':
         if (query !== undefined) {
-          const results = searchIcons(query, options);
+          const { libraryId } = event.data;
+          const results = searchIcons(query, { ...options, libraryId });
           self.postMessage({ 
             type: 'searchResults', 
             results: results.map(r => r.icon), // Only send icons, not full results

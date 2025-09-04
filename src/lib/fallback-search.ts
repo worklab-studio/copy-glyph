@@ -15,6 +15,7 @@ interface FallbackSearchOptions {
   minScore?: number;
   enableSynonyms?: boolean;
   enablePhonetic?: boolean;
+  libraryId?: string;
 }
 
 interface SearchResult {
@@ -192,10 +193,21 @@ export function fallbackSearch(
     maxResults = 1000,
     minScore = 0.1,
     enableSynonyms = true,
-    enablePhonetic = true
+    enablePhonetic = true,
+    libraryId
   } = options;
   
   if (!query?.trim() || !icons.length) return [];
+  
+  // Filter icons by library if specified
+  let filteredIcons = icons;
+  if (libraryId && libraryId !== 'all') {
+    filteredIcons = icons.filter(icon => {
+      // Extract library from icon id (assuming format: libraryId-iconName or similar)
+      const iconLibrary = icon.id.split('-')[0];
+      return iconLibrary === libraryId;
+    });
+  }
   
   const normalizedQuery = query.toLowerCase().trim();
   
@@ -208,7 +220,7 @@ export function fallbackSearch(
   const results: SearchResult[] = [];
   
   // Score all icons
-  for (const icon of icons) {
+  for (const icon of filteredIcons) {
     // Filter out icons with invalid svg data early
     if (!icon.svg) continue;
     
