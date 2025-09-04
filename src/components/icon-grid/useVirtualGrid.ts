@@ -12,11 +12,19 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
   const [containerWidth, setContainerWidth] = useState(0);
   const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Memoize column calculation
-  const columnsCount = useMemo(() => 
-    Math.floor(Math.max(containerWidth, 320) / 80) || 4, 
-    [containerWidth]
-  );
+  // Memoize column calculation for mobile edge-to-edge grid
+  const columnsCount = useMemo(() => {
+    if (!containerWidth) return 4;
+    
+    // For mobile, use viewport width to ensure edge-to-edge layout
+    const isMobile = containerWidth < 768;
+    if (isMobile) {
+      // Calculate square cells that fit edge-to-edge
+      return Math.floor(containerWidth / (containerWidth / 4)); // Always 4 columns on mobile for square cells
+    }
+    
+    return Math.floor(Math.max(containerWidth, 320) / 80) || 4;
+  }, [containerWidth]);
 
   // Memoize row grouping with better performance
   const rows = useMemo(() => {
@@ -71,7 +79,14 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => containerRef.current,
-    estimateSize: () => 80,
+    estimateSize: () => {
+      // Calculate row height based on container width to maintain square cells
+      const isMobile = containerWidth < 768;
+      if (isMobile && containerWidth > 0) {
+        return containerWidth / 4; // Square cells: width/4 columns = height
+      }
+      return 80;
+    },
     overscan: enabled && rows.length > 100 ? 2 : 5, // Dynamic overscan for performance
     enabled,
     scrollMargin: containerRef.current?.offsetTop ?? 0,

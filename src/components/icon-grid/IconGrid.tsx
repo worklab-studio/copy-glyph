@@ -61,7 +61,10 @@ export function IconGrid({
                   }}
                   className=""
                 >
-                  <div className="grid min-w-0 gap-0" style={{ gridTemplateColumns: `repeat(${columnsCount}, minmax(0, 1fr))`, height: '80px' }}>
+                  <div className="grid min-w-0 gap-0" style={{ 
+                    gridTemplateColumns: `repeat(${columnsCount}, minmax(0, 1fr))`, 
+                    height: `${virtualItem.size}px`
+                  }}>
                     {row.map((icon) => (
                       <IconCell
                         key={icon.id}
