@@ -168,63 +168,87 @@ export function MobileIconActions({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="bottom" className="h-[400px]">
-        <SheetHeader className="pb-4">
-          <SheetTitle className="text-left">
-            {selectedIcon.name}
-          </SheetTitle>
-        </SheetHeader>
+      <SheetContent side="bottom" className="h-[500px]">
+        <div className="sticky top-0 bg-background border-b -mx-6 px-6 pb-4 mb-6 z-10">
+          <SheetHeader>
+            <SheetTitle className="text-left text-lg font-semibold">
+              {selectedIcon.name}
+            </SheetTitle>
+          </SheetHeader>
+        </div>
         
-        <div className="grid grid-cols-2 gap-3">
-          {/* Download options */}
-          <Button
-            onClick={handleDownloadSVG}
-            className="flex flex-col h-20 gap-2"
-            variant="outline"
-          >
-            <Download className="h-5 w-5" />
-            <span className="text-xs">Download SVG</span>
-          </Button>
+        <div className="space-y-6">
+          {/* Download Section */}
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-3">
+              Download
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                onClick={handleDownloadSVG}
+                className="flex flex-col h-24 gap-3 bg-primary/5 hover:bg-primary/10 border-primary/20"
+                variant="outline"
+              >
+                <div className="p-2 rounded-full bg-primary/10">
+                  <Download className="h-5 w-5 text-primary" />
+                </div>
+                <span className="text-sm font-medium">SVG</span>
+              </Button>
+              
+              <Button
+                onClick={handleDownloadPNG}
+                className="flex flex-col h-24 gap-3 bg-secondary/5 hover:bg-secondary/10 border-secondary/20"
+                variant="outline"
+              >
+                <div className="p-2 rounded-full bg-secondary/10">
+                  <Image className="h-5 w-5 text-secondary-foreground" />
+                </div>
+                <span className="text-sm font-medium">PNG</span>
+              </Button>
+            </div>
+          </div>
           
-          <Button
-            onClick={handleDownloadPNG}
-            className="flex flex-col h-20 gap-2"
-            variant="outline"
-          >
-            <Image className="h-5 w-5" />
-            <span className="text-xs">Download PNG</span>
-          </Button>
-          
-          {/* Copy options */}
-          <Button
-            onClick={handleCopySVG}
-            className="flex flex-col h-20 gap-2"
-            variant="outline"
-          >
-            <Copy className="h-5 w-5" />
-            <span className="text-xs">Copy SVG</span>
-          </Button>
-          
-          <Button
-            onClick={() => {
-              // Copy as data URL for easy embedding
-              const customizedSVG = getCustomizedSVG();
-              const encodedSVG = encodeURIComponent(customizedSVG);
-              const dataURL = `data:image/svg+xml,${encodedSVG}`;
-              navigator.clipboard.writeText(dataURL).then(() => {
-                toast({
-                  description: "Data URL copied to clipboard!",
-                  duration: 2000
-                });
-                onClose();
-              });
-            }}
-            className="flex flex-col h-20 gap-2"
-            variant="outline"
-          >
-            <FileCode className="h-5 w-5" />
-            <span className="text-xs">Copy Data URL</span>
-          </Button>
+          {/* Copy Section */}
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-3">
+              Copy
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                onClick={handleCopySVG}
+                className="flex flex-col h-24 gap-3 bg-accent/5 hover:bg-accent/10 border-accent/20"
+                variant="outline"
+              >
+                <div className="p-2 rounded-full bg-accent/10">
+                  <Copy className="h-5 w-5 text-accent-foreground" />
+                </div>
+                <span className="text-sm font-medium">SVG Code</span>
+              </Button>
+              
+              <Button
+                onClick={() => {
+                  // Copy as data URL for easy embedding
+                  const customizedSVG = getCustomizedSVG();
+                  const encodedSVG = encodeURIComponent(customizedSVG);
+                  const dataURL = `data:image/svg+xml,${encodedSVG}`;
+                  navigator.clipboard.writeText(dataURL).then(() => {
+                    toast({
+                      description: "Data URL copied to clipboard!",
+                      duration: 2000
+                    });
+                    onClose();
+                  });
+                }}
+                className="flex flex-col h-24 gap-3 bg-muted/50 hover:bg-muted border-muted-foreground/20"
+                variant="outline"
+              >
+                <div className="p-2 rounded-full bg-muted">
+                  <FileCode className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <span className="text-sm font-medium">Data URL</span>
+              </Button>
+            </div>
+          </div>
         </div>
       </SheetContent>
     </Sheet>

@@ -41,13 +41,15 @@ export function MobileLibraryDrawer({
 
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>Icon Libraries</DrawerTitle>
-        </DrawerHeader>
+      <DrawerContent className="max-h-[85vh]">
+        <div className="sticky top-0 bg-background border-b z-10">
+          <DrawerHeader>
+            <DrawerTitle>Icon Libraries</DrawerTitle>
+          </DrawerHeader>
+        </div>
         
         <ScrollArea className="flex-1 px-4">
-          <div className="space-y-1 pb-6">
+          <div className="space-y-1 pb-6 pt-4">
             {/* Browse Section */}
             <div className="pb-2">
               <h3 className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
