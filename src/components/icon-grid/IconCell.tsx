@@ -390,11 +390,13 @@ export function IconCell({
         {renderIcon()}
         
         {/* Tooltip - shows after 0.5s hover, using exact same styling as copied tooltip */}
-        {showTooltip && (
+        {showTooltip && buttonRef.current && (
           <div 
-            className="absolute left-1/2 transform -translate-x-1/2 bg-foreground text-background text-xs py-1 px-2 rounded whitespace-nowrap pointer-events-none z-[9999]"
-            style={{ 
-              bottom: 'calc(100% + 4px)'
+            className="fixed bg-foreground text-background text-xs py-1 px-2 rounded whitespace-nowrap pointer-events-none z-[10000]"
+            style={{
+              left: `${buttonRef.current.getBoundingClientRect().left + buttonRef.current.offsetWidth / 2}px`,
+              top: `${buttonRef.current.getBoundingClientRect().top - 32}px`,
+              transform: 'translateX(-50%)'
             }}
           >
             Double click to copy icon
