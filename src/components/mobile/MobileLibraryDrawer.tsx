@@ -48,65 +48,66 @@ export function MobileLibraryDrawer({
           </DrawerHeader>
         </div>
         
-        <div className="flex-1 px-4 flex flex-col">
-          <div className="flex-1"></div>
-          <div className="space-y-1 pb-6 pt-4">
-            {/* Browse Section */}
-            <div className="pb-2">
-              <h3 className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Browse
-              </h3>
-              <div className="space-y-1">
-                <Button
-                  variant={selectedSet === "all" ? "secondary" : "ghost"}
-                  className="w-full justify-start h-10"
-                  onClick={() => handleSetChange("all")}
-                >
-                  <Layers className="mr-3 h-4 w-4" />
-                  All Icons
-                </Button>
-                <Button
-                  variant={selectedSet === "animated" ? "secondary" : "ghost"}
-                  className="w-full justify-start h-10"
-                  onClick={() => handleSetChange("animated")}
-                >
-                  <Sparkles className="mr-3 h-4 w-4" />
-                  Animated
-                </Button>
+        <ScrollArea className="flex-1">
+          <div className="px-4 pb-6 pt-4 min-h-full flex flex-col justify-end">
+            <div className="space-y-1">
+              {/* Browse Section */}
+              <div className="pb-2">
+                <h3 className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Browse
+                </h3>
+                <div className="space-y-1">
+                  <Button
+                    variant={selectedSet === "all" ? "secondary" : "ghost"}
+                    className="w-full justify-start h-10"
+                    onClick={() => handleSetChange("all")}
+                  >
+                    <Layers className="mr-3 h-4 w-4" />
+                    All Icons
+                  </Button>
+                  <Button
+                    variant={selectedSet === "animated" ? "secondary" : "ghost"}
+                    className="w-full justify-start h-10"
+                    onClick={() => handleSetChange("animated")}
+                  >
+                    <Sparkles className="mr-3 h-4 w-4" />
+                    Animated
+                  </Button>
+                </div>
               </div>
-            </div>
 
-            {/* Libraries Section */}
-            <div>
-              <h3 className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Libraries
-              </h3>
-              <div className="space-y-1">
-                {libraries
-                  .filter(lib => lib.id !== "animated")
-                  .map((library) => {
-                    const IconComponent = iconMap[library.id] || Layers;
-                    return (
-                      <Button
-                        key={library.id}
-                        variant={selectedSet === library.id ? "secondary" : "ghost"}
-                        className="w-full justify-between h-10"
-                        onClick={() => handleSetChange(library.id)}
-                      >
-                        <div className="flex items-center">
-                          <IconComponent className="mr-3 h-4 w-4" />
-                          {library.name}
-                        </div>
-                        <span className="text-xs text-muted-foreground">
-                          {library.count.toLocaleString()}
-                        </span>
-                      </Button>
-                    );
-                  })}
+              {/* Libraries Section */}
+              <div>
+                <h3 className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Libraries
+                </h3>
+                <div className="space-y-1">
+                  {libraries
+                    .filter(lib => lib.id !== "animated")
+                    .map((library) => {
+                      const IconComponent = iconMap[library.id] || Layers;
+                      return (
+                        <Button
+                          key={library.id}
+                          variant={selectedSet === library.id ? "secondary" : "ghost"}
+                          className="w-full justify-between h-10"
+                          onClick={() => handleSetChange(library.id)}
+                        >
+                          <div className="flex items-center">
+                            <IconComponent className="mr-3 h-4 w-4" />
+                            {library.name}
+                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            {library.count.toLocaleString()}
+                          </span>
+                        </Button>
+                      );
+                    })}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </ScrollArea>
       </DrawerContent>
     </Drawer>
   );
