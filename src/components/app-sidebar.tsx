@@ -1,7 +1,7 @@
 import { Package2, Home, Layers, Map, Grid3X3, Box, Code2, Feather, Zap, Crown, Palette, Atom, Gamepad2, Music, TestTube, Circle, Table, Play, Globe, Minus, Hash, Bug, Workflow, Target, GitBranch, Component, Sparkles, Sun } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-// Removed AnimatedPlayIcon since animated icons are removed
+import { AnimatedPlayIcon } from "@/components/animated-play-icon";
 import { featherIcons } from "@/data/feather-icons";
 import { phosphorIcons } from "@/data/phosphor-icons";
 import { lucideIcons } from "@/data/lucide-icons";
@@ -10,8 +10,7 @@ import { remixIcons } from "@/data/remix-icons";
 import { bootstrapIcons } from "@/data/bootstrap-icons";
 import { boxicons } from "@/data/boxicons";
 import cssGgIcons from "@/data/css-gg-icons";
-// Removed problematic animated icons import
-// import { animatedIcons } from "@/data/animated-icons";
+import { animatedIcons } from "@/data/animated-icons";
 import { iconsaxIcons } from "@/data/iconsax-icons";
 import { atlasIcons } from "@/data/atlas-icons";
 import { lineIcons } from "@/data/line-icons";
@@ -26,18 +25,23 @@ import { radixIcons } from "@/data/radix-icons";
 import { materialIcons } from "@/data/material-icons";
 import { solarIcons } from "@/data/solar-icons";
 
-// Calculate total icons count (animated icons removed)
-const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length + iconsaxIcons.length + atlasIcons.length + lineIcons.length + pixelartIcons.length + teenyIcons.length + antIcons.length + fluentIcons.length + iconnoirIcons.length + ikonateIcons.length + octiconsIcons.length + radixIcons.length + materialIcons.length + solarIcons.length;
+// Calculate total icons count
+const totalIconsCount = lucideIcons.length + featherIcons.length + phosphorIcons.length + tablerIcons.length + remixIcons.length + bootstrapIcons.length + boxicons.length + cssGgIcons.length + animatedIcons.length + iconsaxIcons.length + atlasIcons.length + lineIcons.length + pixelartIcons.length + teenyIcons.length + antIcons.length + fluentIcons.length + iconnoirIcons.length + ikonateIcons.length + octiconsIcons.length + radixIcons.length + materialIcons.length + solarIcons.length;
 
-// Fixed top navigation items (animated removed)
+// Fixed top navigation items  
 const topNavItems = [
   {
     name: "All Icons",
     id: "all",
     count: totalIconsCount,
     icon: Home
+  },
+  {
+    name: "Animated",
+    id: "animated",
+    count: animatedIcons.length,
+    icon: AnimatedPlayIcon
   }
-  // Removed animated icons section
 ];
 
 // Active icon libraries

@@ -16,8 +16,7 @@ import { remixIcons } from "@/data/remix-icons";
 import { bootstrapIcons } from "@/data/bootstrap-icons";
 import { boxicons } from "@/data/boxicons";
 import cssGgIcons from "@/data/css-gg-icons";
-// Removed animated icons due to loading issues
-// import { animatedIcons } from "@/data/animated-icons";
+import { animatedIcons } from "@/data/animated-icons";
 import { iconsaxIcons } from "@/data/iconsax-icons";
 import { atlasIcons } from "@/data/atlas-icons";
 import { lineIcons } from "@/data/line-icons";
@@ -31,11 +30,11 @@ import { octiconsIcons } from "@/data/octicons-icons";
 import { radixIcons } from "@/data/radix-icons";
 import { materialIcons } from "@/data/material-icons";
 import { solarIcons } from "@/data/solar-icons";
-// Combine all icon libraries (animated icons removed)
+// Combine all icon libraries
 const allIcons: IconItem[] = [
   ...materialIcons,
   ...atlasIcons,
-  // ...animatedIcons, // Removed due to loading issues
+  ...animatedIcons,
   ...lucideIcons,
   ...featherIcons,
   ...phosphorIcons,
@@ -92,7 +91,7 @@ function IconGridPage() {
     
     const setMappings: Record<string, string> = {
       'material': 'material-',
-      // 'animated': 'animated-', // Removed due to loading issues
+      'animated': 'animated-',
       'lucide': 'lucide-',
       'feather': 'feather-',
       'phosphor': 'phosphor-',
@@ -195,8 +194,9 @@ function IconGridPage() {
                   <h2 className="text-2xl font-semibold">
                     {selectedSet === "all" ? "All icons" : 
                      selectedSet === "favorites" ? "Favorites" : 
-                      selectedSet === "material" ? "Material Design Icons" :
-                      selectedSet === "lucide" ? "Lucide Icons" :
+                     selectedSet === "material" ? "Material Design Icons" :
+                     selectedSet === "animated" ? "Animated Icons" :
+                     selectedSet === "lucide" ? "Lucide Icons" :
                      selectedSet === "feather" ? "Feather Icons" :
                      selectedSet === "phosphor" ? "Phosphor Icons" :
                      selectedSet === "tabler" ? "Tabler Icons" :
@@ -267,7 +267,11 @@ function IconGridPage() {
 }
 
 const Index = () => {
-  return <IconGridPage />;
+  return (
+    <IconCustomizationProvider>
+      <IconGridPage />
+    </IconCustomizationProvider>
+  );
 };
 
 export default Index;
