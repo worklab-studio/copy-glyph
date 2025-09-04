@@ -55,7 +55,19 @@ export function useSearchWorker(): SearchWorkerHook {
             const searchKey = `search-${query}`;
             const searchCallbacks = pendingCallbacks.current.get(searchKey);
             if (searchCallbacks) {
-              searchCallbacks.resolve(results || []);
+              // Map worker results back to original icons with React components
+              const mappedResults = (results || []).map((workerIcon: any) => {
+                // Find original icon across all libraries
+                for (const [, iconMap] of originalIconsRef.current) {
+                  const originalIcon = iconMap.get(workerIcon.id);
+                  if (originalIcon) {
+                    return originalIcon;
+                  }
+                }
+                return workerIcon; // Fallback if not found
+              }).filter((icon: IconItem) => icon.svg); // Filter out any invalid results
+              
+              searchCallbacks.resolve(mappedResults);
               pendingCallbacks.current.delete(searchKey);
             }
             break;
@@ -64,6 +76,12 @@ export function useSearchWorker(): SearchWorkerHook {
             const clearKey = `clear-${libraryId}`;
             const clearCallbacks = pendingCallbacks.current.get(clearKey);
             if (clearCallbacks) {
+              // Clear stored icons for this library
+              if (libraryId) {
+                originalIconsRef.current.delete(libraryId);
+              } else {
+                originalIconsRef.current.clear();
+              }
               clearCallbacks.resolve(true);
               pendingCallbacks.current.delete(clearKey);
             }
@@ -138,30 +156,38 @@ export function useSearchWorker(): SearchWorkerHook {
     });
   }, [isReady]);
 
-  // Index library function - only send serializable data to worker
+  // Store original icons for mapping search results back
+  const originalIconsRef = useRef<Map<string, Map<string, IconItem>>>(new Map());
+
+  // Index library function - send only searchable metadata to worker
   const indexLibrary = useCallback(async (libraryId: string, icons: IconItem[]): Promise<void> => {
     if (!workerRef.current || !isReady) {
       return Promise.resolve();
     }
 
-    return new Promise((resolve, reject) => {
-      const key = `index-${libraryId}`;
-      pendingCallbacks.current.set(key, { resolve, reject });
-      
-      // Filter out React components and only send serializable data
-      const serializableIcons = icons
-        .filter(icon => icon.svg) // Only include icons with valid svg
-        .map(icon => ({
+    // Store original icons for result mapping
+    const iconMap = new Map<string, IconItem>();
+    const serializableIcons = icons
+      .filter(icon => icon.svg) // Only include icons with valid svg
+      .map(icon => {
+        iconMap.set(icon.id, icon); // Store original icon
+        return {
           id: icon.id,
           name: icon.name,
           tags: icon.tags || [],
           category: icon.category || '',
-          style: icon.style,
-          // Only include svg if it's a string, not a React component
-          svg: typeof icon.svg === 'string' ? icon.svg : 'component'
-        }));
+          style: icon.style || ''
+          // No SVG data sent to worker - only searchable metadata
+        };
+      });
+    
+    originalIconsRef.current.set(libraryId, iconMap);
+
+    return new Promise((resolve, reject) => {
+      const key = `index-${libraryId}`;
+      pendingCallbacks.current.set(key, { resolve, reject });
       
-      // Send index message with serializable data only
+      // Send index message with only searchable metadata
       workerRef.current!.postMessage({
         type: 'index',
         libraryId,

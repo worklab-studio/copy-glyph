@@ -73,17 +73,21 @@ function IconGridPage() {
       return;
     }
 
-    if (searchReady && loaded) {
-      // Use enhanced worker search with comprehensive options
-      search(searchQuery, {
-        maxResults: 1000,
-        fuzzy: true,
-        enableSynonyms: true,
-        enablePhonetic: true
-      }).then(setSearchResults)
-        .catch(error => {
-          console.error('Search failed:', error);
-          // Enhanced fallback search using same algorithms
+    const performSearch = async () => {
+      try {
+        // Try worker search with comprehensive options
+        if (searchReady && loaded) {
+          const results = await search(searchQuery, {
+            maxResults: 1000,
+            fuzzy: true,
+            enableSynonyms: true,
+            enablePhonetic: true
+          });
+          // Filter out any invalid results
+          const validResults = results.filter(icon => icon && icon.svg);
+          setSearchResults(validResults);
+        } else if (loaded) {
+          // Enhanced fallback search when worker isn't ready
           const { fallbackSearch } = require('@/lib/fallback-search');
           const fallbackResults = fallbackSearch(icons, searchQuery, {
             fuzzy: true,
@@ -93,19 +97,23 @@ function IconGridPage() {
             enablePhonetic: true
           });
           setSearchResults(fallbackResults);
+        }
+      } catch (error) {
+        console.warn('Worker search failed, using fallback:', error);
+        // Always fallback to client-side search on any error
+        const { fallbackSearch } = require('@/lib/fallback-search');
+        const fallbackResults = fallbackSearch(icons, searchQuery, {
+          fuzzy: true,
+          maxResults: 1000,
+          minScore: 0.1,
+          enableSynonyms: true,
+          enablePhonetic: true
         });
-    } else if (loaded) {
-      // Enhanced fallback search when worker isn't ready
-      const { fallbackSearch } = require('@/lib/fallback-search');
-      const fallbackResults = fallbackSearch(icons, searchQuery, {
-        fuzzy: true,
-        maxResults: 1000,
-        minScore: 0.1,
-        enableSynonyms: true,
-        enablePhonetic: true
-      });
-      setSearchResults(fallbackResults);
-    }
+        setSearchResults(fallbackResults);
+      }
+    };
+
+    performSearch();
   }, [searchQuery, search, searchReady, loaded, icons]);
 
   // Get current icon set to display

@@ -12,7 +12,7 @@ import { expandQueryWithSynonyms } from '../lib/search-synonyms';
 interface SearchMessage {
   type: 'search' | 'index' | 'clear';
   query?: string;
-  icons?: IconItem[];
+  icons?: SearchableIcon[];
   libraryId?: string;
   options?: {
     fuzzy?: boolean;
@@ -23,8 +23,17 @@ interface SearchMessage {
   };
 }
 
+// Simplified icon interface for search indexing (no SVG components)
+interface SearchableIcon {
+  id: string;
+  name: string;
+  tags?: string[];
+  category?: string;
+  style?: string;
+}
+
 interface SearchResult {
-  icon: IconItem;
+  icon: SearchableIcon;
   score: number;
   matchedFields: string[];
   matchDetails: {
@@ -37,11 +46,11 @@ interface SearchResult {
 
 // Enhanced search index with performance optimizations
 const searchIndex = new Map<string, {
-  icons: IconItem[];
-  nameIndex: Map<string, IconItem[]>;
-  tagIndex: Map<string, IconItem[]>;
-  categoryIndex: Map<string, IconItem[]>;
-  stemIndex: Map<string, IconItem[]>;
+  icons: SearchableIcon[];
+  nameIndex: Map<string, SearchableIcon[]>;
+  tagIndex: Map<string, SearchableIcon[]>;
+  categoryIndex: Map<string, SearchableIcon[]>;
+  stemIndex: Map<string, SearchableIcon[]>;
   popularityIndex: Map<string, number>;
 }>();
 
@@ -66,7 +75,7 @@ const FIELD_WEIGHTS = {
 
 // Calculate comprehensive search score for an icon
 function calculateIconScore(
-  icon: IconItem, 
+  icon: SearchableIcon, 
   originalQuery: string,
   expandedQueries: string[],
   queryWords: string[],
@@ -209,11 +218,11 @@ function calculateIconScore(
 }
 
 // Build enhanced search index with stemming and popularity tracking
-function buildIndex(libraryId: string, icons: IconItem[]) {
-  const nameIndex = new Map<string, IconItem[]>();
-  const tagIndex = new Map<string, IconItem[]>();
-  const categoryIndex = new Map<string, IconItem[]>();
-  const stemIndex = new Map<string, IconItem[]>();
+function buildIndex(libraryId: string, icons: SearchableIcon[]) {
+  const nameIndex = new Map<string, SearchableIcon[]>();
+  const tagIndex = new Map<string, SearchableIcon[]>();
+  const categoryIndex = new Map<string, SearchableIcon[]>();
+  const stemIndex = new Map<string, SearchableIcon[]>();
   const popularityIndex = new Map<string, number>();
   
   for (const icon of icons) {
@@ -349,7 +358,7 @@ function searchIcons(query: string, options: SearchMessage['options'] = {}): Sea
   
   // Search across all indexed libraries
   for (const [, index] of searchIndex) {
-    const candidates = new Set<IconItem>();
+    const candidates = new Set<SearchableIcon>();
     
     // Collect candidates from all relevant indexes
     for (const expandedQuery of expandedQueries) {
