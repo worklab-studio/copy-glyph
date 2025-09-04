@@ -33,11 +33,14 @@ function IconGridPage() {
     icons, 
     sections,
     loading, 
+    backgroundLoading,
     error, 
     loaded,
     loadLibrary, 
+    loadLibraryProgressive,
     loadAllLibraries,
     loadAllLibrariesSectioned,
+    loadAllLibrariesSectionedProgressive,
     clearError 
   } = useAsyncIconLibrary();
   
@@ -49,14 +52,14 @@ function IconGridPage() {
     isSearching 
   } = useSearchWorker();
 
-  // Load initial library
+  // Load initial library progressively
   useEffect(() => {
     if (selectedSet === "all") {
-      loadAllLibrariesSectioned();
+      loadAllLibrariesSectionedProgressive();
     } else {
-      loadLibrary(selectedSet);
+      loadLibraryProgressive(selectedSet);
     }
-  }, [selectedSet, loadLibrary, loadAllLibrariesSectioned]);
+  }, [selectedSet, loadLibraryProgressive, loadAllLibrariesSectionedProgressive]);
 
   // Index loaded icons for search - with error handling
   useEffect(() => {
@@ -337,13 +340,7 @@ function IconGridPage() {
                   </AlertDescription>
                 </Alert>
               </div>
-            ) : loading ? (
-              <div className="flex flex-col items-center justify-center h-64 px-6">
-                <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-                <p className="text-lg font-medium">Loading icons...</p>
-                <p className="text-sm text-muted-foreground">This may take a moment</p>
-              </div>
-            ) : displayedIcons.length === 0 ? (
+            ) : displayedIcons.length === 0 && !loading ? (
               <div className="flex h-64 items-center justify-center text-center px-6">
                 <div className="space-y-2">
                   <p className="text-lg text-muted-foreground">
@@ -401,7 +398,15 @@ function IconGridPage() {
               )
             )}
             
-            {/* Loading indicator for search */}
+            {/* Background loading indicator */}
+            {backgroundLoading && (
+              <div className="fixed bottom-4 right-4 bg-muted text-muted-foreground px-3 py-2 rounded-md shadow-lg flex items-center gap-2 text-xs">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                <span>Loading more icons...</span>
+              </div>
+            )}
+            
+            {/* Search loading indicator */}
             {isSearching && (
               <div className="fixed bottom-4 right-4 bg-primary text-primary-foreground px-3 py-2 rounded-md shadow-lg flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />

@@ -6,14 +6,17 @@ interface UseAsyncIconLibraryState {
   icons: IconItem[];
   sections: LibrarySection[]; // For sectioned "all" view
   loading: boolean;
+  backgroundLoading: boolean;
   error: string | null;
   loaded: boolean;
 }
 
 interface UseAsyncIconLibraryReturn extends UseAsyncIconLibraryState {
   loadLibrary: (libraryId: string) => Promise<void>;
+  loadLibraryProgressive: (libraryId: string) => Promise<void>;
   loadAllLibraries: () => Promise<void>;
   loadAllLibrariesSectioned: () => Promise<void>;
+  loadAllLibrariesSectionedProgressive: () => Promise<void>;
   searchIcons: (query: string, libraryIds?: string[]) => IconItem[];
   clearError: () => void;
 }
@@ -23,6 +26,7 @@ export function useAsyncIconLibrary(): UseAsyncIconLibraryReturn {
     icons: [],
     sections: [],
     loading: false,
+    backgroundLoading: false,
     error: null,
     loaded: false
   });
@@ -37,6 +41,7 @@ export function useAsyncIconLibrary(): UseAsyncIconLibraryReturn {
         icons,
         sections: [], // Reset sections for single library view
         loading: false,
+        backgroundLoading: false,
         error: null,
         loaded: true
       });
@@ -60,6 +65,7 @@ export function useAsyncIconLibrary(): UseAsyncIconLibraryReturn {
         icons,
         sections: [],
         loading: false,
+        backgroundLoading: false,
         error: null,
         loaded: true
       });
@@ -68,6 +74,41 @@ export function useAsyncIconLibrary(): UseAsyncIconLibraryReturn {
         ...prev,
         loading: false,
         error: error instanceof Error ? error.message : 'Failed to load libraries',
+        loaded: false
+      }));
+    }
+  }, []);
+
+  // Load a library progressively
+  const loadLibraryProgressive = useCallback(async (libraryId: string) => {
+    setState(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      const { initialBatch, loadRemaining } = await iconLibraryManager.loadLibraryProgressive(libraryId, 100);
+      
+      // Show initial batch immediately
+      setState({
+        icons: initialBatch,
+        sections: [],
+        loading: false,
+        backgroundLoading: true,
+        error: null,
+        loaded: true
+      });
+
+      // Load remaining icons in background
+      const allIcons = await loadRemaining();
+      setState(prev => ({
+        ...prev,
+        icons: allIcons,
+        backgroundLoading: false
+      }));
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        backgroundLoading: false,
+        error: error instanceof Error ? error.message : 'Failed to load library',
         loaded: false
       }));
     }
@@ -86,6 +127,7 @@ export function useAsyncIconLibrary(): UseAsyncIconLibraryReturn {
         icons: allIcons,
         sections,
         loading: false,
+        backgroundLoading: false,
         error: null,
         loaded: true
       });
@@ -93,6 +135,47 @@ export function useAsyncIconLibrary(): UseAsyncIconLibraryReturn {
       setState(prev => ({
         ...prev,
         loading: false,
+        backgroundLoading: false,
+        error: error instanceof Error ? error.message : 'Failed to load libraries',
+        loaded: false
+      }));
+    }
+  }, []);
+
+  // Load all libraries sectioned progressively
+  const loadAllLibrariesSectionedProgressive = useCallback(async () => {
+    setState(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      const { initialSections, loadRemaining } = await iconLibraryManager.loadAllLibrariesSectionedProgressive(120);
+      // Also create flat array for search compatibility
+      const initialIcons = initialSections.flatMap(section => section.icons);
+      
+      // Show initial batch immediately
+      setState({
+        icons: initialIcons,
+        sections: initialSections,
+        loading: false,
+        backgroundLoading: true,
+        error: null,
+        loaded: true
+      });
+
+      // Load remaining sections in background
+      const allSections = await loadRemaining();
+      const allIcons = allSections.flatMap(section => section.icons);
+      
+      setState(prev => ({
+        ...prev,
+        icons: allIcons,
+        sections: allSections,
+        backgroundLoading: false
+      }));
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        backgroundLoading: false,
         error: error instanceof Error ? error.message : 'Failed to load libraries',
         loaded: false
       }));
@@ -112,8 +195,10 @@ export function useAsyncIconLibrary(): UseAsyncIconLibraryReturn {
   return {
     ...state,
     loadLibrary,
+    loadLibraryProgressive,
     loadAllLibraries,
     loadAllLibrariesSectioned,
+    loadAllLibrariesSectionedProgressive,
     searchIcons,
     clearError
   };

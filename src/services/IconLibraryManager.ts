@@ -196,6 +196,100 @@ class IconLibraryManager {
     }
   }
 
+  // Load library in batches - returns initial batch immediately
+  async loadLibraryProgressive(libraryId: string, initialBatchSize: number = 100): Promise<{
+    initialBatch: IconItem[];
+    loadRemaining: () => Promise<IconItem[]>;
+  }> {
+    // Check cache first
+    const cached = this.cache.get(libraryId);
+    if (cached && !this.isCacheExpired(cached)) {
+      cached.accessCount++;
+      cached.lastAccessed = Date.now();
+      const icons = cached.icons;
+      return {
+        initialBatch: icons.slice(0, initialBatchSize),
+        loadRemaining: async () => icons
+      };
+    }
+
+    // Load full library and return batched
+    const allIcons = await this.loadLibrary(libraryId);
+    return {
+      initialBatch: allIcons.slice(0, initialBatchSize),
+      loadRemaining: async () => allIcons
+    };
+  }
+
+  // Load all libraries progressively
+  async loadAllLibrariesProgressive(initialBatchSize: number = 100): Promise<{
+    initialBatch: IconItem[];
+    loadRemaining: () => Promise<IconItem[]>;
+  }> {
+    const libraryIds = this.libraries.map(lib => lib.id);
+    const initialBatches: IconItem[] = [];
+    const loadRemainingFns: Array<() => Promise<IconItem[]>> = [];
+
+    // Get initial batch from each library
+    for (const libraryId of libraryIds.slice(0, 6)) { // Prioritize first 6 libraries
+      try {
+        const { initialBatch, loadRemaining } = await this.loadLibraryProgressive(libraryId, Math.floor(initialBatchSize / 6));
+        initialBatches.push(...initialBatch);
+        loadRemainingFns.push(loadRemaining);
+      } catch (error) {
+        console.warn(`Failed to load initial batch for ${libraryId}:`, error);
+      }
+    }
+
+    return {
+      initialBatch: initialBatches,
+      loadRemaining: async () => {
+        // Load all remaining icons in background
+        const allIcons = await this.loadAllLibraries();
+        return allIcons;
+      }
+    };
+  }
+
+  // Load all libraries sectioned progressively
+  async loadAllLibrariesSectionedProgressive(initialBatchSize: number = 100): Promise<{
+    initialSections: LibrarySection[];
+    loadRemaining: () => Promise<LibrarySection[]>;
+  }> {
+    const libraryIds = this.libraries.slice(0, 6).map(lib => lib.id); // Prioritize first 6 libraries
+    const initialSections: LibrarySection[] = [];
+    const batchPerLibrary = Math.floor(initialBatchSize / libraryIds.length);
+
+    // Get initial batch from each library
+    for (const libraryId of libraryIds) {
+      try {
+        const libraryMeta = this.libraries.find(lib => lib.id === libraryId);
+        if (!libraryMeta) continue;
+
+        const { initialBatch } = await this.loadLibraryProgressive(libraryId, batchPerLibrary);
+        
+        if (initialBatch.length > 0) {
+          initialSections.push({
+            libraryId,
+            libraryName: libraryMeta.name,
+            icons: initialBatch
+          });
+        }
+      } catch (error) {
+        console.warn(`Failed to load initial section for ${libraryId}:`, error);
+      }
+    }
+
+    return {
+      initialSections,
+      loadRemaining: async () => {
+        // Load all remaining sections in background
+        const allSections = await this.loadAllLibrariesGrouped();
+        return allSections;
+      }
+    };
+  }
+
   private async loadLibraryInternal(libraryId: string): Promise<IconItem[]> {
     // Try localStorage cache first
     const localCache = this.getFromLocalStorage(libraryId);
