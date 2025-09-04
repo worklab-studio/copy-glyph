@@ -311,7 +311,7 @@ function IconGridPage() {
           </main>
           
           <footer className="border-t p-4 text-center text-xs text-muted-foreground bg-background">
-            <p>Built at Ossian Design Lab • <a href="mailto:support@notionicons.so" className="hover:text-primary">Support</a></p>
+            <p>Built by Ossian Design Lab • <a href="mailto:support@iconstack.io" className="hover:text-primary">Support</a></p>
           </footer>
         </div>
         

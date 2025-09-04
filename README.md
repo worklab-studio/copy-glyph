@@ -1,6 +1,12 @@
-# Welcome to your Lovable project
+# Inconstack - The Ultimate Free Icon Library
 
-## Project info
+## Project Overview
+
+**Inconstack** is the largest free icon library with 50,000+ SVG icons from top open-source sets. Download instantly, copy as SVG/XML, or use in Figma, Notion, and web apps.
+
+Built by **Ossian Design Lab** • [iconstack.io](https://iconstack.io)
+
+## Project Info
 
 **URL**: https://lovable.dev/projects/dccc87d3-b9f4-428f-9f0d-cfba1d515872
 
