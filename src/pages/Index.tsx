@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { SidebarProvider } from "@/components/ui/sidebar";
+
 import { Header } from "@/components/header";
 import { AppSidebar } from "@/components/app-sidebar";
 import { IconGrid } from "@/components/icon-grid/IconGrid";
@@ -173,8 +173,7 @@ function IconGridPage() {
   };
 
   return (
-    <SidebarProvider>
-      <div className="flex h-screen w-full overflow-hidden">{/* Fixed viewport height */}
+    <div className="flex h-screen w-full overflow-hidden">{/* Fixed viewport height */}
         <AppSidebar 
           selectedSet={selectedSet}
           onSetChange={setSelectedSet}
@@ -260,9 +259,8 @@ function IconGridPage() {
           </footer>
         </div>
         
-        <ControlPanel selectedIcon={selectedIcon} />
-      </div>
-    </SidebarProvider>
+      <ControlPanel selectedIcon={selectedIcon} />
+    </div>
   );
 }
 
