@@ -13,7 +13,6 @@ export function showFirstCopyNudge({ keyboardShortcut }: FirstCopyNudgeProps) {
           <AnimatedBookmarkIcon className="text-primary/70 w-6 h-6" />
         </div>
         <div className="text-center">
-          <div className="font-semibold text-base mb-1">🎉 First Icon Stacked!</div>
           <div className="text-sm text-muted-foreground">
             Bookmark Iconstack ({keyboardShortcut}) to come back anytime.
           </div>
@@ -21,6 +20,6 @@ export function showFirstCopyNudge({ keyboardShortcut }: FirstCopyNudgeProps) {
       </div>
     ),
     duration: 7000,
-    className: "min-h-[120px] p-4"
+    className: "min-h-[100px] p-4"
   });
 }
