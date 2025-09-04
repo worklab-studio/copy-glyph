@@ -1,7 +1,9 @@
 import { type IconItem } from '@/types/icon';
-import { processedTablerIcons, hasProcessedIcons } from './processed/tabler-icons-processed';
 
-// Fallback runtime processing for development
+// Import the async function from processed file
+import { getProcessedTablerIcons, hasProcessedIcons } from './processed/tabler-icons-processed';
+
+// Fallback runtime processing - same logic but different entry point
 let fallbackIcons: IconItem[] | null = null;
 
 async function getRuntimeProcessedIcons(): Promise<IconItem[]> {
@@ -49,7 +51,7 @@ async function getRuntimeProcessedIcons(): Promise<IconItem[]> {
   return fallbackIcons;
 }
 
-// Export either pre-processed icons or promise for runtime processing
-export const tablerIcons: IconItem[] | Promise<IconItem[]> = hasProcessedIcons 
-  ? processedTablerIcons 
+// Export promise for async processing (works for both static and runtime processing)
+export const tablerIcons: Promise<IconItem[]> = hasProcessedIcons 
+  ? getProcessedTablerIcons()
   : getRuntimeProcessedIcons();
