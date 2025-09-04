@@ -29,7 +29,7 @@ export function IconGrid({
   return (
     <div 
       ref={containerRef}
-      className="h-full overflow-y-auto overflow-x-hidden"
+      className="h-full overflow-y-auto overflow-x-hidden p-0 m-0"
       role="grid"
       aria-label={computedAriaLabel}
     >
