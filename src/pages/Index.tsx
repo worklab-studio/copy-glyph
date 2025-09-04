@@ -16,6 +16,8 @@ import { showFirstCopyNudge } from "@/components/ui/first-copy-nudge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
+import { iconLibraryManager } from "@/services/IconLibraryManager";
+import { type LibrarySection } from "@/types/icon";
 
 function IconGridPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -171,6 +173,60 @@ function IconGridPage() {
     });
   }, [currentIcons, selectedCategory]);
 
+  // Group search results by library for sectioned display when searching "all icons"
+  const groupedSearchSections = useMemo(() => {
+    if (!searchQuery.trim() || selectedSet !== "all" || searchResults.length === 0) {
+      return [];
+    }
+
+    // Group icons by library ID
+    const iconsByLibrary = new Map<string, IconItem[]>();
+    
+    searchResults.forEach(icon => {
+      // Extract library ID from icon ID (assumes format like "library-iconname")
+      const libraryId = icon.id.split('-')[0];
+      if (!iconsByLibrary.has(libraryId)) {
+        iconsByLibrary.set(libraryId, []);
+      }
+      iconsByLibrary.get(libraryId)!.push(icon);
+    });
+
+    // Create sections in the same order as defined in IconLibraryManager
+    const orderedSections: LibrarySection[] = [];
+    
+    iconLibraryManager.libraries.forEach(libraryMeta => {
+      const libraryIcons = iconsByLibrary.get(libraryMeta.id);
+      if (libraryIcons && libraryIcons.length > 0) {
+        // Filter by category if selected
+        let filteredIcons = libraryIcons;
+        if (selectedCategory) {
+          filteredIcons = libraryIcons.filter(icon => icon.category === selectedCategory);
+        }
+        
+        if (filteredIcons.length > 0) {
+          // Sort icons within each library (outline icons first, then alphabetically)
+          const sortedIcons = filteredIcons.sort((a, b) => {
+            const aIsOutline = a.style === 'outline' || a.id.includes('outline');
+            const bIsOutline = b.style === 'outline' || b.id.includes('outline');
+            
+            if (aIsOutline && !bIsOutline) return -1;
+            if (!aIsOutline && bIsOutline) return 1;
+            
+            return a.name.localeCompare(b.name);
+          });
+          
+          orderedSections.push({
+            libraryId: libraryMeta.id,
+            libraryName: libraryMeta.name,
+            icons: sortedIcons
+          });
+        }
+      }
+    });
+
+    return orderedSections;
+  }, [searchQuery, selectedSet, searchResults, selectedCategory]);
+
   // Reset category when library changes
   React.useEffect(() => {
     setSelectedCategory(null);
@@ -237,19 +293,19 @@ function IconGridPage() {
                       selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)}
                   </h2>
                    <p className="text-sm text-muted-foreground">
-                     {searchQuery && searchTotalCount > displayedIcons.length ? (
-                       <>
-                         Showing {displayedIcons.length.toLocaleString()} of {searchTotalCount.toLocaleString()} icons matching "{searchQuery}"
-                         {selectedCategory && ` in ${selectedCategory}`}
-                       </>
-                     ) : (
-                       <>
-                         {displayedIcons.length.toLocaleString()} icons
-                         {searchQuery && ` matching "${searchQuery}"`}
-                         {selectedCategory && ` in ${selectedCategory}`}
-                       </>
-                     )}
-                   </p>
+                      {searchQuery && searchTotalCount > (groupedSearchSections.length > 0 ? groupedSearchSections.reduce((total, section) => total + section.icons.length, 0) : displayedIcons.length) ? (
+                        <>
+                          Showing {groupedSearchSections.length > 0 ? groupedSearchSections.reduce((total, section) => total + section.icons.length, 0).toLocaleString() : displayedIcons.length.toLocaleString()} of {searchTotalCount.toLocaleString()} icons matching "{searchQuery}"
+                          {selectedCategory && ` in ${selectedCategory}`}
+                        </>
+                      ) : (
+                        <>
+                          {groupedSearchSections.length > 0 ? groupedSearchSections.reduce((total, section) => total + section.icons.length, 0).toLocaleString() : displayedIcons.length.toLocaleString()} icons
+                          {searchQuery && ` matching "${searchQuery}"`}
+                          {selectedCategory && ` in ${selectedCategory}`}
+                        </>
+                      )}
+                    </p>
                 </div>
                 
                 <div className="flex items-center">
@@ -305,9 +361,11 @@ function IconGridPage() {
                 </div>
               </div>
             ) : (
-              selectedSet === "all" && !searchQuery.trim() && sections.length > 0 ? (
+              // Use SectionedIconGrid for: 1) "all icons" without search, OR 2) "all icons" with search results
+              (selectedSet === "all" && !searchQuery.trim() && sections.length > 0) || 
+              (selectedSet === "all" && searchQuery.trim() && groupedSearchSections.length > 0) ? (
                 <SectionedIconGrid
-                  sections={sections}
+                  sections={searchQuery.trim() ? groupedSearchSections : sections}
                   selectedId={selectedId}
                   onCopy={handleCopy}
                   onIconClick={handleIconClick}
