@@ -419,7 +419,7 @@ function IconGridPage() {
           </footer>
         </div>
         
-        <ControlPanel selectedIcon={selectedIcon} />
+        <ControlPanel selectedIcon={selectedIcon} selectedSet={selectedSet} />
       </div>
     </SidebarProvider>
   );
