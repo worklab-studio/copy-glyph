@@ -209,6 +209,16 @@ export function IconCell({
     const iconColor = customization.color;
     const iconStrokeWidth = customization.strokeWidth;
     
+    // Check if icon.svg exists and is valid
+    if (!icon.svg) {
+      console.warn('Icon svg is undefined for icon:', icon.id, icon.name);
+      return (
+        <div className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] flex items-center justify-center">
+          <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
+        </div>
+      );
+    }
+    
     // Check if this icon supports stroke width customization
     const supportsStroke = supportsStrokeWidth(icon);
     // Check if this is an animated icon
@@ -280,6 +290,16 @@ export function IconCell({
     } else {
       const IconComponent = icon.svg as React.ComponentType<any>;
       
+      // Additional safety check for component validity
+      if (typeof IconComponent !== 'function' && typeof IconComponent !== 'object') {
+        console.warn('Icon component is invalid for icon:', icon.id, icon.name, 'Type:', typeof IconComponent, 'Value:', IconComponent);
+        return (
+          <div className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] flex items-center justify-center">
+            <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
+          </div>
+        );
+      }
+      
       // Standardized props for all icon libraries
       const iconProps: any = {
         className: "h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] transition-colors",
@@ -302,7 +322,16 @@ export function IconCell({
         iconProps.isHovered = isHovered;
       }
       
-      return <IconComponent {...iconProps} />;
+      try {
+        return <IconComponent {...iconProps} />;
+      } catch (error) {
+        console.error('Error rendering icon component:', icon.id, error);
+        return (
+          <div className="h-[clamp(24px,32%,40px)] w-[clamp(24px,32%,40px)] flex items-center justify-center text-muted-foreground">
+            <span className="text-xs">⚠</span>
+          </div>
+        );
+      }
     }
   };
 

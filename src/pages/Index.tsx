@@ -78,9 +78,10 @@ function IconGridPage() {
           // Fallback to client-side search
           const query = searchQuery.toLowerCase();
           const fallbackResults = icons.filter(icon =>
-            icon.name.toLowerCase().includes(query) ||
+            icon.svg && // Ensure icon has valid svg
+            (icon.name.toLowerCase().includes(query) ||
             icon.tags?.some(tag => tag.toLowerCase().includes(query)) ||
-            icon.category?.toLowerCase().includes(query)
+            icon.category?.toLowerCase().includes(query))
           );
           setSearchResults(fallbackResults);
         });
@@ -88,9 +89,10 @@ function IconGridPage() {
       // Fallback search when worker isn't ready
       const query = searchQuery.toLowerCase();
       const fallbackResults = icons.filter(icon =>
-        icon.name.toLowerCase().includes(query) ||
+        icon.svg && // Ensure icon has valid svg
+        (icon.name.toLowerCase().includes(query) ||
         icon.tags?.some(tag => tag.toLowerCase().includes(query)) ||
-        icon.category?.toLowerCase().includes(query)
+        icon.category?.toLowerCase().includes(query))
       );
       setSearchResults(fallbackResults);
     }
@@ -99,9 +101,11 @@ function IconGridPage() {
   // Get current icon set to display
   const currentIcons = useMemo(() => {
     if (searchQuery.trim()) {
-      return searchResults;
+      // Filter search results to only include icons with valid svg data
+      return searchResults.filter(icon => icon.svg !== undefined && icon.svg !== null);
     }
-    return icons;
+    // Filter out icons that don't have valid svg data
+    return icons.filter(icon => icon.svg !== undefined && icon.svg !== null);
   }, [searchQuery, searchResults, icons]);
 
 
