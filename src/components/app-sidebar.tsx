@@ -47,13 +47,11 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
     {
       name: "All Icons",
       id: "all",
-      count: totalCount,
       icon: Home
     },
     {
       name: "Animated",
       id: "animated", 
-      count: libraries.find(lib => lib.id === 'animated')?.count || 0,
       icon: AnimatedPlayIcon
     }
   ];
