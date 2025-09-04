@@ -476,11 +476,15 @@ self.onmessage = function(event: MessageEvent<SearchMessage>) {
         if (query !== undefined) {
           const { libraryId } = event.data;
           const results = searchIcons(query, { ...options, libraryId });
+          // Calculate total count before limiting
+          const totalCount = results.length;
+          const limitedResults = results.slice(0, options?.maxResults || 1000);
           self.postMessage({ 
             type: 'searchResults', 
-            results: results.map(r => r.icon), // Only send icons, not full results
+            results: limitedResults.map(r => r.icon),
+            totalCount,
             query,
-            count: results.length
+            count: limitedResults.length
           });
         }
         break;

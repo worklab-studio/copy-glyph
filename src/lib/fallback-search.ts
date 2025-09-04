@@ -187,7 +187,7 @@ export function fallbackSearch(
   icons: IconItem[], 
   query: string, 
   options: FallbackSearchOptions = {}
-): IconItem[] {
+): { results: IconItem[]; totalCount: number } {
   const {
     fuzzy = true,
     maxResults = 1000,
@@ -197,7 +197,7 @@ export function fallbackSearch(
     libraryId
   } = options;
   
-  if (!query?.trim() || !icons.length) return [];
+  if (!query?.trim() || !icons.length) return { results: [], totalCount: 0 };
   
   // Filter icons by library if specified
   let filteredIcons = icons;
@@ -249,8 +249,13 @@ export function fallbackSearch(
       
       // Tertiary sort by name length (shorter names first for exact matches)
       return a.icon.name.length - b.icon.name.length;
-    })
-    .slice(0, maxResults);
+    });
+
+  const totalCount = sortedResults.length;
+  const limitedResults = sortedResults.slice(0, maxResults);
   
-  return sortedResults.map(result => result.icon);
+  return { 
+    results: limitedResults.map(result => result.icon),
+    totalCount 
+  };
 }

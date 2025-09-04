@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback, useState } from 'react';
 import { type IconItem } from '@/types/icon';
 
 interface SearchWorkerHook {
-  search: (query: string, options?: { maxResults?: number; fuzzy?: boolean; enableSynonyms?: boolean; enablePhonetic?: boolean; libraryId?: string }) => Promise<IconItem[]>;
+  search: (query: string, options?: { maxResults?: number; fuzzy?: boolean; enableSynonyms?: boolean; enablePhonetic?: boolean; libraryId?: string }) => Promise<{ results: IconItem[]; totalCount: number }>;
   indexLibrary: (libraryId: string, icons: IconItem[]) => Promise<void>;
   clearIndex: (libraryId?: string) => Promise<void>;
   isReady: boolean;
@@ -67,7 +67,8 @@ export function useSearchWorker(): SearchWorkerHook {
                 return workerIcon; // Fallback if not found
               }).filter((icon: IconItem) => icon.svg); // Filter out any invalid results
               
-              searchCallbacks.resolve(mappedResults);
+              const { totalCount = mappedResults.length } = event.data;
+              searchCallbacks.resolve({ results: mappedResults, totalCount });
               pendingCallbacks.current.delete(searchKey);
             }
             break;
@@ -120,9 +121,9 @@ export function useSearchWorker(): SearchWorkerHook {
   const search = useCallback(async (
     query: string, 
     options: { maxResults?: number; fuzzy?: boolean; enableSynonyms?: boolean; enablePhonetic?: boolean; libraryId?: string } = {}
-  ): Promise<IconItem[]> => {
+  ): Promise<{ results: IconItem[]; totalCount: number }> => {
     if (!workerRef.current || !isReady || !query.trim()) {
-      return [];
+      return { results: [], totalCount: 0 };
     }
 
     setIsSearching(true);

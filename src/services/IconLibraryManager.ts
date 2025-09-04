@@ -48,7 +48,7 @@ class IconLibraryManager {
     { id: 'iconnoir', name: 'IconNoir', count: 1400, style: 'outline' },
     { id: 'octicons', name: 'Octicons', count: 600, style: 'filled' },
     { id: 'radix', name: 'Radix Icons', count: 300, style: 'filled' },
-    { id: 'animated', name: 'Animated', count: 100, style: 'animated' },
+    { id: 'animated', name: 'Animated', count: 31, style: 'animated' },
   ];
 
   // Preload popular libraries in background

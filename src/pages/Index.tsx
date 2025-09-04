@@ -20,6 +20,7 @@ function IconGridPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<IconItem[]>([]);
+  const [searchTotalCount, setSearchTotalCount] = useState<number>(0);
   const { customization } = useIconCustomization();
   
   // Async icon loading
@@ -70,6 +71,7 @@ function IconGridPage() {
   useEffect(() => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
+      setSearchTotalCount(0);
       return;
     }
 
@@ -77,7 +79,7 @@ function IconGridPage() {
       try {
         // Try worker search with comprehensive options including library filter
         if (searchReady && loaded) {
-          const results = await search(searchQuery, {
+          const searchResult = await search(searchQuery, {
             maxResults: 1000,
             fuzzy: true,
             enableSynonyms: true,
@@ -85,12 +87,13 @@ function IconGridPage() {
             libraryId: selectedSet // Filter by selected library
           });
           // Filter out any invalid results
-          const validResults = results.filter(icon => icon && icon.svg);
+          const validResults = searchResult.results.filter(icon => icon && icon.svg);
           setSearchResults(validResults);
+          setSearchTotalCount(searchResult.totalCount);
         } else if (loaded) {
           // Enhanced fallback search when worker isn't ready
           const { fallbackSearch } = require('@/lib/fallback-search');
-          const fallbackResults = fallbackSearch(icons, searchQuery, {
+          const fallbackResult = fallbackSearch(icons, searchQuery, {
             fuzzy: true,
             maxResults: 1000,
             minScore: 0.1,
@@ -98,13 +101,14 @@ function IconGridPage() {
             enablePhonetic: true,
             libraryId: selectedSet // Filter by selected library
           });
-          setSearchResults(fallbackResults);
+          setSearchResults(fallbackResult.results);
+          setSearchTotalCount(fallbackResult.totalCount);
         }
       } catch (error) {
         console.warn('Worker search failed, using fallback:', error);
         // Always fallback to client-side search on any error
         const { fallbackSearch } = require('@/lib/fallback-search');
-        const fallbackResults = fallbackSearch(icons, searchQuery, {
+        const fallbackResult = fallbackSearch(icons, searchQuery, {
           fuzzy: true,
           maxResults: 1000,
           minScore: 0.1,
@@ -112,7 +116,8 @@ function IconGridPage() {
           enablePhonetic: true,
           libraryId: selectedSet // Filter by selected library
         });
-        setSearchResults(fallbackResults);
+        setSearchResults(fallbackResult.results);
+        setSearchTotalCount(fallbackResult.totalCount);
       }
     };
 
@@ -217,11 +222,20 @@ function IconGridPage() {
                       selectedSet === "solar" ? "Solar Icons" :
                       selectedSet.charAt(0).toUpperCase() + selectedSet.slice(1)}
                   </h2>
-                  <p className="text-sm text-muted-foreground">
-                    {displayedIcons.length.toLocaleString()} icons
-                    {searchQuery && ` matching "${searchQuery}"`}
-                    {selectedCategory && ` in ${selectedCategory}`}
-                  </p>
+                   <p className="text-sm text-muted-foreground">
+                     {searchQuery && searchTotalCount > displayedIcons.length ? (
+                       <>
+                         Showing {displayedIcons.length.toLocaleString()} of {searchTotalCount.toLocaleString()} icons matching "{searchQuery}"
+                         {selectedCategory && ` in ${selectedCategory}`}
+                       </>
+                     ) : (
+                       <>
+                         {displayedIcons.length.toLocaleString()} icons
+                         {searchQuery && ` matching "${searchQuery}"`}
+                         {selectedCategory && ` in ${selectedCategory}`}
+                       </>
+                     )}
+                   </p>
                 </div>
                 
                 <div className="flex items-center">
