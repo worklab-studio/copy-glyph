@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback, useState } from 'react';
 import { type IconItem } from '@/types/icon';
 
 interface SearchWorkerHook {
-  search: (query: string, options?: { maxResults?: number; fuzzy?: boolean }) => Promise<IconItem[]>;
+  search: (query: string, options?: { maxResults?: number; fuzzy?: boolean; enableSynonyms?: boolean; enablePhonetic?: boolean }) => Promise<IconItem[]>;
   indexLibrary: (libraryId: string, icons: IconItem[]) => Promise<void>;
   clearIndex: (libraryId?: string) => Promise<void>;
   isReady: boolean;
@@ -101,7 +101,7 @@ export function useSearchWorker(): SearchWorkerHook {
   // Search function
   const search = useCallback(async (
     query: string, 
-    options: { maxResults?: number; fuzzy?: boolean } = {}
+    options: { maxResults?: number; fuzzy?: boolean; enableSynonyms?: boolean; enablePhonetic?: boolean } = {}
   ): Promise<IconItem[]> => {
     if (!workerRef.current || !isReady || !query.trim()) {
       return [];
@@ -113,11 +113,18 @@ export function useSearchWorker(): SearchWorkerHook {
       const key = `search-${query}`;
       pendingCallbacks.current.set(key, { resolve, reject });
       
-      // Send search message
+      // Send search message with enhanced options
       workerRef.current!.postMessage({
         type: 'search',
         query: query.trim(),
-        options
+        options: {
+          maxResults: 1000,
+          fuzzy: true,
+          enableSynonyms: true,
+          enablePhonetic: true,
+          minScore: 0.1,
+          ...options
+        }
       });
 
       // Set timeout to prevent hanging

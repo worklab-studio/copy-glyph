@@ -71,29 +71,36 @@ function IconGridPage() {
     }
 
     if (searchReady && loaded) {
-      search(searchQuery, { maxResults: 1000, fuzzy: true })
-        .then(setSearchResults)
+      // Use enhanced worker search with comprehensive options
+      search(searchQuery, {
+        maxResults: 1000,
+        fuzzy: true,
+        enableSynonyms: true,
+        enablePhonetic: true
+      }).then(setSearchResults)
         .catch(error => {
           console.error('Search failed:', error);
-          // Fallback to client-side search
-          const query = searchQuery.toLowerCase();
-          const fallbackResults = icons.filter(icon =>
-            icon.svg && // Ensure icon has valid svg
-            (icon.name.toLowerCase().includes(query) ||
-            icon.tags?.some(tag => tag.toLowerCase().includes(query)) ||
-            icon.category?.toLowerCase().includes(query))
-          );
+          // Enhanced fallback search using same algorithms
+          const { fallbackSearch } = require('@/lib/fallback-search');
+          const fallbackResults = fallbackSearch(icons, searchQuery, {
+            fuzzy: true,
+            maxResults: 1000,
+            minScore: 0.1,
+            enableSynonyms: true,
+            enablePhonetic: true
+          });
           setSearchResults(fallbackResults);
         });
     } else if (loaded) {
-      // Fallback search when worker isn't ready
-      const query = searchQuery.toLowerCase();
-      const fallbackResults = icons.filter(icon =>
-        icon.svg && // Ensure icon has valid svg
-        (icon.name.toLowerCase().includes(query) ||
-        icon.tags?.some(tag => tag.toLowerCase().includes(query)) ||
-        icon.category?.toLowerCase().includes(query))
-      );
+      // Enhanced fallback search when worker isn't ready
+      const { fallbackSearch } = require('@/lib/fallback-search');
+      const fallbackResults = fallbackSearch(icons, searchQuery, {
+        fuzzy: true,
+        maxResults: 1000,
+        minScore: 0.1,
+        enableSynonyms: true,
+        enablePhonetic: true
+      });
       setSearchResults(fallbackResults);
     }
   }, [searchQuery, search, searchReady, loaded, icons]);
