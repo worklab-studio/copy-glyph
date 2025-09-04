@@ -10,6 +10,7 @@ type VirtualItem = {
   rowIndex?: number;
   icons?: IconItem[];
   libraryName?: string;
+  sectionStart?: number; // Track where each section starts
 };
 
 export function SectionedIconGrid({
@@ -23,11 +24,12 @@ export function SectionedIconGrid({
 }: SectionedIconGridProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
+  const [scrollTop, setScrollTop] = useState(0);
 
   // Calculate columns based on container width (80px per icon)
   const columnsCount = Math.floor(Math.max(containerWidth, 320) / 80) || 4;
 
-  // Update container width on resize
+  // Update container width and track scroll
   useEffect(() => {
     const updateWidth = () => {
       if (containerRef.current) {
@@ -35,22 +37,50 @@ export function SectionedIconGrid({
       }
     };
 
+    const handleScroll = () => {
+      if (containerRef.current) {
+        setScrollTop(containerRef.current.scrollTop);
+      }
+    };
+
     updateWidth();
+    const container = containerRef.current;
+    
     window.addEventListener('resize', updateWidth);
-    return () => window.removeEventListener('resize', updateWidth);
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+    }
+    
+    return () => {
+      window.removeEventListener('resize', updateWidth);
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
   }, []);
 
-  // Create flattened virtual items array with proper row grouping
-  const virtualItems = useMemo(() => {
+  // Create flattened virtual items array with section tracking
+  const { virtualItems, sectionPositions } = useMemo(() => {
     const items: VirtualItem[] = [];
+    const positions: { sectionIndex: number; libraryName: string; start: number }[] = [];
+    let currentPosition = 0;
     
     sections.forEach((section, sectionIndex) => {
+      // Track section start position
+      positions.push({
+        sectionIndex,
+        libraryName: section.libraryName,
+        start: currentPosition
+      });
+      
       // Add section header
       items.push({
         type: 'header',
         sectionIndex,
-        libraryName: section.libraryName
+        libraryName: section.libraryName,
+        sectionStart: currentPosition
       });
+      currentPosition += 60; // Header height
       
       // Group icons into rows
       for (let i = 0; i < section.icons.length; i += columnsCount) {
@@ -61,11 +91,27 @@ export function SectionedIconGrid({
           rowIndex: Math.floor(i / columnsCount),
           icons: rowIcons
         });
+        currentPosition += 80; // Row height
       }
     });
     
-    return items;
+    return { virtualItems: items, sectionPositions: positions };
   }, [sections, columnsCount]);
+
+  // Find which section header should be sticky
+  const stickyHeader = useMemo(() => {
+    let currentHeader = null;
+    
+    for (let i = sectionPositions.length - 1; i >= 0; i--) {
+      const section = sectionPositions[i];
+      if (section.start <= scrollTop) {
+        currentHeader = section;
+        break;
+      }
+    }
+    
+    return currentHeader;
+  }, [sectionPositions, scrollTop]);
 
   const virtualizer = useVirtualizer({
     count: virtualItems.length,
@@ -92,76 +138,89 @@ export function SectionedIconGrid({
   }
 
   return (
-    <div
-      ref={containerRef}
-      className="h-full overflow-auto"
-      role="grid"
-      aria-label={computedAriaLabel}
-    >
+    <div className="relative h-full">
+      {/* Fixed sticky header space */}
+      <div className="absolute top-0 left-0 right-0 z-30 h-[60px] bg-background/95 backdrop-blur-sm border-b border-border/50">
+        {stickyHeader && (
+          <div className="flex items-center px-6 py-4 h-full">
+            <h3 className="text-lg font-semibold text-foreground">
+              {stickyHeader.libraryName}
+            </h3>
+          </div>
+        )}
+      </div>
+      
       <div
-        style={{
-          height: `${virtualizer.getTotalSize()}px`,
-          width: '100%',
-          position: 'relative',
-        }}
+        ref={containerRef}
+        className="h-full overflow-auto pt-[60px]"
+        role="grid"
+        aria-label={computedAriaLabel}
       >
-        {virtualizer.getVirtualItems().map((virtualItem) => {
-          const item = virtualItems[virtualItem.index];
-          
-          if (item?.type === 'header') {
-            return (
-              <div
-                key={`header-${item.sectionIndex}`}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: `${virtualItem.size}px`,
-                  transform: `translateY(${virtualItem.start}px)`,
-                }}
-                className="flex items-center px-6 py-4 bg-background/95 backdrop-blur-sm border-b border-border/50 sticky top-0 z-10"
-              >
-                <h3 className="text-lg font-semibold text-foreground">
-                  {item.libraryName}
-                </h3>
-              </div>
-            );
-          }
-
-          if (item?.type === 'icons-row' && item.icons) {
-            return (
-              <div
-                key={`row-${item.sectionIndex}-${item.rowIndex}`}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: `${virtualItem.size}px`,
-                  transform: `translateY(${virtualItem.start}px)`,
-                }}
-                className="px-6"
-              >
-                <div className="grid gap-2 h-full" style={{ gridTemplateColumns: `repeat(${columnsCount}, 1fr)` }}>
-                  {item.icons.map((icon) => (
-                    <IconCell
-                      key={icon.id}
-                      icon={icon}
-                      isSelected={selectedId === icon.id}
-                      color={color}
-                      strokeWidth={strokeWidth}
-                      onCopy={onCopy}
-                      onIconClick={onIconClick}
-                    />
-                  ))}
+        <div
+          style={{
+            height: `${virtualizer.getTotalSize()}px`,
+            width: '100%',
+            position: 'relative',
+          }}
+        >
+          {virtualizer.getVirtualItems().map((virtualItem) => {
+            const item = virtualItems[virtualItem.index];
+            
+            if (item?.type === 'header') {
+              return (
+                <div
+                  key={`header-${item.sectionIndex}`}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: `${virtualItem.size}px`,
+                    transform: `translateY(${virtualItem.start}px)`,
+                  }}
+                  className="flex items-center px-6 py-4 bg-background/95 backdrop-blur-sm border-b border-border/50"
+                >
+                  <h3 className="text-lg font-semibold text-foreground">
+                    {item.libraryName}
+                  </h3>
                 </div>
-              </div>
-            );
-          }
+              );
+            }
 
-          return null;
-        })}
+            if (item?.type === 'icons-row' && item.icons) {
+              return (
+                <div
+                  key={`row-${item.sectionIndex}-${item.rowIndex}`}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: `${virtualItem.size}px`,
+                    transform: `translateY(${virtualItem.start}px)`,
+                  }}
+                  className="px-6"
+                >
+                  <div className="grid gap-2 h-full" style={{ gridTemplateColumns: `repeat(${columnsCount}, 1fr)` }}>
+                    {item.icons.map((icon) => (
+                      <IconCell
+                        key={icon.id}
+                        icon={icon}
+                        isSelected={selectedId === icon.id}
+                        color={color}
+                        strokeWidth={strokeWidth}
+                        onCopy={onCopy}
+                        onIconClick={onIconClick}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            }
+
+            return null;
+          })}
+        </div>
       </div>
     </div>
   );
