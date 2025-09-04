@@ -142,7 +142,7 @@ export function SectionedIconGrid({
       {/* Fixed sticky header space */}
       <div className="absolute top-0 left-0 right-0 z-30 h-[60px] bg-background/95 backdrop-blur-sm border-b border-border/50">
         {stickyHeader && (
-          <div className="flex items-center px-6 py-4 h-full">
+          <div className="flex items-center pl-4 py-4 h-full">
             <h3 className="text-lg font-semibold text-foreground">
               {stickyHeader.libraryName}
             </h3>
@@ -185,7 +185,7 @@ export function SectionedIconGrid({
                     height: `${virtualItem.size}px`,
                     transform: `translateY(${virtualItem.start}px)`,
                   }}
-                  className="flex items-center px-6 py-4 bg-background/95 backdrop-blur-sm border-b border-border/50"
+                  className="flex items-center pl-4 py-4 bg-background/95 backdrop-blur-sm border-b border-border/50"
                 >
                   <h3 className="text-lg font-semibold text-foreground">
                     {item.libraryName}
@@ -206,9 +206,9 @@ export function SectionedIconGrid({
                     height: `${virtualItem.size}px`,
                     transform: `translateY(${virtualItem.start}px)`,
                   }}
-                  className="px-6"
+                  className=""
                 >
-                  <div className="grid gap-2 h-full" style={{ gridTemplateColumns: `repeat(${columnsCount}, 1fr)` }}>
+                  <div className="grid gap-2 h-full px-2" style={{ gridTemplateColumns: `repeat(${columnsCount}, 1fr)` }}>
                     {item.icons.map((icon) => (
                       <IconCell
                         key={icon.id}
