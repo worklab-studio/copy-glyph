@@ -329,8 +329,59 @@ function IconGridPage() {
             onLibraryClick={() => setShowLibraryDrawer(true)}
           />
 
+          {/* Mobile Library Header */}
+          <div 
+            className="sticky top-[87px] z-40 bg-background border-b px-4 py-3 cursor-pointer hover:bg-muted/30 active:bg-muted/50 transition-colors"
+            onClick={() => {
+              const mainElement = document.querySelector('main');
+              if (mainElement) {
+                mainElement.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+          >
+            <h1 className="text-lg font-semibold">
+              {selectedSet === "all" ? "All Icons" : 
+               selectedSet === "favorites" ? "Favorites" : 
+               selectedSet === "material" ? "Material Design Icons" :
+               selectedSet === "animated" ? "Animated Icons" :
+               selectedSet === "lucide" ? "Lucide Icons" :
+               selectedSet === "feather" ? "Feather Icons" :
+               selectedSet === "phosphor" ? "Phosphor Icons" :
+               selectedSet === "tabler" ? "Tabler Icons" :
+               selectedSet === "bootstrap" ? "Bootstrap Icons" :
+               selectedSet === "remix" ? "Remix Icons" :
+               selectedSet === "boxicons" ? "Boxicons" :
+               selectedSet === "css-gg" ? "CSS.GG Icons" :
+               selectedSet === "iconsax" ? "Iconsax Icons" :
+               selectedSet === "atlas" ? "Atlas Icons" :
+               selectedSet === "solar" ? "Solar Icons" :
+               selectedSet === "octicons" ? "Octicons" :
+               selectedSet === "radix" ? "Radix Icons" :
+               selectedSet === "antd" ? "Ant Design Icons" :
+               selectedSet === "fluent" ? "Fluent Icons" :
+               selectedSet === "iconnoir" ? "Iconoir Icons" :
+               selectedSet === "teeny" ? "Teeny Icons" :
+               selectedSet === "pixelart" ? "Pixel Art Icons" :
+               selectedSet === "lineicons" ? "Line Icons" :
+               "Icons"}
+              {searchQuery && (
+                <span className="ml-2 text-sm text-muted-foreground">
+                  ({searchTotalCount > 0 ? searchTotalCount.toLocaleString() : '0'} results)
+                </span>
+              )}
+            </h1>
+            {!searchQuery && (
+              <p className="text-sm text-muted-foreground mt-1">
+                {selectedSet === "all" ? 
+                  `${totalCount.toLocaleString()} icons across all libraries` :
+                  `${displayedIcons.length.toLocaleString()} icons`
+                }
+              </p>
+            )}
+          </div>
+
           {/* Content area */}
-          <main className="flex-1 overflow-hidden">
+          <main className="flex-1 overflow-auto">
             {showLoadingAnimation ? (
               <div className="flex-1 flex items-center justify-center h-full">
                 <LoadingWithTagline 
