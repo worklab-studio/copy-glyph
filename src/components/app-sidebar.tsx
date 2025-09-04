@@ -96,9 +96,6 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
                   >
                     <item.icon className="h-4 w-4" />
                     <span className="flex-1 text-left">{item.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {item.count.toLocaleString()}
-                    </span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -132,9 +129,6 @@ export function AppSidebar({ selectedSet, onSetChange }: AppSidebarProps) {
                       >
                         <IconComponent className="h-4 w-4" />
                         <span className="flex-1 text-left">{library.name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {library.count.toLocaleString()}
-                        </span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );
