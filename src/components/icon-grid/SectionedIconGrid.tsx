@@ -208,7 +208,7 @@ export function SectionedIconGrid({
                   }}
                   className=""
                 >
-                  <div className="grid h-full min-w-0" style={{ gridTemplateColumns: `repeat(${columnsCount}, minmax(0, 1fr))` }}>
+                  <div className="grid h-full min-w-0 gap-0" style={{ gridTemplateColumns: `repeat(${columnsCount}, minmax(0, 1fr))` }}>
                     {item.icons.map((icon) => (
                       <IconCell
                         key={icon.id}
