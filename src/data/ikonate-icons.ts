@@ -1,5 +1,5 @@
 import { IconItem } from '../types/icon';
-import { iconMap } from '../../Ikonate icons';
+import { iconMap } from '../../Ikonate icons.ts';
 
 // Ikonate Icons - Complete collection from https://ikonate.com/
 // All 283 professional icons imported and processed
