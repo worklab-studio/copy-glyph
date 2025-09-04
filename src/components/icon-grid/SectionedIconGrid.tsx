@@ -26,8 +26,8 @@ export function SectionedIconGrid({
   const [containerWidth, setContainerWidth] = useState(0);
   const [scrollTop, setScrollTop] = useState(0);
 
-  // Calculate columns based on container width (80px per icon)
-  const columnsCount = Math.floor(Math.max(containerWidth, 320) / 80) || 4;
+  // Calculate columns to fit container width without gaps (minimum 60px per icon)
+  const columnsCount = Math.floor(Math.max(containerWidth, 320) / 60) || 4;
 
   // Update container width and track scroll
   useEffect(() => {
@@ -139,7 +139,7 @@ export function SectionedIconGrid({
 
   return (
     <div className="relative h-full">
-      {/* Fixed sticky header space */}
+      {/* Fixed sticky header - floats over content */}
       <div className="absolute top-0 left-0 right-0 z-30 h-[60px] bg-background/95 backdrop-blur-sm border-b border-border/50">
         {stickyHeader && (
           <div className="flex items-center pl-4 py-4 h-full">
@@ -152,7 +152,7 @@ export function SectionedIconGrid({
       
       <div
         ref={containerRef}
-        className="h-full overflow-auto pt-[60px]"
+        className="h-full overflow-auto"
         role="grid"
         aria-label={computedAriaLabel}
       >
@@ -208,7 +208,7 @@ export function SectionedIconGrid({
                   }}
                   className=""
                 >
-                  <div className="grid gap-2 h-full px-2" style={{ gridTemplateColumns: `repeat(${columnsCount}, 1fr)` }}>
+                  <div className="grid h-full" style={{ gridTemplateColumns: `repeat(${columnsCount}, 1fr)` }}>
                     {item.icons.map((icon) => (
                       <IconCell
                         key={icon.id}

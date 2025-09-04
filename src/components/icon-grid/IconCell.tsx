@@ -360,9 +360,8 @@ export function IconCell({
         aria-pressed={isSelected}
         data-selected={isSelected}
         className={cn(
-          "group relative aspect-square flex items-center justify-center transition-all duration-200",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-          "m-0 w-[80px] h-[80px]"
+          "group relative w-full h-full aspect-square flex items-center justify-center transition-all duration-200",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         )}
         style={{
           willChange: 'transform, opacity',
