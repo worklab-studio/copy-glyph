@@ -10,6 +10,8 @@ import { useTheme } from "next-themes";
 import { renderToStaticMarkup } from "react-dom/server";
 import { supportsStrokeWidth } from "@/lib/icon-utils";
 
+console.log('IconCell module loading...', { memo, React });
+
 interface IconCellProps {
   icon: IconItem;
   isSelected?: boolean;
@@ -19,14 +21,16 @@ interface IconCellProps {
   onIconClick?: (icon: IconItem) => void;
 }
 
-const IconCellComponent = ({ 
+// Export the component directly without memo for now
+export function IconCell({ 
   icon, 
   isSelected = false, 
   color = "#666", 
   strokeWidth = 1.5,
   onCopy,
   onIconClick
-}: IconCellProps) => {
+}: IconCellProps) {
+  console.log('IconCell rendering directly...', { icon, isSelected });
   const [isHovered, setIsHovered] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -363,7 +367,6 @@ const IconCellComponent = ({
       </button>
     </CopyTooltip>
   );
-};
+}
 
-// Memoize the component to prevent unnecessary re-renders
-export const IconCell = memo(IconCellComponent);
+console.log('IconCell exported successfully');
