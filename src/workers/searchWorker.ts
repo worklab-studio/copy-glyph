@@ -62,16 +62,16 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 // Tiered scoring system for precise search results  
 const FIELD_WEIGHTS = {
-  nameExact: 100.0,     // Perfect name match gets highest score
-  namePrefix: 50.0,     // Name starts with query
-  nameFuzzy: 10.0,      // Fuzzy name match
-  tagExact: 50.0,       // Exact tag match
-  tagFuzzy: 8.0,        // Fuzzy tag match  
-  categoryExact: 25.0,  // Exact category match
-  categoryFuzzy: 5.0,   // Fuzzy category match
-  synonymMatch: 5.0,    // Synonym match (conservative)
-  phoneticMatch: 3.0,   // Phonetic match
-  stemMatch: 8.0        // Stemmed word match
+  nameExact: 200.0,     // Perfect name match gets highest score - boosted
+  namePrefix: 80.0,     // Name starts with query - boosted  
+  nameFuzzy: 15.0,      // Fuzzy name match - slightly increased
+  tagExact: 60.0,       // Exact tag match - boosted
+  tagFuzzy: 5.0,        // Fuzzy tag match - reduced for precision
+  categoryExact: 30.0,  // Exact category match - boosted
+  categoryFuzzy: 3.0,   // Fuzzy category match - reduced
+  synonymMatch: 4.0,    // Synonym match - reduced
+  phoneticMatch: 2.0,   // Phonetic match - reduced  
+  stemMatch: 6.0        // Stemmed word match - reduced
 };
 
 // Calculate comprehensive search score for an icon
@@ -336,12 +336,16 @@ function searchIcons(
 ): SearchResult[] {
   const {
     fuzzy = true,
-    maxResults = 500,      // Reduced to prioritize best matches
-    minScore = 8.0,        // Significantly increased for precision
+    maxResults = 200,      // Further reduced for precision
+    minScore = 20.0,       // Significantly increased for strict filtering
     enableSynonyms = false, // Disabled by default for exact results
-    enablePhonetic = true,
+    enablePhonetic = false, // Disabled by default - too permissive
     libraryId
   } = options;
+  
+  // Smart query length sensitivity - shorter queries need higher scores
+  const queryLength = query.trim().length;
+  const adaptiveMinScore = queryLength < 4 ? minScore * 2 : minScore;
   
   if (!query?.trim()) return [];
   
@@ -425,7 +429,7 @@ function searchIcons(
         options
       );
       
-      if (result && result.score >= minScore) {
+      if (result && result.score >= adaptiveMinScore) {
         results.push(result);
       }
     }
