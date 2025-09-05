@@ -253,4 +253,15 @@
     will-change: scroll-position;
     contain: layout style paint;
   }
+
+  /* Component color enforcement - ensures React icons inherit currentColor */
+  .icon-component [fill]:not([fill='none']):not([fill='transparent']) { 
+    fill: currentColor !important; 
+  }
+  .icon-component [stroke]:not([stroke='none']):not([stroke='transparent']) { 
+    stroke: currentColor !important; 
+  }
+  .icon-component stop { 
+    stop-color: currentColor !important; 
+  }
 }

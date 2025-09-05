@@ -11,6 +11,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { supportsStrokeWidth } from "@/lib/icon-utils";
 import { HapticsManager } from "@/lib/haptics";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { buildCustomizedSvg, copyToClipboard } from "@/lib/svg-build";
 
 console.log('IconCell module loading...', { memo, React });
 
@@ -80,24 +81,33 @@ export function IconCell({
   }, [icon, onIconClick]);
 
   const handleDoubleClick = useCallback(async (e: React.MouseEvent) => {
+    // Disable double-click on mobile - use explicit action sheet instead
+    if (isMobile) return;
+    
     e.preventDefault();
     e.stopPropagation();
     
-    // Trigger medium haptic feedback for copy action
     await HapticsManager.medium();
     
-    // Hide tooltip immediately when double-clicking
     setShowTooltip(false);
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current);
       hoverTimeoutRef.current = null;
     }
     
-    // Check if this icon supports stroke width customization
-    const supportsStroke = supportsStrokeWidth(icon);
-    
     try {
-      let svgString: string;
+      const svgString = buildCustomizedSvg(icon, customization.color, customization.strokeWidth);
+      await copyToClipboard(svgString);
+      setShowCopied(true);
+      onCopy?.(icon);
+      
+      await HapticsManager.notification('success');
+      setTimeout(() => setShowCopied(false), 1200);
+    } catch (error) {
+      console.error('Copy failed:', error);
+      await HapticsManager.notification('error');
+    }
+  }, [icon, customization.color, customization.strokeWidth, onCopy, isMobile]);
 
       if (typeof icon.svg === 'string') {
         svgString = icon.svg;
@@ -171,14 +181,12 @@ export function IconCell({
       // Trigger success haptic feedback after successful copy
       await HapticsManager.notification('success');
       
-      // Auto-hide tooltip after 1.2s
       setTimeout(() => setShowCopied(false), 1200);
     } catch (error) {
       console.error('Copy failed:', error);
-      // Trigger error haptic feedback on copy failure
       await HapticsManager.notification('error');
     }
-  }, [icon, onCopy, customization]);
+  }, [icon, customization.color, customization.strokeWidth, onCopy, isMobile]);
 
   const handleCopy = useCallback(async (e: React.MouseEvent) => {
     e.preventDefault();
