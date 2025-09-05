@@ -41,14 +41,14 @@ export function MobileLibraryDrawer({
 
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent className="max-h-[85vh]">
-        <div className="sticky top-0 bg-background border-b z-10">
+      <DrawerContent className="h-[85vh] flex flex-col">
+        <div className="shrink-0 bg-background border-b">
           <DrawerHeader>
             <DrawerTitle>Icon Libraries</DrawerTitle>
           </DrawerHeader>
         </div>
         
-        <ScrollArea className="flex-1 max-h-[calc(85vh-80px)]">
+        <ScrollArea className="flex-1 overflow-hidden">
           <div className="px-4 pb-6 pt-4 space-y-1">
             {/* Browse Section */}
             <div className="pb-2">
