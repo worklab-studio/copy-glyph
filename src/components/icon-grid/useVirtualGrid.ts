@@ -16,14 +16,15 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
   const columnsCount = useMemo(() => {
     if (!containerWidth) return 4;
     
-    // For mobile, use viewport width to ensure edge-to-edge layout
-    const isMobile = containerWidth < 768;
+    // Use consistent 640px breakpoint to match use-mobile hook
+    const isMobile = containerWidth < 640;
     if (isMobile) {
-      // Calculate square cells that fit edge-to-edge
-      return Math.floor(containerWidth / (containerWidth / 4)); // Always 4 columns on mobile for square cells
+      // Fixed 4 columns on mobile for consistent square grid
+      return 4;
     }
     
-    return Math.floor(Math.max(containerWidth, 320) / 80) || 4;
+    // Better desktop column calculation with smoother scaling
+    return Math.floor(Math.max(containerWidth, 320) / 100) || 4;
   }, [containerWidth]);
 
   // Memoize row grouping with better performance
@@ -81,11 +82,11 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
     getScrollElement: () => containerRef.current,
     estimateSize: () => {
       // Calculate row height based on container width to maintain square cells
-      const isMobile = containerWidth < 768;
+      const isMobile = containerWidth < 640;
       if (isMobile && containerWidth > 0) {
         return containerWidth / 4; // Square cells: width/4 columns = height
       }
-      return 80;
+      return containerWidth / columnsCount || 100;
     },
     overscan: enabled && rows.length > 100 ? 2 : 5, // Dynamic overscan for performance
     enabled,

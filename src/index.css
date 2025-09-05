@@ -146,22 +146,24 @@
 
   /* Icon Cell Performance Optimizations - Mobile responsive square cells */
   .icon-cell {
-    @apply relative flex items-center justify-center transition-all duration-200 m-0 p-0 border-0;
+    @apply relative flex items-center justify-center m-0 p-0 border-0;
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
     width: 100%;
     aspect-ratio: 1; /* Make cells square */
-    min-height: 80px; /* Minimum height for desktop */
+    min-height: 100px; /* Better minimum height for desktop */
     will-change: transform;
     contain: layout style;
     transform: translate3d(0, 0, 0); /* Hardware acceleration */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth transitions for all changes */
   }
 
   /* Mobile-specific square cells */
-  @media (max-width: 768px) {
+  @media (max-width: 640px) {
     .icon-cell {
       aspect-ratio: 1;
       min-height: unset; /* Remove min-height on mobile */
       height: 25vw; /* Make height 1/4 of viewport width for 4-column square grid */
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth resize transitions */
     }
   }
 
