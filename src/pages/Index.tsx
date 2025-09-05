@@ -172,7 +172,7 @@ function IconGridPage() {
             fuzzy: false,
             enableSynonyms: false,
             enablePhonetic: false,
-            exactMatch: true,
+            exactMatch: false,
             libraryId: selectedSet // Filter by selected library
           });
           // Filter out any invalid results
@@ -188,7 +188,7 @@ function IconGridPage() {
             minScore: 0.1,
             enableSynonyms: false,
             enablePhonetic: false,
-            exactMatch: true,
+            exactMatch: false,
             libraryId: selectedSet // Filter by selected library
           });
           setSearchResults(fallbackResult.results);
@@ -204,7 +204,7 @@ function IconGridPage() {
           minScore: 0.1,
           enableSynonyms: false,
           enablePhonetic: false,
-          exactMatch: true,
+          exactMatch: false,
           libraryId: selectedSet // Filter by selected library
         });
         setSearchResults(fallbackResult.results);
