@@ -110,6 +110,13 @@ function IconGridPage() {
     }
   }, [selectedSet, loadLibraryProgressive, loaded]);
 
+  // Load all libraries when switching back to "All Icons"
+  useEffect(() => {
+    if (loaded && selectedSet === "all") {
+      loadAllLibrariesSectioned();
+    }
+  }, [selectedSet, loadAllLibrariesSectioned, loaded]);
+
   // Index loaded icons for search - with error handling
   useEffect(() => {
     if (loaded && icons.length > 0 && searchReady) {
