@@ -320,8 +320,9 @@ function IconGridPage() {
   if (isMobile) {
     return (
       <>
-        <div className="flex flex-col h-screen w-full overflow-hidden">
-          <div className="sticky top-0 z-50 bg-background">
+        <div className="flex flex-col h-screen w-full">
+          {/* Fixed top header - non-scrollable */}
+          <div className="fixed top-0 left-0 right-0 z-50 bg-background">
             <MobileHeader
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -382,8 +383,8 @@ function IconGridPage() {
             </div>
           </div>
 
-          {/* Content area */}
-          <main className="flex-1 overflow-auto">
+          {/* Content area with top padding to account for fixed header */}
+          <main className="flex-1 overflow-auto pt-32">
             {showLoadingAnimation ? (
               <div className="flex-1 flex items-center justify-center h-full">
                 <LoadingWithTagline 
