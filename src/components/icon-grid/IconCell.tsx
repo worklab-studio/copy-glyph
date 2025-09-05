@@ -7,7 +7,8 @@ import { CopyTooltip } from "@/components/ui/copy-tooltip";
 import { cn } from "@/lib/utils";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { useTheme } from "next-themes";
-import { supportsStrokeWidth, getCustomizedSVG, getDisplaySVG } from "@/lib/icon-utils";
+import { renderToStaticMarkup } from "react-dom/server";
+import { supportsStrokeWidth } from "@/lib/icon-utils";
 import { HapticsManager } from "@/lib/haptics";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -92,9 +93,78 @@ export function IconCell({
       hoverTimeoutRef.current = null;
     }
     
+    // Check if this icon supports stroke width customization
+    const supportsStroke = supportsStrokeWidth(icon);
+    
     try {
-      const svgString = getCustomizedSVG(icon, customization);
-      await navigator.clipboard.writeText(svgString);
+      let svgString: string;
+
+      if (typeof icon.svg === 'string') {
+        svgString = icon.svg;
+      } else {
+        // Render the React component to SVG string
+        const IconComponent = icon.svg as React.ComponentType<any>;
+        const iconProps: any = {
+          size: 24,
+          color: customization.color
+        };
+        
+        // Only add strokeWidth for icons that support it
+        if (supportsStroke) {
+          iconProps.strokeWidth = customization.strokeWidth;
+        }
+        
+        const element = React.createElement(IconComponent, iconProps);
+        svgString = renderToStaticMarkup(element);
+      }
+
+      // Apply current customizations to the SVG - comprehensive color replacement
+      let customizedSVG = svgString
+        // Replace all instances of #292D32 (main Iconsax color)
+        .replace(/#292D32/gi, customization.color)
+        // Handle Atlas-specific colors
+        .replace(/#020202/gi, customization.color)
+        // Handle other common hardcoded colors
+        .replace(/#2F2F2F/gi, customization.color)
+        .replace(/#333333/gi, customization.color)
+        .replace(/#000000/gi, customization.color)
+        .replace(/#000/gi, customization.color)
+        // Replace ALL hex colors in attributes
+        .replace(/fill="#[0-9A-Fa-f]{3,6}"/gi, `fill="${customization.color}"`)
+        .replace(/stroke="#[0-9A-Fa-f]{3,6}"/gi, `stroke="${customization.color}"`)
+        // Handle CSS style attributes with any hex colors
+        .replace(/style="([^"]*?)fill:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1fill: ${customization.color}$2"`)
+        .replace(/style="([^"]*?)stroke:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1stroke: ${customization.color}$2"`)
+        // Handle stop-color in gradients with any hex colors
+        .replace(/stop-color="#[0-9A-Fa-f]{3,6}"/gi, `stop-color="${customization.color}"`)
+        // Handle CSS classes within SVG (common in Atlas icons)
+        .replace(/<style[^>]*>([^<]*\.cls-\d+[^}]*fill:\s*#[0-9A-Fa-f]{3,6}[^<]*)<\/style>/gi, 
+          (match, content) => match.replace(/#[0-9A-Fa-f]{3,6}/g, customization.color))
+        .replace(/<style[^>]*>([^<]*\.cls-\d+[^}]*stroke:\s*#[0-9A-Fa-f]{3,6}[^<]*)<\/style>/gi, 
+          (match, content) => match.replace(/#[0-9A-Fa-f]{3,6}/g, customization.color))
+        // Handle currentColor replacement for copy (Atlas icons)
+        .replace(/stroke="currentColor"/gi, `stroke="${customization.color}"`)
+        .replace(/fill="currentColor"/gi, `fill="${customization.color}"`)
+        // Preserve fill="none" and stroke="none"
+        .replace(new RegExp(`fill="${customization.color}"([^>]*?)stroke="${customization.color}"`, 'gi'), `fill="none"$1stroke="${customization.color}"`);
+      
+      if (supportsStroke) {
+        // Replace existing stroke-width attributes
+        customizedSVG = customizedSVG
+          .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`)
+          .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${customization.strokeWidth}"`)
+          .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${customization.strokeWidth}`);
+        
+        // Add stroke-width to elements that have stroke but no stroke-width
+        customizedSVG = customizedSVG.replace(/(<[^>]*stroke="[^"]*"[^>]*?)(?![^>]*stroke-width)([^>]*>)/g, `$1 stroke-width="${customization.strokeWidth}"$2`);
+        
+        // If no stroke-width exists anywhere, inject it into the root SVG element
+        if (!customizedSVG.includes('stroke-width')) {
+          customizedSVG = customizedSVG.replace(/<svg([^>]*?)>/g, `<svg$1 stroke-width="${customization.strokeWidth}">`);
+        }
+      }
+
+      await navigator.clipboard.writeText(customizedSVG);
       setShowCopied(true);
       onCopy?.(icon);
       
@@ -115,7 +185,7 @@ export function IconCell({
     e.stopPropagation();
     
     try {
-      await copyIcon(icon, customization);
+      await copyIcon(icon);
       setShowCopied(true);
       onCopy?.(icon);
       
@@ -124,7 +194,7 @@ export function IconCell({
     } catch (error) {
       console.error('Copy failed:', error);
     }
-  }, [icon, onCopy, customization]);
+  }, [icon, onCopy]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -153,28 +223,67 @@ export function IconCell({
     const isAnimatedIcon = icon.style === 'animated';
     
     if (typeof icon.svg === 'string') {
-      // For SVG strings, use the display version with currentColor
-      try {
-        const modifiedSvg = getDisplaySVG(icon, customization);
+      // For SVG strings, we need to modify the stroke-width attribute and colors
+      let modifiedSvg = icon.svg;
+      
+      // Comprehensive color replacement for all icon libraries
+      modifiedSvg = modifiedSvg
+        // Replace all instances of #292D32 (main Iconsax color) with currentColor
+        .replace(/#292D32/gi, 'currentColor')
+        // Handle Atlas-specific colors
+        .replace(/#020202/gi, 'currentColor')
+        .replace(/#020202/gi, 'currentColor')
+        // Handle other common hardcoded colors that might exist
+        .replace(/#2F2F2F/gi, 'currentColor')
+        .replace(/#333333/gi, 'currentColor')
+        .replace(/#000000/gi, 'currentColor')
+        .replace(/#000/gi, 'currentColor')
+        // Replace ALL 6-digit hex colors in fill and stroke
+        .replace(/fill="#[0-9A-Fa-f]{6}"/gi, 'fill="currentColor"')
+        .replace(/stroke="#[0-9A-Fa-f]{6}"/gi, 'stroke="currentColor"')
+        // Replace ALL 3-digit hex colors in fill and stroke
+        .replace(/fill="#[0-9A-Fa-f]{3}"/gi, 'fill="currentColor"')
+        .replace(/stroke="#[0-9A-Fa-f]{3}"/gi, 'stroke="currentColor"')
+        // Handle CSS style attributes with any hex colors
+        .replace(/style="([^"]*?)fill:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, 'style="$1fill: currentColor$2"')
+        .replace(/style="([^"]*?)stroke:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, 'style="$1stroke: currentColor$2"')
+        // Handle stop-color in gradients with any hex colors
+        .replace(/stop-color="#[0-9A-Fa-f]{3,6}"/gi, 'stop-color="currentColor"')
+        // Handle CSS classes within SVG (common in Atlas icons)
+        .replace(/<style[^>]*>([^<]*\.cls-\d+[^}]*fill:\s*#[0-9A-Fa-f]{3,6}[^<]*)<\/style>/gi, 
+          (match, content) => match.replace(/#[0-9A-Fa-f]{3,6}/g, 'currentColor'))
+        .replace(/<style[^>]*>([^<]*\.cls-\d+[^}]*stroke:\s*#[0-9A-Fa-f]{3,6}[^<]*)<\/style>/gi, 
+          (match, content) => match.replace(/#[0-9A-Fa-f]{3,6}/g, 'currentColor'))
+        // Preserve fill="none" and stroke="none"
+        .replace(/fill="currentColor"([^>]*?)stroke="currentColor"/gi, 'fill="none"$1stroke="currentColor"');
+      
+      // Apply stroke width to SVG string only for icons that support it
+      if (supportsStroke) {        
+        // Replace existing stroke-width attributes
+        modifiedSvg = modifiedSvg
+          .replace(/stroke-width="[^"]*"/g, `stroke-width="${iconStrokeWidth}"`)
+          .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${iconStrokeWidth}"`)
+          .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${iconStrokeWidth}`);
         
-        return (
-          <div 
-            dangerouslySetInnerHTML={{ __html: modifiedSvg }}
-            className="icon-svg"
-            style={{ 
-              color: iconColor,
-              ['--icon-color' as any]: iconColor,
-            }}
-          />
-        );
-      } catch (error) {
-        console.error('Error processing SVG for display:', icon.id, error);
-        return (
-          <div className="icon-error">
-            <span className="text-xs">⚠</span>
-          </div>
-        );
+        // Add stroke-width to elements that have stroke but no stroke-width
+        modifiedSvg = modifiedSvg.replace(/(<[^>]*stroke="[^"]*"[^>]*?)(?![^>]*stroke-width)([^>]*>)/g, `$1 stroke-width="${iconStrokeWidth}"$2`);
+        
+        // If no stroke-width exists anywhere, inject it into the root SVG element
+        if (!modifiedSvg.includes('stroke-width')) {
+          modifiedSvg = modifiedSvg.replace(/<svg([^>]*?)>/g, `<svg$1 stroke-width="${iconStrokeWidth}">`);
+        }
       }
+      
+      return (
+        <div 
+          dangerouslySetInnerHTML={{ __html: modifiedSvg }}
+          className="icon-svg"
+          style={{ 
+            color: iconColor,
+            ['--icon-color' as any]: iconColor,
+          }}
+        />
+      );
     } else {
       const IconComponent = icon.svg as React.ComponentType<any>;
       
