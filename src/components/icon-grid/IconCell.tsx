@@ -10,6 +10,7 @@ import { useTheme } from "next-themes";
 import { renderToStaticMarkup } from "react-dom/server";
 import { supportsStrokeWidth } from "@/lib/icon-utils";
 import { HapticsManager } from "@/lib/haptics";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 console.log('IconCell module loading...', { memo, React });
 
@@ -37,6 +38,7 @@ export function IconCell({
   const [showTooltip, setShowTooltip] = useState(false);
   const { customization } = useIconCustomization();
   const { theme } = useTheme();
+  const isMobile = useIsMobile();
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -381,7 +383,7 @@ export function IconCell({
           
           {renderedIcon}
           
-          {showTooltip && (
+          {!isMobile && showTooltip && (
             <div className="icon-tooltip">
               Double click to copy icon
             </div>
