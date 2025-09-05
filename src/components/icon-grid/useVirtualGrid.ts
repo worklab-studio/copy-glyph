@@ -86,7 +86,7 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
       if (isMobile && containerWidth > 0) {
         return containerWidth / 4; // Square cells: width/4 columns = height
       }
-      return containerWidth / columnsCount || 100;
+      return 80; // Fixed 80px for desktop and tablet
     },
     overscan: enabled && rows.length > 100 ? 2 : 5, // Dynamic overscan for performance
     enabled,
