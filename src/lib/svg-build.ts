@@ -46,36 +46,45 @@ const LibraryHandlers = {
  * Enhanced color replacement patterns for comprehensive SVG processing
  */
 function applyColorReplacements(svgContent: string, color: string): string {
+  // Skip replacement if color is currentColor (already correct)
+  if (color === 'currentColor') return svgContent;
+  
   return svgContent
-    // Hex colors (preserve none, transparent, and common preserved values)
-    .replace(/fill="(?!none|transparent|inherit|currentColor)#[0-9A-Fa-f]{3,8}"/gi, `fill="${color}"`)
-    .replace(/stroke="(?!none|transparent|inherit|currentColor)#[0-9A-Fa-f]{3,8}"/gi, `stroke="${color}"`)
+    // Replace currentColor explicitly first (this is what we want to change)
+    .replace(/stroke="currentColor"/gi, `stroke="${color}"`)
+    .replace(/fill="currentColor"/gi, `fill="${color}"`)
+    
+    // Hex colors (preserve none, transparent, and inherit)
+    .replace(/fill="(?!none|transparent|inherit)#[0-9A-Fa-f]{3,8}"/gi, `fill="${color}"`)
+    .replace(/stroke="(?!none|transparent|inherit)#[0-9A-Fa-f]{3,8}"/gi, `stroke="${color}"`)
     
     // RGB/RGBA colors
-    .replace(/fill="(?!none|transparent|inherit|currentColor)rgba?\([^)]+\)"/gi, `fill="${color}"`)
-    .replace(/stroke="(?!none|transparent|inherit|currentColor)rgba?\([^)]+\)"/gi, `stroke="${color}"`)
+    .replace(/fill="(?!none|transparent|inherit)rgba?\([^)]+\)"/gi, `fill="${color}"`)
+    .replace(/stroke="(?!none|transparent|inherit)rgba?\([^)]+\)"/gi, `stroke="${color}"`)
     
     // HSL/HSLA colors
-    .replace(/fill="(?!none|transparent|inherit|currentColor)hsla?\([^)]+\)"/gi, `fill="${color}"`)
-    .replace(/stroke="(?!none|transparent|inherit|currentColor)hsla?\([^)]+\)"/gi, `stroke="${color}"`)
+    .replace(/fill="(?!none|transparent|inherit)hsla?\([^)]+\)"/gi, `fill="${color}"`)
+    .replace(/stroke="(?!none|transparent|inherit)hsla?\([^)]+\)"/gi, `stroke="${color}"`)
     
     // Named colors (common ones that should be replaced)
-    .replace(/fill="(?!none|transparent|inherit|currentColor)(black|white|gray|grey|red|blue|green|yellow|orange|purple|pink|brown)"/gi, `fill="${color}"`)
-    .replace(/stroke="(?!none|transparent|inherit|currentColor)(black|white|gray|grey|red|blue|green|yellow|orange|purple|pink|brown)"/gi, `stroke="${color}"`)
+    .replace(/fill="(?!none|transparent|inherit)(black|white|gray|grey|red|blue|green|yellow|orange|purple|pink|brown)"/gi, `fill="${color}"`)
+    .replace(/stroke="(?!none|transparent|inherit)(black|white|gray|grey|red|blue|green|yellow|orange|purple|pink|brown)"/gi, `stroke="${color}"`)
     
     // Library-specific colors
-    .replace(/fill="(?!none|transparent|inherit|currentColor)#292D32"/gi, `fill="${color}"`) // Iconsax default
-    .replace(/stroke="(?!none|transparent|inherit|currentColor)#292D32"/gi, `stroke="${color}"`)
-    .replace(/fill="(?!none|transparent|inherit|currentColor)#2F2F2F"/gi, `fill="${color}"`) // Common dark
-    .replace(/stroke="(?!none|transparent|inherit|currentColor)#2F2F2F"/gi, `stroke="${color}"`)
+    .replace(/fill="(?!none|transparent|inherit)#292D32"/gi, `fill="${color}"`) // Iconsax default
+    .replace(/stroke="(?!none|transparent|inherit)#292D32"/gi, `stroke="${color}"`)
+    .replace(/fill="(?!none|transparent|inherit)#2F2F2F"/gi, `fill="${color}"`) // Common dark
+    .replace(/stroke="(?!none|transparent|inherit)#2F2F2F"/gi, `stroke="${color}"`)
     
     // CSS style attributes - comprehensive patterns
-    .replace(/style="([^"]*?)fill:\s*(?!none|transparent|inherit|currentColor)#[0-9A-Fa-f]{3,8}([^"]*?)"/gi, `style="$1fill: ${color}$2"`)
-    .replace(/style="([^"]*?)stroke:\s*(?!none|transparent|inherit|currentColor)#[0-9A-Fa-f]{3,8}([^"]*?)"/gi, `style="$1stroke: ${color}$2"`)
-    .replace(/style="([^"]*?)fill:\s*(?!none|transparent|inherit|currentColor)rgba?\([^)]+\)([^"]*?)"/gi, `style="$1fill: ${color}$2"`)
-    .replace(/style="([^"]*?)stroke:\s*(?!none|transparent|inherit|currentColor)rgba?\([^)]+\)([^"]*?)"/gi, `style="$1stroke: ${color}$2"`)
-    .replace(/style="([^"]*?)color:\s*(?!none|transparent|inherit|currentColor)#[0-9A-Fa-f]{3,8}([^"]*?)"/gi, `style="$1color: ${color}$2"`)
-    .replace(/style="([^"]*?)color:\s*(?!none|transparent|inherit|currentColor)rgba?\([^)]+\)([^"]*?)"/gi, `style="$1color: ${color}$2"`)
+    .replace(/style="([^"]*?)fill:\s*(?!none|transparent|inherit)currentColor([^"]*?)"/gi, `style="$1fill: ${color}$2"`)
+    .replace(/style="([^"]*?)stroke:\s*(?!none|transparent|inherit)currentColor([^"]*?)"/gi, `style="$1stroke: ${color}$2"`)
+    .replace(/style="([^"]*?)fill:\s*(?!none|transparent|inherit)#[0-9A-Fa-f]{3,8}([^"]*?)"/gi, `style="$1fill: ${color}$2"`)
+    .replace(/style="([^"]*?)stroke:\s*(?!none|transparent|inherit)#[0-9A-Fa-f]{3,8}([^"]*?)"/gi, `style="$1stroke: ${color}$2"`)
+    .replace(/style="([^"]*?)fill:\s*(?!none|transparent|inherit)rgba?\([^)]+\)([^"]*?)"/gi, `style="$1fill: ${color}$2"`)
+    .replace(/style="([^"]*?)stroke:\s*(?!none|transparent|inherit)rgba?\([^)]+\)([^"]*?)"/gi, `style="$1stroke: ${color}$2"`)
+    .replace(/style="([^"]*?)color:\s*(?!none|transparent|inherit)#[0-9A-Fa-f]{3,8}([^"]*?)"/gi, `style="$1color: ${color}$2"`)
+    .replace(/style="([^"]*?)color:\s*(?!none|transparent|inherit)rgba?\([^)]+\)([^"]*?)"/gi, `style="$1color: ${color}$2"`)
     
     // CSS custom properties (common in modern icon libraries)
     .replace(/var\(--[^)]*color[^)]*\)/gi, color)
@@ -176,7 +185,19 @@ function getLibraryType(iconId: string): keyof typeof LibraryHandlers {
   if (iconId.startsWith('lucide-')) return 'lucide';
   if (iconId.startsWith('material-')) return 'material';
   if (iconId.startsWith('iconsax-')) return 'iconsax';
+  if (iconId.startsWith('tabler-')) return 'generic'; // Tabler uses string SVGs
   return 'generic';
+}
+
+/**
+ * Check if icon is a string SVG (not React component)
+ */
+function isStringSvg(icon: IconItem): boolean {
+  return typeof icon.svg === 'string' || 
+         icon.id.startsWith('tabler-') || 
+         icon.id.startsWith('feather-') || 
+         icon.id.startsWith('bootstrap-') ||
+         icon.id.startsWith('remix-');
 }
 
 /**
@@ -191,8 +212,12 @@ export function buildCustomizedSvg(
     let svgContent = '';
     const libraryType = getLibraryType(icon.id);
     
-    // Handle React component icons with library-specific props
-    if (typeof icon.svg !== 'string') {
+    // Determine processing pipeline based on icon type
+    if (isStringSvg(icon)) {
+      // Handle string SVGs (Tabler, Feather, Bootstrap, etc.)
+      svgContent = icon.svg as string;
+    } else {
+      // Handle React component icons with library-specific props
       const IconComponent = icon.svg as React.ComponentType<any>;
       const handler = LibraryHandlers[libraryType];
       const iconProps = handler(IconComponent, color, strokeWidth);
@@ -207,9 +232,6 @@ export function buildCustomizedSvg(
         const element = React.createElement(IconComponent, fallbackProps);
         svgContent = renderToStaticMarkup(element);
       }
-    } else {
-      // Handle string SVGs
-      svgContent = icon.svg;
     }
     
     // Validate initial content
