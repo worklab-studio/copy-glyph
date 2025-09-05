@@ -4,8 +4,183 @@ import { type IconItem } from "@/types/icon";
 import { supportsStrokeWidth } from "./icon-utils";
 
 /**
- * Builds a customized SVG string from an icon with applied color and stroke-width
- * Handles both string SVGs and React component icons consistently
+ * Library-specific icon component handlers
+ */
+const LibraryHandlers = {
+  // Lucide React components
+  lucide: (IconComponent: React.ComponentType<any>, color: string, strokeWidth: number) => ({
+    size: 24,
+    color,
+    strokeWidth,
+    'aria-hidden': true
+  }),
+  
+  // Material icons (usually filled)
+  material: (IconComponent: React.ComponentType<any>, color: string, strokeWidth: number) => ({
+    style: { color, fontSize: '24px' },
+    'aria-hidden': true
+  }),
+  
+  // IconSax icons
+  iconsax: (IconComponent: React.ComponentType<any>, color: string, strokeWidth: number) => ({
+    size: '24',
+    color,
+    variant: 'Linear',
+    'aria-hidden': true
+  }),
+  
+  // Generic fallback
+  generic: (IconComponent: React.ComponentType<any>, color: string, strokeWidth: number) => ({
+    size: 24,
+    width: 24,
+    height: 24,
+    color,
+    fill: color,
+    stroke: color,
+    strokeWidth,
+    'aria-hidden': true
+  })
+};
+
+/**
+ * Enhanced color replacement patterns for comprehensive SVG processing
+ */
+function applyColorReplacements(svgContent: string, color: string): string {
+  return svgContent
+    // Hex colors (preserve none, transparent, and common preserved values)
+    .replace(/fill="(?!none|transparent|inherit|currentColor)#[0-9A-Fa-f]{3,8}"/gi, `fill="${color}"`)
+    .replace(/stroke="(?!none|transparent|inherit|currentColor)#[0-9A-Fa-f]{3,8}"/gi, `stroke="${color}"`)
+    
+    // RGB/RGBA colors
+    .replace(/fill="(?!none|transparent|inherit|currentColor)rgba?\([^)]+\)"/gi, `fill="${color}"`)
+    .replace(/stroke="(?!none|transparent|inherit|currentColor)rgba?\([^)]+\)"/gi, `stroke="${color}"`)
+    
+    // HSL/HSLA colors
+    .replace(/fill="(?!none|transparent|inherit|currentColor)hsla?\([^)]+\)"/gi, `fill="${color}"`)
+    .replace(/stroke="(?!none|transparent|inherit|currentColor)hsla?\([^)]+\)"/gi, `stroke="${color}"`)
+    
+    // Named colors (common ones that should be replaced)
+    .replace(/fill="(?!none|transparent|inherit|currentColor)(black|white|gray|grey|red|blue|green|yellow|orange|purple|pink|brown)"/gi, `fill="${color}"`)
+    .replace(/stroke="(?!none|transparent|inherit|currentColor)(black|white|gray|grey|red|blue|green|yellow|orange|purple|pink|brown)"/gi, `stroke="${color}"`)
+    
+    // Library-specific colors
+    .replace(/fill="(?!none|transparent|inherit|currentColor)#292D32"/gi, `fill="${color}"`) // Iconsax default
+    .replace(/stroke="(?!none|transparent|inherit|currentColor)#292D32"/gi, `stroke="${color}"`)
+    .replace(/fill="(?!none|transparent|inherit|currentColor)#2F2F2F"/gi, `fill="${color}"`) // Common dark
+    .replace(/stroke="(?!none|transparent|inherit|currentColor)#2F2F2F"/gi, `stroke="${color}"`)
+    
+    // CSS style attributes - comprehensive patterns
+    .replace(/style="([^"]*?)fill:\s*(?!none|transparent|inherit|currentColor)#[0-9A-Fa-f]{3,8}([^"]*?)"/gi, `style="$1fill: ${color}$2"`)
+    .replace(/style="([^"]*?)stroke:\s*(?!none|transparent|inherit|currentColor)#[0-9A-Fa-f]{3,8}([^"]*?)"/gi, `style="$1stroke: ${color}$2"`)
+    .replace(/style="([^"]*?)fill:\s*(?!none|transparent|inherit|currentColor)rgba?\([^)]+\)([^"]*?)"/gi, `style="$1fill: ${color}$2"`)
+    .replace(/style="([^"]*?)stroke:\s*(?!none|transparent|inherit|currentColor)rgba?\([^)]+\)([^"]*?)"/gi, `style="$1stroke: ${color}$2"`)
+    .replace(/style="([^"]*?)color:\s*(?!none|transparent|inherit|currentColor)#[0-9A-Fa-f]{3,8}([^"]*?)"/gi, `style="$1color: ${color}$2"`)
+    .replace(/style="([^"]*?)color:\s*(?!none|transparent|inherit|currentColor)rgba?\([^)]+\)([^"]*?)"/gi, `style="$1color: ${color}$2"`)
+    
+    // CSS custom properties (common in modern icon libraries)
+    .replace(/var\(--[^)]*color[^)]*\)/gi, color)
+    
+    // Gradient stop colors (be more selective to avoid breaking gradients)
+    .replace(/stop-color="(?!none|transparent)#[0-9A-Fa-f]{3,8}"/gi, `stop-color="${color}"`)
+    .replace(/stop-color="(?!none|transparent)rgba?\([^)]+\)"/gi, `stop-color="${color}"`);
+}
+
+/**
+ * Apply stroke-width to appropriate elements
+ */
+function applyStrokeWidth(svgContent: string, strokeWidth: number, icon: IconItem): string {
+  if (!supportsStrokeWidth(icon)) return svgContent;
+  
+  let result = svgContent;
+  
+  // Replace existing stroke-width attributes
+  result = result
+    .replace(/stroke-width="[^"]*"/g, `stroke-width="${strokeWidth}"`)
+    .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${strokeWidth}"`)
+    .replace(/style="([^"]*?)stroke-width:\s*[^;"\s]+([^"]*?)"/gi, `style="$1stroke-width: ${strokeWidth}$2"`);
+  
+  // Add stroke-width to elements with stroke but no stroke-width
+  result = result.replace(
+    /(<[^>]*stroke="[^"]*"[^>]*?)(?![^>]*stroke-width)([^>]*>)/g,
+    `$1 stroke-width="${strokeWidth}"$2`
+  );
+  
+  // Add to root SVG if no stroke-width exists anywhere and it's an outline-style icon
+  if (!result.includes('stroke-width') && (icon.style?.includes('outline') || icon.style?.includes('line'))) {
+    result = result.replace(
+      /<svg([^>]*?)>/g,
+      `<svg$1 stroke-width="${strokeWidth}">`
+    );
+  }
+  
+  return result;
+}
+
+/**
+ * Robust SVG validation and structure normalization
+ */
+function validateAndNormalizeSvg(svgContent: string): string {
+  // Basic structure validation
+  if (!svgContent || !svgContent.includes('<svg')) {
+    throw new Error('Invalid SVG: Missing SVG element');
+  }
+  
+  if (!svgContent.includes('</svg>')) {
+    throw new Error('Invalid SVG: Unclosed SVG element');
+  }
+  
+  let normalized = svgContent;
+  
+  // Ensure proper XML namespace
+  if (!normalized.includes('xmlns=')) {
+    normalized = normalized.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+  }
+  
+  // Ensure viewBox for proper scaling
+  if (!normalized.includes('viewBox=')) {
+    // Try to extract width/height for viewBox, default to 24x24
+    const widthMatch = normalized.match(/width="(\d+)"/);
+    const heightMatch = normalized.match(/height="(\d+)"/);
+    const width = widthMatch ? widthMatch[1] : '24';
+    const height = heightMatch ? heightMatch[1] : '24';
+    normalized = normalized.replace('<svg', `<svg viewBox="0 0 ${width} ${height}"`);
+  }
+  
+  // Ensure proper dimensions for canvas rendering
+  if (!normalized.match(/width="\d+"/)) {
+    normalized = normalized.replace('<svg', '<svg width="24"');
+  }
+  if (!normalized.match(/height="\d+"/)) {
+    normalized = normalized.replace('<svg', '<svg height="24"');
+  }
+  
+  // Test if SVG can be parsed by DOMParser (browser compatibility)
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(normalized, 'image/svg+xml');
+    const parserError = doc.querySelector('parsererror');
+    if (parserError) {
+      throw new Error('SVG parsing failed: Invalid XML structure');
+    }
+  } catch (error) {
+    console.warn('SVG validation warning:', error);
+  }
+  
+  return normalized;
+}
+
+/**
+ * Detect library type from icon ID
+ */
+function getLibraryType(iconId: string): keyof typeof LibraryHandlers {
+  if (iconId.startsWith('lucide-')) return 'lucide';
+  if (iconId.startsWith('material-')) return 'material';
+  if (iconId.startsWith('iconsax-')) return 'iconsax';
+  return 'generic';
+}
+
+/**
+ * Enhanced SVG builder with comprehensive library support
  */
 export function buildCustomizedSvg(
   icon: IconItem,
@@ -13,115 +188,56 @@ export function buildCustomizedSvg(
   strokeWidth: number = 2
 ): string {
   try {
-    console.log('buildCustomizedSvg called for:', icon.id, 'color:', color, 'strokeWidth:', strokeWidth);
     let svgContent = '';
+    const libraryType = getLibraryType(icon.id);
     
-    // Handle React component icons
+    // Handle React component icons with library-specific props
     if (typeof icon.svg !== 'string') {
-      console.log('Processing React component icon');
       const IconComponent = icon.svg as React.ComponentType<any>;
-      const iconProps: any = {
-        size: 24,
-        width: 24,
-        height: 24,
-        color,
-        fill: color,
-        stroke: color
-      };
+      const handler = LibraryHandlers[libraryType];
+      const iconProps = handler(IconComponent, color, strokeWidth);
       
-      // Add strokeWidth for supported icons
-      if (supportsStrokeWidth(icon)) {
-        iconProps.strokeWidth = strokeWidth;
+      try {
+        const element = React.createElement(IconComponent, iconProps);
+        svgContent = renderToStaticMarkup(element);
+      } catch (componentError) {
+        console.warn(`Component rendering failed for ${icon.id}, trying generic props:`, componentError);
+        // Fallback to generic props
+        const fallbackProps = LibraryHandlers.generic(IconComponent, color, strokeWidth);
+        const element = React.createElement(IconComponent, fallbackProps);
+        svgContent = renderToStaticMarkup(element);
       }
-      
-      const element = React.createElement(IconComponent, iconProps);
-      svgContent = renderToStaticMarkup(element);
     } else {
-      console.log('Processing string SVG icon');
+      // Handle string SVGs
       svgContent = icon.svg;
     }
-
-    console.log('Initial SVG content length:', svgContent.length);
-
-    // Ensure SVG has proper namespace and structure
-    if (!svgContent.includes('xmlns=')) {
-      svgContent = svgContent.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
-      console.log('Added xmlns namespace');
+    
+    // Validate initial content
+    if (!svgContent) {
+      throw new Error('Empty SVG content generated');
     }
-
-    // Ensure viewBox is preserved/added
-    if (!svgContent.includes('viewBox=') && svgContent.includes('<svg')) {
-      svgContent = svgContent.replace('<svg', '<svg viewBox="0 0 24 24"');
-      console.log('Added viewBox');
-    }
-
-    // Comprehensive color normalization - preserve fill="none" and stroke="none"
-    let normalizedSVG = svgContent
-      // Handle hex colors in attributes (preserve none values)
-      .replace(/fill="(?!none|transparent)#[0-9A-Fa-f]{3,8}"/gi, `fill="${color}"`)
-      .replace(/stroke="(?!none|transparent)#[0-9A-Fa-f]{3,8}"/gi, `stroke="${color}"`)
-      
-      // Handle RGB/RGBA colors
-      .replace(/fill="(?!none|transparent)rgba?\([^)]+\)"/gi, `fill="${color}"`)
-      .replace(/stroke="(?!none|transparent)rgba?\([^)]+\)"/gi, `stroke="${color}"`)
-      
-      // Handle HSL colors
-      .replace(/fill="(?!none|transparent)hsla?\([^)]+\)"/gi, `fill="${color}"`)
-      .replace(/stroke="(?!none|transparent)hsla?\([^)]+\)"/gi, `stroke="${color}"`)
-      
-      // Handle CSS style attributes
-      .replace(/style="([^"]*?)fill:\s*(?!none|transparent)#[0-9A-Fa-f]{3,8}([^"]*?)"/gi, `style="$1fill: ${color}$2"`)
-      .replace(/style="([^"]*?)stroke:\s*(?!none|transparent)#[0-9A-Fa-f]{3,8}([^"]*?)"/gi, `style="$1stroke: ${color}$2"`)
-      .replace(/style="([^"]*?)fill:\s*(?!none|transparent)rgba?\([^)]+\)([^"]*?)"/gi, `style="$1fill: ${color}$2"`)
-      .replace(/style="([^"]*?)stroke:\s*(?!none|transparent)rgba?\([^)]+\)([^"]*?)"/gi, `style="$1stroke: ${color}$2"`)
-      
-      // Handle gradient stop colors
-      .replace(/stop-color="(?!none)#[0-9A-Fa-f]{3,8}"/gi, `stop-color="${color}"`)
-      .replace(/stop-color="(?!none)rgba?\([^)]+\)"/gi, `stop-color="${color}"`)
-      
-      // Handle color classes (common in some libraries)
-      .replace(/class="([^"]*?)text-\w+([^"]*?)"/gi, (match, before, after) => {
-        return `class="${before.trim()} ${after.trim()}".trim() style="color: ${color}"`;
-      });
-
+    
+    // Apply comprehensive color replacements
+    let processedSvg = applyColorReplacements(svgContent, color);
+    
     // Apply stroke-width for supported icons
-    if (supportsStrokeWidth(icon)) {
-      // Replace existing stroke-width attributes
-      normalizedSVG = normalizedSVG
-        .replace(/stroke-width="[^"]*"/g, `stroke-width="${strokeWidth}"`)
-        .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${strokeWidth}"`)
-        .replace(/style="([^"]*?)stroke-width:\s*[^;"\s]+([^"]*?)"/gi, `style="$1stroke-width: ${strokeWidth}$2"`);
-      
-      // Add stroke-width to elements with stroke but no stroke-width
-      normalizedSVG = normalizedSVG.replace(
-        /(<[^>]*stroke="[^"]*"[^>]*?)(?![^>]*stroke-width)([^>]*>)/g,
-        `$1 stroke-width="${strokeWidth}"$2`
-      );
-      
-      // Add to root SVG if no stroke-width exists anywhere
-      if (!normalizedSVG.includes('stroke-width')) {
-        normalizedSVG = normalizedSVG.replace(
-          /<svg([^>]*?)>/g,
-          `<svg$1 stroke-width="${strokeWidth}">`
-        );
-      }
-    }
-
-    // Validate the generated SVG
-    if (!normalizedSVG.includes('<svg')) {
-      throw new Error('Invalid SVG structure');
-    }
-
-    console.log('Final SVG generated successfully, length:', normalizedSVG.length);
-    console.log('Final SVG preview:', normalizedSVG.substring(0, 150) + '...');
-    return normalizedSVG;
+    processedSvg = applyStrokeWidth(processedSvg, strokeWidth, icon);
+    
+    // Final validation and normalization
+    const finalSvg = validateAndNormalizeSvg(processedSvg);
+    
+    return finalSvg;
+    
   } catch (error) {
-    console.error('Error building customized SVG:', error);
-    // Return a fallback SVG
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${strokeWidth}">
+    console.error(`Error building customized SVG for ${icon.id}:`, error);
+    
+    // Return a fallback SVG with proper structure
+    const fallbackSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">
       <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
       <path d="m9 12 2 2 4-4"/>
     </svg>`;
+    
+    return fallbackSvg;
   }
 }
 

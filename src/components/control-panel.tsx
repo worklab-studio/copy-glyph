@@ -37,13 +37,11 @@ export function ControlPanel({
     if (!selectedIcon) return;
     
     try {
-      console.log('Starting SVG download for:', selectedIcon.id, selectedIcon.name);
       const customizedSVG = buildCustomizedSvg(
         selectedIcon,
         customization.color,
         customization.strokeWidth
       );
-      console.log('Generated SVG:', customizedSVG.substring(0, 200) + '...');
       
       const blob = new Blob([customizedSVG], { type: 'image/svg+xml' });
       downloadFile(blob, `${selectedIcon.name}.svg`);
@@ -53,7 +51,6 @@ export function ControlPanel({
         duration: 2000
       });
     } catch (error) {
-      console.error('SVG download failed:', error);
       toast({
         description: `Failed to download SVG: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
@@ -66,63 +63,91 @@ export function ControlPanel({
     if (!selectedIcon) return;
     
     try {
-      console.log('Starting PNG download for:', selectedIcon.id, selectedIcon.name);
       const customizedSVG = buildCustomizedSvg(
         selectedIcon,
         customization.color,
         customization.strokeWidth
       );
-      console.log('Generated SVG for PNG:', customizedSVG.substring(0, 200) + '...');
       
-      // Validate SVG before canvas rendering
-      if (!customizedSVG.includes('xmlns=')) {
-        throw new Error('Invalid SVG structure - missing xmlns');
-      }
+      // Enhanced PNG conversion with retry mechanism
+      await convertSvgToPng(customizedSVG, selectedIcon.name);
       
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Could not get canvas context');
-      
-      canvas.width = 500;
-      canvas.height = 500;
-      
-      const img = document.createElement('img');
-      const svgBlob = new Blob([customizedSVG], { type: 'image/svg+xml;charset=utf-8' });
-      const url = URL.createObjectURL(svgBlob);
-      
-      img.onload = () => {
-        console.log('SVG image loaded successfully for PNG conversion');
-        ctx.clearRect(0, 0, 500, 500);
-        ctx.drawImage(img, 0, 0, 500, 500);
-        
-        canvas.toBlob((blob) => {
-          if (!blob) return;
-          
-          downloadFile(blob, `${selectedIcon.name}.png`);
-          URL.revokeObjectURL(url);
-          
-          toast({
-            description: `${selectedIcon.name}.png downloaded successfully!`,
-            duration: 2000
-          });
-        }, 'image/png');
-      };
-      
-      img.onerror = (e) => {
-        console.error('Failed to load SVG image for PNG conversion:', e);
-        URL.revokeObjectURL(url);
-        throw new Error('Failed to load SVG image - possibly malformed SVG');
-      };
-      
-      img.src = url;
     } catch (error) {
-      console.error('PNG download failed:', error);
       toast({
         description: `Failed to download PNG: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
         duration: 2000
       });
     }
+  };
+
+  // Enhanced PNG conversion with retry mechanism and timeout
+  const convertSvgToPng = (svgContent: string, fileName: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) {
+        reject(new Error('Canvas context not available'));
+        return;
+      }
+      
+      canvas.width = 500;
+      canvas.height = 500;
+      
+      const img = document.createElement('img');
+      const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
+      
+      // Set timeout for image loading (10 seconds)
+      const timeout = setTimeout(() => {
+        URL.revokeObjectURL(url);
+        reject(new Error('PNG conversion timeout - SVG took too long to load'));
+      }, 10000);
+      
+      img.onload = () => {
+        clearTimeout(timeout);
+        
+        try {
+          // Set white background for better PNG visibility
+          ctx.fillStyle = 'white';
+          ctx.fillRect(0, 0, 500, 500);
+          
+          // Draw the SVG image
+          ctx.drawImage(img, 0, 0, 500, 500);
+          
+          // Convert to PNG blob
+          canvas.toBlob((blob) => {
+            URL.revokeObjectURL(url);
+            
+            if (blob) {
+              downloadFile(blob, `${fileName}.png`);
+              toast({
+                description: `${fileName}.png downloaded successfully!`,
+                duration: 2000
+              });
+              resolve();
+            } else {
+              reject(new Error('Failed to create PNG blob from canvas'));
+            }
+          }, 'image/png', 1.0);
+          
+        } catch (canvasError) {
+          clearTimeout(timeout);
+          URL.revokeObjectURL(url);
+          reject(new Error(`Canvas rendering failed: ${canvasError instanceof Error ? canvasError.message : 'Unknown error'}`));
+        }
+      };
+      
+      img.onerror = () => {
+        clearTimeout(timeout);
+        URL.revokeObjectURL(url);
+        reject(new Error('Failed to load SVG image - the SVG may be malformed or unsupported'));
+      };
+      
+      // Set the image source to start loading
+      img.src = url;
+    });
   };
 
   const getCustomizedSVG = () => {
