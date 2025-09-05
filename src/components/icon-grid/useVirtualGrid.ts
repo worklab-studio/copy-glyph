@@ -23,8 +23,8 @@ export function useVirtualGrid({ items, containerRef, enabled = true }: UseVirtu
       return 4;
     }
     
-    // Better desktop column calculation with smoother scaling
-    return Math.floor(Math.max(containerWidth, 320) / 100) || 4;
+    // Better desktop column calculation with consistent 80px cells
+    return Math.floor(Math.max(containerWidth, 320) / 80) || 4;
   }, [containerWidth]);
 
   // Memoize row grouping with better performance
