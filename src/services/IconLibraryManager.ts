@@ -306,8 +306,15 @@ class IconLibraryManager {
       return localCache.icons;
     }
 
-    // Load from network/import
-    const icons = await this.importLibrary(libraryId);
+    // Import the raw library
+    const rawIcons = await this.importLibrary(libraryId);
+    
+    // Apply optimizeSvg on every string icon at load for normalized exports
+    const { optimizeSvg } = await import('@/lib/svg-optimize');
+    const icons = rawIcons.map(icon => ({
+      ...icon,
+      svg: typeof icon.svg === 'string' ? optimizeSvg(icon.svg) : icon.svg
+    }));
     
     // Cache the result
     this.updateMemoryCache(libraryId, icons);

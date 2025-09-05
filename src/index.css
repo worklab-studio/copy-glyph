@@ -254,14 +254,31 @@
     contain: layout style paint;
   }
 
-  /* Component color enforcement - ensures React icons inherit currentColor */
-  .icon-component [fill]:not([fill='none']):not([fill='transparent']) { 
+  /* Component color inheritance for consistent exports */
+  .icon-component { 
+    color: inherit; 
+  }
+  .icon-component svg { 
+    color: inherit; 
+  }
+  .icon-component [fill]:not([fill='none']) { 
     fill: currentColor !important; 
   }
-  .icon-component [stroke]:not([stroke='none']):not([stroke='transparent']) { 
+  .icon-component [stroke]:not([stroke='none']) { 
     stroke: currentColor !important; 
   }
   .icon-component stop { 
     stop-color: currentColor !important; 
+  }
+  
+  /* Unified rendered icon box size for consistent exports */
+  .icon-svg, .icon-component { 
+    width: 32px; 
+    height: 32px; 
+  }
+  .icon-svg svg, .icon-component svg { 
+    width: 100%; 
+    height: 100%; 
+    display: block; 
   }
 }
