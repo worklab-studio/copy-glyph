@@ -165,14 +165,14 @@ function IconGridPage() {
 
     const performSearch = async () => {
       try {
-        // Try worker search with comprehensive options including library filter
+        // Try worker search with conservative options including library filter
         if (searchReady && loaded) {
           const searchResult = await search(searchQuery, {
-            maxResults: 10000, // Increase limit to show more results
+            maxResults: 1000, // Conservative limit for performance
             fuzzy: true,
-            enableSynonyms: true,
-            enablePhonetic: true,
-            libraryId: selectedSet // Filter by selected library
+            enableSynonyms: false, // Conservative default
+            enablePhonetic: false, // Conservative default
+            libraryId: selectedSet !== 'all' ? selectedSet : undefined // Only filter if specific library selected
           });
           // Filter out any invalid results
           const validResults = searchResult.results.filter(icon => icon && icon.svg);
@@ -180,14 +180,14 @@ function IconGridPage() {
           setSearchTotalCount(searchResult.totalCount);
         } else if (loaded) {
           // Enhanced fallback search when worker isn't ready
-          const { fallbackSearch } = require('@/lib/fallback-search');
+          const { fallbackSearch } = await import('@/lib/fallback-search');
           const fallbackResult = fallbackSearch(icons, searchQuery, {
             fuzzy: true,
-            maxResults: 10000, // Increase limit to show more results
-            minScore: 0.1,
-            enableSynonyms: true,
-            enablePhonetic: true,
-            libraryId: selectedSet // Filter by selected library
+            maxResults: 1000, // Conservative limit for performance
+            minScore: 8.0, // Higher threshold for precision
+            enableSynonyms: false, // Conservative default
+            enablePhonetic: false, // Conservative default
+            libraryId: selectedSet !== 'all' ? selectedSet : undefined // Only filter if specific library selected
           });
           setSearchResults(fallbackResult.results);
           setSearchTotalCount(fallbackResult.totalCount);
@@ -195,14 +195,14 @@ function IconGridPage() {
       } catch (error) {
         console.warn('Worker search failed, using fallback:', error);
         // Always fallback to client-side search on any error
-        const { fallbackSearch } = require('@/lib/fallback-search');
+        const { fallbackSearch } = await import('@/lib/fallback-search');
         const fallbackResult = fallbackSearch(icons, searchQuery, {
           fuzzy: true,
-          maxResults: 10000, // Increase limit to show more results
-          minScore: 0.1,
-          enableSynonyms: true,
-          enablePhonetic: true,
-          libraryId: selectedSet // Filter by selected library
+          maxResults: 1000, // Conservative limit for performance
+          minScore: 8.0, // Higher threshold for precision
+          enableSynonyms: false, // Conservative default
+          enablePhonetic: false, // Conservative default
+          libraryId: selectedSet !== 'all' ? selectedSet : undefined // Only filter if specific library selected
         });
         setSearchResults(fallbackResult.results);
         setSearchTotalCount(fallbackResult.totalCount);

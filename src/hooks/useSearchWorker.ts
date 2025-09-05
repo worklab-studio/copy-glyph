@@ -13,7 +13,8 @@ export function useSearchWorker(): SearchWorkerHook {
   const workerRef = useRef<Worker | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const pendingCallbacks = useRef<Map<string, {
+  const seqRef = useRef(0);
+  const pendingCallbacks = useRef<Map<number, {
     resolve: (value: any) => void;
     reject: (error: any) => void;
   }>>(new Map());
@@ -28,7 +29,7 @@ export function useSearchWorker(): SearchWorkerHook {
       );
 
       workerRef.current.onmessage = (event) => {
-        const { type, libraryId, results, query, success, error } = event.data;
+        const { type, seq, libraryId, results, query, success, error } = event.data;
         
         if (error) {
           console.error('Search worker error:', error);
@@ -42,18 +43,16 @@ export function useSearchWorker(): SearchWorkerHook {
 
         switch (type) {
           case 'indexComplete':
-            const indexKey = `index-${libraryId}`;
-            const indexCallbacks = pendingCallbacks.current.get(indexKey);
+            const indexCallbacks = pendingCallbacks.current.get(seq);
             if (indexCallbacks) {
               indexCallbacks.resolve(success);
-              pendingCallbacks.current.delete(indexKey);
+              pendingCallbacks.current.delete(seq);
             }
             break;
 
           case 'searchResults':
             setIsSearching(false);
-            const searchKey = `search-${query}`;
-            const searchCallbacks = pendingCallbacks.current.get(searchKey);
+            const searchCallbacks = pendingCallbacks.current.get(seq);
             if (searchCallbacks) {
               // Map worker results back to original icons with React components
               const mappedResults = (results || []).map((workerIcon: any) => {
@@ -69,13 +68,12 @@ export function useSearchWorker(): SearchWorkerHook {
               
               const { totalCount = mappedResults.length } = event.data;
               searchCallbacks.resolve({ results: mappedResults, totalCount });
-              pendingCallbacks.current.delete(searchKey);
+              pendingCallbacks.current.delete(seq);
             }
             break;
 
           case 'clearComplete':
-            const clearKey = `clear-${libraryId}`;
-            const clearCallbacks = pendingCallbacks.current.get(clearKey);
+            const clearCallbacks = pendingCallbacks.current.get(seq);
             if (clearCallbacks) {
               // Clear stored icons for this library
               if (libraryId) {
@@ -84,7 +82,7 @@ export function useSearchWorker(): SearchWorkerHook {
                 originalIconsRef.current.clear();
               }
               clearCallbacks.resolve(true);
-              pendingCallbacks.current.delete(clearKey);
+              pendingCallbacks.current.delete(seq);
             }
             break;
         }
@@ -129,28 +127,29 @@ export function useSearchWorker(): SearchWorkerHook {
     setIsSearching(true);
     
     return new Promise((resolve, reject) => {
-      const key = `search-${query}`;
-      pendingCallbacks.current.set(key, { resolve, reject });
+      const seq = ++seqRef.current;
+      pendingCallbacks.current.set(seq, { resolve, reject });
       
-      // Send search message with enhanced options
+      // Send search message with conservative options
       workerRef.current!.postMessage({
         type: 'search',
+        seq,
         query: query.trim(),
         libraryId: options.libraryId,
         options: {
-          maxResults: 10000, // Increase limit to show more results
+          maxResults: 1000, // Conservative limit for performance
           fuzzy: true,
-          enableSynonyms: true,
-          enablePhonetic: true,
-          minScore: 0.1,
+          enableSynonyms: false, // Conservative default
+          enablePhonetic: false, // Conservative default
+          minScore: 8.0, // Higher threshold for precision
           ...options
         }
       });
 
       // Set timeout to prevent hanging
       setTimeout(() => {
-        if (pendingCallbacks.current.has(key)) {
-          pendingCallbacks.current.delete(key);
+        if (pendingCallbacks.current.has(seq)) {
+          pendingCallbacks.current.delete(seq);
           setIsSearching(false);
           reject(new Error('Search timeout'));
         }
@@ -186,20 +185,21 @@ export function useSearchWorker(): SearchWorkerHook {
     originalIconsRef.current.set(libraryId, iconMap);
 
     return new Promise((resolve, reject) => {
-      const key = `index-${libraryId}`;
-      pendingCallbacks.current.set(key, { resolve, reject });
+      const seq = ++seqRef.current;
+      pendingCallbacks.current.set(seq, { resolve, reject });
       
       // Send index message with only searchable metadata
       workerRef.current!.postMessage({
         type: 'index',
+        seq,
         libraryId,
         icons: serializableIcons
       });
 
       // Set timeout
       setTimeout(() => {
-        if (pendingCallbacks.current.has(key)) {
-          pendingCallbacks.current.delete(key);
+        if (pendingCallbacks.current.has(seq)) {
+          pendingCallbacks.current.delete(seq);
           reject(new Error('Index timeout'));
         }
       }, 10000); // 10 second timeout for indexing
@@ -213,19 +213,20 @@ export function useSearchWorker(): SearchWorkerHook {
     }
 
     return new Promise((resolve, reject) => {
-      const key = `clear-${libraryId || 'all'}`;
-      pendingCallbacks.current.set(key, { resolve, reject });
+      const seq = ++seqRef.current;
+      pendingCallbacks.current.set(seq, { resolve, reject });
       
       // Send clear message
       workerRef.current!.postMessage({
         type: 'clear',
+        seq,
         libraryId
       });
 
       // Set timeout
       setTimeout(() => {
-        if (pendingCallbacks.current.has(key)) {
-          pendingCallbacks.current.delete(key);
+        if (pendingCallbacks.current.has(seq)) {
+          pendingCallbacks.current.delete(seq);
           reject(new Error('Clear timeout'));
         }
       }, 3000); // 3 second timeout

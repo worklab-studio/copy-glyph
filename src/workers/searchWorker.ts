@@ -11,6 +11,7 @@ import { expandQueryWithSynonyms } from '../lib/search-synonyms';
 
 interface SearchMessage {
   type: 'search' | 'index' | 'clear';
+  seq?: number;
   query?: string;
   libraryId?: string;
   icons?: SearchableIcon[];
@@ -74,6 +75,23 @@ const FIELD_WEIGHTS = {
   stemMatch: 8.0        // Stemmed word match
 };
 
+// Token-based word matching utility
+function matchesWholeWord(text: string, query: string): { exact: boolean; prefix: boolean } {
+  const textWords = extractWords(text);
+  const queryLower = query.toLowerCase();
+  
+  for (const word of textWords) {
+    if (word === queryLower) {
+      return { exact: true, prefix: false };
+    }
+    if (query.length >= 3 && word.startsWith(queryLower)) {
+      return { exact: false, prefix: true };
+    }
+  }
+  
+  return { exact: false, prefix: false };
+}
+
 // Calculate comprehensive search score for an icon
 function calculateIconScore(
   icon: SearchableIcon, 
@@ -106,18 +124,16 @@ function calculateIconScore(
     let queryScore = 0;
     const currentFields: string[] = [];
     
-    // Score against name
-    if (iconName.includes(normalizedQuery)) {
-      if (iconName === normalizedQuery) {
-        queryScore = Math.max(queryScore, FIELD_WEIGHTS.nameExact);
-        matchDetails.exactMatch = true;
-      } else if (iconName.startsWith(normalizedQuery)) {
-        queryScore = Math.max(queryScore, FIELD_WEIGHTS.namePrefix);
-      } else {
-        queryScore = Math.max(queryScore, FIELD_WEIGHTS.nameExact * 0.8);
-      }
+    // Score against name using token-based matching
+    const nameMatch = matchesWholeWord(iconName, normalizedQuery);
+    if (nameMatch.exact) {
+      queryScore = Math.max(queryScore, FIELD_WEIGHTS.nameExact);
+      matchDetails.exactMatch = true;
       currentFields.push('name');
-    } else if (fuzzy) {
+    } else if (nameMatch.prefix) {
+      queryScore = Math.max(queryScore, FIELD_WEIGHTS.namePrefix);
+      currentFields.push('name');
+    } else if (fuzzy && normalizedQuery.length >= 4) {
       const nameScore = fuzzyScore(normalizedQuery, iconName);
       if (nameScore > 0) {
         queryScore = Math.max(queryScore, nameScore * FIELD_WEIGHTS.nameFuzzy);
@@ -126,17 +142,17 @@ function calculateIconScore(
       }
     }
     
-    // Score against tags
+    // Score against tags using token-based matching
     for (const tag of iconTags) {
-      if (tag.includes(normalizedQuery)) {
-        if (tag === normalizedQuery) {
-          queryScore = Math.max(queryScore, FIELD_WEIGHTS.tagExact);
-          matchDetails.exactMatch = true;
-        } else {
-          queryScore = Math.max(queryScore, FIELD_WEIGHTS.tagExact * 0.8);
-        }
+      const tagMatch = matchesWholeWord(tag, normalizedQuery);
+      if (tagMatch.exact) {
+        queryScore = Math.max(queryScore, FIELD_WEIGHTS.tagExact);
+        matchDetails.exactMatch = true;
         currentFields.push('tag');
-      } else if (fuzzy) {
+      } else if (tagMatch.prefix) {
+        queryScore = Math.max(queryScore, FIELD_WEIGHTS.tagExact * 0.8);
+        currentFields.push('tag');
+      } else if (fuzzy && normalizedQuery.length >= 4) {
         const tagScore = fuzzyScore(normalizedQuery, tag);
         if (tagScore > 0) {
           queryScore = Math.max(queryScore, tagScore * FIELD_WEIGHTS.tagFuzzy);
@@ -146,16 +162,16 @@ function calculateIconScore(
       }
     }
     
-    // Score against category
-    if (iconCategory.includes(normalizedQuery)) {
-      if (iconCategory === normalizedQuery) {
-        queryScore = Math.max(queryScore, FIELD_WEIGHTS.categoryExact);
-        matchDetails.exactMatch = true;
-      } else {
-        queryScore = Math.max(queryScore, FIELD_WEIGHTS.categoryExact * 0.8);
-      }
+    // Score against category using token-based matching
+    const categoryMatch = matchesWholeWord(iconCategory, normalizedQuery);
+    if (categoryMatch.exact) {
+      queryScore = Math.max(queryScore, FIELD_WEIGHTS.categoryExact);
+      matchDetails.exactMatch = true;
       currentFields.push('category');
-    } else if (fuzzy) {
+    } else if (categoryMatch.prefix) {
+      queryScore = Math.max(queryScore, FIELD_WEIGHTS.categoryExact * 0.8);
+      currentFields.push('category');
+    } else if (fuzzy && normalizedQuery.length >= 4) {
       const categoryScore = fuzzyScore(normalizedQuery, iconCategory);
       if (categoryScore > 0) {
         queryScore = Math.max(queryScore, categoryScore * FIELD_WEIGHTS.categoryFuzzy);
@@ -382,21 +398,21 @@ function searchIcons(
     for (const expandedQuery of expandedQueries) {
       const normalizedExpanded = expandedQuery.toLowerCase();
       
-      // Direct index lookups for performance
+      // Optimized index lookups for performance (exact/prefix only)
       for (const [key, icons] of index.nameIndex) {
-        if (key.includes(normalizedExpanded)) {
+        if (key === normalizedExpanded || (normalizedExpanded.length >= 3 && key.startsWith(normalizedExpanded))) {
           icons.forEach(icon => candidates.add(icon));
         }
       }
       
       for (const [key, icons] of index.tagIndex) {
-        if (key.includes(normalizedExpanded)) {
+        if (key === normalizedExpanded || (normalizedExpanded.length >= 3 && key.startsWith(normalizedExpanded))) {
           icons.forEach(icon => candidates.add(icon));
         }
       }
       
       for (const [key, icons] of index.categoryIndex) {
-        if (key.includes(normalizedExpanded)) {
+        if (key === normalizedExpanded || (normalizedExpanded.length >= 3 && key.startsWith(normalizedExpanded))) {
           icons.forEach(icon => candidates.add(icon));
         }
       }
@@ -457,7 +473,7 @@ function searchIcons(
 
 // Handle messages from main thread
 self.onmessage = function(event: MessageEvent<SearchMessage>) {
-  const { type, query, icons, libraryId, options } = event.data;
+  const { type, seq, query, icons, libraryId, options } = event.data;
   
   try {
     switch (type) {
@@ -466,6 +482,7 @@ self.onmessage = function(event: MessageEvent<SearchMessage>) {
           buildIndex(libraryId, icons);
           self.postMessage({ 
             type: 'indexComplete', 
+            seq,
             libraryId,
             success: true 
           });
@@ -474,13 +491,13 @@ self.onmessage = function(event: MessageEvent<SearchMessage>) {
         
       case 'search':
         if (query !== undefined) {
-          const { libraryId } = event.data;
           const results = searchIcons(query, { ...options, libraryId });
           // Calculate total count before limiting
           const totalCount = results.length;
           const limitedResults = results.slice(0, options?.maxResults || 1000);
           self.postMessage({ 
             type: 'searchResults', 
+            seq,
             results: limitedResults.map(r => r.icon),
             totalCount,
             query,
@@ -497,6 +514,7 @@ self.onmessage = function(event: MessageEvent<SearchMessage>) {
         }
         self.postMessage({ 
           type: 'clearComplete',
+          seq,
           libraryId: libraryId || 'all'
         });
         break;

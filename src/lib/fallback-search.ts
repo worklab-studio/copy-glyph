@@ -44,6 +44,23 @@ const FIELD_WEIGHTS = {
   stemMatch: 8.0        // Stemmed word match
 };
 
+// Token-based word matching utility (mirrors worker logic)
+function matchesWholeWord(text: string, query: string): { exact: boolean; prefix: boolean } {
+  const textWords = extractWords(text);
+  const queryLower = query.toLowerCase();
+  
+  for (const word of textWords) {
+    if (word === queryLower) {
+      return { exact: true, prefix: false };
+    }
+    if (query.length >= 3 && word.startsWith(queryLower)) {
+      return { exact: false, prefix: true };
+    }
+  }
+  
+  return { exact: false, prefix: false };
+}
+
 // Calculate comprehensive search score for an icon (same logic as worker)
 function calculateIconScore(
   icon: IconItem, 
@@ -63,9 +80,9 @@ function calculateIconScore(
     phoneticMatch: false
   };
 
-  // Normalize icon fields once - CRITICAL: Fix tag normalization bug
+  // Normalize icon fields once
   const iconName = (icon.name || '').toLowerCase();
-  const iconTags = (icon.tags || []).map(tag => tag.toLowerCase()); // FIXED: Ensure all tags are lowercase
+  const iconTags = (icon.tags || []).map(tag => tag.toLowerCase());
   const iconCategory = (icon.category || '').toLowerCase();
   
   // Check all expanded queries (including synonyms)
@@ -76,18 +93,16 @@ function calculateIconScore(
     let queryScore = 0;
     const currentFields: string[] = [];
     
-    // Score against name
-    if (iconName.includes(normalizedQuery)) {
-      if (iconName === normalizedQuery) {
-        queryScore = Math.max(queryScore, FIELD_WEIGHTS.nameExact);
-        matchDetails.exactMatch = true;
-      } else if (iconName.startsWith(normalizedQuery)) {
-        queryScore = Math.max(queryScore, FIELD_WEIGHTS.namePrefix);
-      } else {
-        queryScore = Math.max(queryScore, FIELD_WEIGHTS.nameExact * 0.8);
-      }
+    // Score against name using token-based matching
+    const nameMatch = matchesWholeWord(iconName, normalizedQuery);
+    if (nameMatch.exact) {
+      queryScore = Math.max(queryScore, FIELD_WEIGHTS.nameExact);
+      matchDetails.exactMatch = true;
       currentFields.push('name');
-    } else if (fuzzy) {
+    } else if (nameMatch.prefix) {
+      queryScore = Math.max(queryScore, FIELD_WEIGHTS.namePrefix);
+      currentFields.push('name');
+    } else if (fuzzy && normalizedQuery.length >= 4) {
       const nameScore = fuzzyScore(normalizedQuery, iconName);
       if (nameScore > 0) {
         queryScore = Math.max(queryScore, nameScore * FIELD_WEIGHTS.nameFuzzy);
@@ -96,17 +111,17 @@ function calculateIconScore(
       }
     }
     
-    // Score against tags - FIXED: Now uses properly normalized tags
+    // Score against tags using token-based matching
     for (const tag of iconTags) {
-      if (tag.includes(normalizedQuery)) {
-        if (tag === normalizedQuery) {
-          queryScore = Math.max(queryScore, FIELD_WEIGHTS.tagExact);
-          matchDetails.exactMatch = true;
-        } else {
-          queryScore = Math.max(queryScore, FIELD_WEIGHTS.tagExact * 0.8);
-        }
+      const tagMatch = matchesWholeWord(tag, normalizedQuery);
+      if (tagMatch.exact) {
+        queryScore = Math.max(queryScore, FIELD_WEIGHTS.tagExact);
+        matchDetails.exactMatch = true;
         currentFields.push('tag');
-      } else if (fuzzy) {
+      } else if (tagMatch.prefix) {
+        queryScore = Math.max(queryScore, FIELD_WEIGHTS.tagExact * 0.8);
+        currentFields.push('tag');
+      } else if (fuzzy && normalizedQuery.length >= 4) {
         const tagScore = fuzzyScore(normalizedQuery, tag);
         if (tagScore > 0) {
           queryScore = Math.max(queryScore, tagScore * FIELD_WEIGHTS.tagFuzzy);
@@ -116,16 +131,16 @@ function calculateIconScore(
       }
     }
     
-    // Score against category
-    if (iconCategory.includes(normalizedQuery)) {
-      if (iconCategory === normalizedQuery) {
-        queryScore = Math.max(queryScore, FIELD_WEIGHTS.categoryExact);
-        matchDetails.exactMatch = true;
-      } else {
-        queryScore = Math.max(queryScore, FIELD_WEIGHTS.categoryExact * 0.8);
-      }
+    // Score against category using token-based matching
+    const categoryMatch = matchesWholeWord(iconCategory, normalizedQuery);
+    if (categoryMatch.exact) {
+      queryScore = Math.max(queryScore, FIELD_WEIGHTS.categoryExact);
+      matchDetails.exactMatch = true;
       currentFields.push('category');
-    } else if (fuzzy) {
+    } else if (categoryMatch.prefix) {
+      queryScore = Math.max(queryScore, FIELD_WEIGHTS.categoryExact * 0.8);
+      currentFields.push('category');
+    } else if (fuzzy && normalizedQuery.length >= 4) {
       const categoryScore = fuzzyScore(normalizedQuery, iconCategory);
       if (categoryScore > 0) {
         queryScore = Math.max(queryScore, categoryScore * FIELD_WEIGHTS.categoryFuzzy);
