@@ -119,3 +119,210 @@ export function sortIconsByStyleThenName(icons: IconItem[]): IconItem[] {
     return a.name.localeCompare(b.name);
   });
 }
+
+/**
+ * Library-specific color patterns and replacements
+ */
+const LIBRARY_COLOR_PATTERNS = {
+  // Iconsax specific colors
+  iconsax: [
+    /#292D32/gi,
+    /#2f2f2f/gi,
+    /#333333/gi
+  ],
+  // Atlas specific colors  
+  atlas: [
+    /#020202/gi,
+    /#000000/gi,
+    /#000/gi
+  ],
+  // CSS.gg specific colors
+  'css-gg': [
+    /#000000/gi,
+    /#000/gi
+  ],
+  // Material Design colors
+  material: [
+    /#000000/gi,
+    /#212121/gi,
+    /#424242/gi
+  ],
+  // BoxIcons colors
+  boxicons: [
+    /#000000/gi,
+    /#2d3748/gi
+  ],
+  // Ant Design colors
+  ant: [
+    /#000000/gi,
+    /#262626/gi,
+    /#434343/gi
+  ]
+};
+
+/**
+ * Get comprehensive SVG with applied customizations
+ * Handles both string SVGs and React components with proper library-specific color handling
+ */
+export function getCustomizedSVG(
+  icon: IconItem, 
+  customization: { color: string; strokeWidth: number },
+  renderSize: number = 24
+): string {
+  if (!icon.svg) {
+    throw new Error('Icon SVG is undefined');
+  }
+  
+  const supportsStroke = supportsStrokeWidth(icon);
+  let svgContent = '';
+  
+  try {
+    if (typeof icon.svg === 'string') {
+      svgContent = icon.svg;
+    } else {
+      // Render React component to SVG string
+      const React = require('react');
+      const { renderToStaticMarkup } = require('react-dom/server');
+      
+      const IconComponent = icon.svg as React.ComponentType<any>;
+      const iconProps: any = {
+        size: renderSize,
+        color: customization.color
+      };
+      
+      if (supportsStroke) {
+        iconProps.strokeWidth = customization.strokeWidth;
+      }
+      
+      const element = React.createElement(IconComponent, iconProps);
+      svgContent = renderToStaticMarkup(element);
+    }
+    
+    // Apply comprehensive color customization
+    let customizedSVG = applyColorCustomization(svgContent, icon.id, customization.color);
+    
+    // Apply stroke width customization
+    if (supportsStroke) {
+      customizedSVG = applyStrokeWidthCustomization(customizedSVG, customization.strokeWidth);
+    }
+    
+    return customizedSVG;
+    
+  } catch (error) {
+    console.error('Failed to process SVG for icon:', icon.id, error);
+    throw new Error(`Failed to process SVG: ${error.message}`);
+  }
+}
+
+/**
+ * Apply comprehensive color customization based on library-specific patterns
+ */
+function applyColorCustomization(svgContent: string, iconId: string, targetColor: string): string {
+  let modifiedSvg = svgContent;
+  
+  // Determine library type from icon ID
+  const libraryType = getLibraryType(iconId);
+  
+  // Apply library-specific color patterns
+  if (LIBRARY_COLOR_PATTERNS[libraryType]) {
+    LIBRARY_COLOR_PATTERNS[libraryType].forEach(pattern => {
+      modifiedSvg = modifiedSvg.replace(pattern, targetColor);
+    });
+  }
+  
+  // Apply comprehensive generic color replacements
+  modifiedSvg = modifiedSvg
+    // Replace ALL hex colors in fill and stroke attributes (3 and 6 digit)
+    .replace(/fill="#[0-9A-Fa-f]{3,6}"/gi, `fill="${targetColor}"`)
+    .replace(/stroke="#[0-9A-Fa-f]{3,6}"/gi, `stroke="${targetColor}"`)
+    
+    // Handle CSS style attributes with hex colors
+    .replace(/style="([^"]*?)fill:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1fill: ${targetColor}$2"`)
+    .replace(/style="([^"]*?)stroke:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1stroke: ${targetColor}$2"`)
+    
+    // Handle stop-color in gradients
+    .replace(/stop-color="#[0-9A-Fa-f]{3,6}"/gi, `stop-color="${targetColor}"`)
+    
+    // Handle CSS classes within SVG (common in Atlas icons)
+    .replace(/<style[^>]*>([^<]*\.cls-\d+[^}]*fill:\s*#[0-9A-Fa-f]{3,6}[^<]*)<\/style>/gi, 
+      (match, content) => match.replace(/#[0-9A-Fa-f]{3,6}/g, targetColor))
+    .replace(/<style[^>]*>([^<]*\.cls-\d+[^}]*stroke:\s*#[0-9A-Fa-f]{3,6}[^<]*)<\/style>/gi, 
+      (match, content) => match.replace(/#[0-9A-Fa-f]{3,6}/g, targetColor))
+    
+    // Handle currentColor for copy operations
+    .replace(/stroke="currentColor"/gi, `stroke="${targetColor}"`)
+    .replace(/fill="currentColor"/gi, `fill="${targetColor}"`)
+    
+    // Preserve fill="none" and stroke="none" by fixing overwrites
+    .replace(new RegExp(`fill="${targetColor}"([^>]*?)stroke="${targetColor}"`, 'gi'), 
+      `fill="none"$1stroke="${targetColor}"`);
+  
+  return modifiedSvg;
+}
+
+/**
+ * Apply stroke width customization to SVG content
+ */
+function applyStrokeWidthCustomization(svgContent: string, strokeWidth: number): string {
+  let modifiedSvg = svgContent;
+  
+  // Replace existing stroke-width attributes
+  modifiedSvg = modifiedSvg
+    .replace(/stroke-width="[^"]*"/g, `stroke-width="${strokeWidth}"`)
+    .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${strokeWidth}"`)
+    .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${strokeWidth}`);
+  
+  // Add stroke-width to elements that have stroke but no stroke-width
+  modifiedSvg = modifiedSvg.replace(/(<[^>]*stroke="[^"]*"[^>]*?)(?![^>]*stroke-width)([^>]*>)/g, 
+    `$1 stroke-width="${strokeWidth}"$2`);
+  
+  // If no stroke-width exists anywhere, inject it into the root SVG element
+  if (!modifiedSvg.includes('stroke-width')) {
+    modifiedSvg = modifiedSvg.replace(/<svg([^>]*?)>/g, `<svg$1 stroke-width="${strokeWidth}">`);
+  }
+  
+  return modifiedSvg;
+}
+
+/**
+ * Determine library type from icon ID
+ */
+function getLibraryType(iconId: string): string {
+  if (iconId.startsWith('iconsax-')) return 'iconsax';
+  if (iconId.startsWith('atlas-')) return 'atlas';
+  if (iconId.startsWith('css-gg-')) return 'css-gg';
+  if (iconId.startsWith('material-')) return 'material';
+  if (iconId.startsWith('box-')) return 'boxicons';
+  if (iconId.startsWith('ant-')) return 'ant';
+  
+  return 'generic';
+}
+
+/**
+ * Get customized SVG for display (using currentColor for theme compatibility)
+ */
+export function getDisplaySVG(
+  icon: IconItem,
+  customization: { color: string; strokeWidth: number }
+): string {
+  if (!icon.svg) return '';
+  
+  const supportsStroke = supportsStrokeWidth(icon);
+  let svgContent = '';
+  
+  if (typeof icon.svg === 'string') {
+    svgContent = icon.svg;
+    
+    // For display, use currentColor to maintain theme compatibility
+    let modifiedSvg = applyColorCustomization(svgContent, icon.id, 'currentColor');
+    
+    if (supportsStroke) {
+      modifiedSvg = applyStrokeWidthCustomization(modifiedSvg, customization.strokeWidth);
+    }
+    
+    return modifiedSvg;
+  }
+  
+  // For React components, we don't modify them for display - they handle theming themselves
+  return '';
+}

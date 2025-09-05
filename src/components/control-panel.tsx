@@ -7,8 +7,8 @@ import { Copy, Download, FileCode, Braces, Image } from "lucide-react";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { toast } from "@/hooks/use-toast";
 import React from "react";
+import { getCustomizedSVG, supportsStrokeWidth } from "@/lib/icon-utils";
 import { renderToStaticMarkup } from "react-dom/server";
-import { supportsStrokeWidth } from "@/lib/icon-utils";
 // @ts-ignore - gif.js doesn't have TypeScript definitions
 import GIF from 'gif.js';
 
@@ -35,56 +35,8 @@ export function ControlPanel({
   const handleDownloadSVG = async () => {
     if (!selectedIcon) return;
     
-    const supportsStroke = supportsStrokeWidth(selectedIcon);
-    
     try {
-      let svgContent = '';
-      if (typeof selectedIcon.svg === 'string') {
-        svgContent = selectedIcon.svg;
-      } else {
-        // Render the React component to SVG string
-        const IconComponent = selectedIcon.svg as React.ComponentType<any>;
-        const iconProps: any = {
-          size: 24,
-          color: customization.color
-        };
-        
-        // Only add strokeWidth for icons that support it
-        if (supportsStroke) {
-          iconProps.strokeWidth = customization.strokeWidth;
-        }
-        
-        const element = React.createElement(IconComponent, iconProps);
-        svgContent = renderToStaticMarkup(element);
-      }
-
-      // Apply current customizations to the SVG - comprehensive approach
-      let customizedSVG = svgContent
-        // Replace comprehensive color attributes
-        .replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`)
-        .replace(/fill="#[0-9A-Fa-f]{3,6}"/gi, `fill="${customization.color}"`)
-        .replace(/stroke="#[0-9A-Fa-f]{3,6}"/gi, `stroke="${customization.color}"`)
-        // Handle CSS style attributes
-        .replace(/style="([^"]*?)fill:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1fill: ${customization.color}$2"`)
-        .replace(/style="([^"]*?)stroke:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1stroke: ${customization.color}$2"`)
-        // Preserve fill="none"
-        .replace(new RegExp(`fill="${customization.color}"([^>]*?)stroke="${customization.color}"`, 'gi'), `fill="none"$1stroke="${customization.color}"`);
-      
-      if (supportsStroke) {
-        // Replace existing stroke-width attributes
-        customizedSVG = customizedSVG
-          .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`)
-          .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${customization.strokeWidth}"`)
-          .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${customization.strokeWidth}`);
-        
-        // Add stroke-width to elements that have stroke but no stroke-width
-        customizedSVG = customizedSVG.replace(/(<[^>]*stroke="[^"]*"[^>]*?)(?![^>]*stroke-width)([^>]*>)/g, `$1 stroke-width="${customization.strokeWidth}"$2`);
-        
-        // If no stroke-width exists anywhere, inject it into the root SVG element
-        if (!customizedSVG.includes('stroke-width')) {
-          customizedSVG = customizedSVG.replace(/<svg([^>]*?)>/g, `<svg$1 stroke-width="${customization.strokeWidth}">`);
-        }
-      }
+      const customizedSVG = getCustomizedSVG(selectedIcon, customization);
 
       // Create and download the file
       const blob = new Blob([customizedSVG], {
@@ -93,29 +45,29 @@ export function ControlPanel({
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `${selectedIcon.name}.svg`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      toast({
-        description: `${selectedIcon.name}.svg downloaded successfully!`,
-        duration: 2000
-      });
-    } catch (error) {
-      toast({
-        description: "Failed to download SVG",
-        variant: "destructive",
-        duration: 2000
-      });
-    }
+          link.download = `${selectedIcon.name}.tsx`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        toast({
+          description: `${selectedIcon.name}.tsx downloaded successfully!`,
+          duration: 2000
+        });
+      } catch (error) {
+        toast({
+          description: "Failed to download TSX",
+          variant: "destructive",
+          duration: 2000
+        });
+      }
   };
 
   const handleDownloadPNG = async () => {
     if (!selectedIcon) return;
     
     try {
-      const customizedSVG = getCustomizedSVG();
+      const customizedSVG = getCustomizedSVG(selectedIcon, customization);
       
       // Create a canvas element
       const canvas = document.createElement('canvas');
@@ -174,61 +126,6 @@ export function ControlPanel({
     }
   };
 
-  const getCustomizedSVG = () => {
-    if (!selectedIcon) return '';
-    
-    const supportsStroke = supportsStrokeWidth(selectedIcon);
-    
-    let svgContent = '';
-    if (typeof selectedIcon.svg === 'string') {
-      svgContent = selectedIcon.svg;
-    } else {
-      // Render the React component to SVG string
-      const IconComponent = selectedIcon.svg as React.ComponentType<any>;
-      const iconProps: any = {
-        size: 24,
-        color: customization.color
-      };
-      
-      // Only add strokeWidth for icons that support it
-      if (supportsStroke) {
-        iconProps.strokeWidth = customization.strokeWidth;
-      }
-      
-      const element = React.createElement(IconComponent, iconProps);
-      svgContent = renderToStaticMarkup(element);
-    }
-
-    // Apply current customizations to the SVG - comprehensive approach
-    let customizedSVG = svgContent
-      // Replace comprehensive color attributes
-      .replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`)
-      .replace(/fill="#[0-9A-Fa-f]{3,6}"/gi, `fill="${customization.color}"`)
-      .replace(/stroke="#[0-9A-Fa-f]{3,6}"/gi, `stroke="${customization.color}"`)
-      // Handle CSS style attributes
-      .replace(/style="([^"]*?)fill:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1fill: ${customization.color}$2"`)
-      .replace(/style="([^"]*?)stroke:\s*#[0-9A-Fa-f]{3,6}([^"]*?)"/gi, `style="$1stroke: ${customization.color}$2"`)
-      // Preserve fill="none"
-      .replace(new RegExp(`fill="${customization.color}"([^>]*?)stroke="${customization.color}"`, 'gi'), `fill="none"$1stroke="${customization.color}"`);
-    
-    if (supportsStroke) {
-      // Replace existing stroke-width attributes
-      customizedSVG = customizedSVG
-        .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`)
-        .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${customization.strokeWidth}"`)
-        .replace(/stroke-width:\s*[^;"\s]+/g, `stroke-width: ${customization.strokeWidth}`);
-      
-      // Add stroke-width to elements that have stroke but no stroke-width
-      customizedSVG = customizedSVG.replace(/(<[^>]*stroke="[^"]*"[^>]*?)(?![^>]*stroke-width)([^>]*>)/g, `$1 stroke-width="${customization.strokeWidth}"$2`);
-      
-      // If no stroke-width exists anywhere, inject it into the root SVG element
-      if (!customizedSVG.includes('stroke-width')) {
-        customizedSVG = customizedSVG.replace(/<svg([^>]*?)>/g, `<svg$1 stroke-width="${customization.strokeWidth}">`);
-      }
-    }
-    
-    return customizedSVG;
-  };
 
   const handleCopySVG = async () => {
     if (!selectedIcon) {
@@ -240,7 +137,7 @@ export function ControlPanel({
       return;
     }
     try {
-      const customizedSVG = getCustomizedSVG();
+      const customizedSVG = getCustomizedSVG(selectedIcon, customization);
 
       // Encode SVG as data URL
       const encodedSVG = encodeURIComponent(customizedSVG);
@@ -269,7 +166,7 @@ export function ControlPanel({
       return;
     }
     try {
-      const customizedSVG = getCustomizedSVG();
+      const customizedSVG = getCustomizedSVG(selectedIcon, customization);
       await navigator.clipboard.writeText(customizedSVG);
       toast({
         description: "SVG XML copied to clipboard!",
@@ -394,7 +291,7 @@ export const ${componentName} = ({
   className = '' 
 }: ${componentName}Props) => {
   return (
-${getCustomizedSVG().split('\n').map(line => `    ${line}`).join('\n')}
+${getCustomizedSVG(selectedIcon, customization).split('\n').map(line => `    ${line}`).join('\n')}
   );
 };`;
 
@@ -428,7 +325,7 @@ ${getCustomizedSVG().split('\n').map(line => `    ${line}`).join('\n')}
         duration: 3000
       });
 
-      const svgContent = getCustomizedSVG();
+      const svgContent = getCustomizedSVG(selectedIcon, customization);
       
       // Create GIF using gif.js
       const gif = new (GIF as any)({

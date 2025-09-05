@@ -4,8 +4,7 @@ import { Copy, Download, FileCode, Braces, Image } from "lucide-react";
 import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { toast } from "@/hooks/use-toast";
 import React from "react";
-import { renderToStaticMarkup } from "react-dom/server";
-import { supportsStrokeWidth } from "@/lib/icon-utils";
+import { getCustomizedSVG } from "@/lib/icon-utils";
 import { HapticsManager } from "@/lib/haptics";
 
 interface MobileIconActionsProps {
@@ -26,46 +25,6 @@ export function MobileIconActions({
 }: MobileIconActionsProps) {
   const { customization } = useIconCustomization();
 
-  const getCustomizedSVG = () => {
-    if (!selectedIcon) return '';
-    
-    const supportsStroke = supportsStrokeWidth(selectedIcon);
-    
-    let svgContent = '';
-    if (typeof selectedIcon.svg === 'string') {
-      svgContent = selectedIcon.svg;
-    } else {
-      // Render the React component to SVG string
-      const IconComponent = selectedIcon.svg as React.ComponentType<any>;
-      const iconProps: any = {
-        size: 24,
-        color: customization.color
-      };
-      
-      // Only add strokeWidth for icons that support it
-      if (supportsStroke) {
-        iconProps.strokeWidth = customization.strokeWidth;
-      }
-      
-      const element = React.createElement(IconComponent, iconProps);
-      svgContent = renderToStaticMarkup(element);
-    }
-
-    // Apply current customizations to the SVG
-    let customizedSVG = svgContent
-      .replace(/stroke="[^"]*"/g, `stroke="${customization.color}"`)
-      .replace(/fill="#[0-9A-Fa-f]{3,6}"/gi, `fill="${customization.color}"`)
-      .replace(/stroke="#[0-9A-Fa-f]{3,6}"/gi, `stroke="${customization.color}"`);
-    
-    if (supportsStroke) {
-      customizedSVG = customizedSVG
-        .replace(/stroke-width="[^"]*"/g, `stroke-width="${customization.strokeWidth}"`)
-        .replace(/strokeWidth="[^"]*"/g, `strokeWidth="${customization.strokeWidth}"`);
-    }
-    
-    return customizedSVG;
-  };
-
   const handleDownloadSVG = async () => {
     if (!selectedIcon) return;
     
@@ -73,7 +32,7 @@ export function MobileIconActions({
     await HapticsManager.medium();
     
     try {
-      const customizedSVG = getCustomizedSVG();
+      const customizedSVG = getCustomizedSVG(selectedIcon, customization);
       const blob = new Blob([customizedSVG], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -108,7 +67,7 @@ export function MobileIconActions({
     await HapticsManager.medium();
     
     try {
-      const customizedSVG = getCustomizedSVG();
+      const customizedSVG = getCustomizedSVG(selectedIcon, customization);
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       if (!ctx) throw new Error('Could not get canvas context');
@@ -166,7 +125,7 @@ export function MobileIconActions({
     await HapticsManager.light();
     
     try {
-      const customizedSVG = getCustomizedSVG();
+      const customizedSVG = getCustomizedSVG(selectedIcon, customization);
       await navigator.clipboard.writeText(customizedSVG);
       toast({
         description: "SVG copied to clipboard!",
@@ -193,7 +152,7 @@ export function MobileIconActions({
     await HapticsManager.light();
     
     try {
-      const customizedSVG = getCustomizedSVG();
+      const customizedSVG = getCustomizedSVG(selectedIcon, customization);
       await navigator.clipboard.writeText(customizedSVG);
       toast({
         description: "SVG XML copied to clipboard!",
