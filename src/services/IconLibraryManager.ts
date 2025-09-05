@@ -58,7 +58,7 @@ class IconLibraryManager {
     // Start preloading popular libraries after a short delay
     setTimeout(() => this.preloadPopularLibraries(), 1000);
     
-    // Clean up old cache entries on startup
+  // Clean up old cache entries on startup
     this.clearOldCacheEntries();
     this.cleanupExpiredCache();
     
@@ -572,7 +572,6 @@ class IconLibraryManager {
     this.searchIndex.set(libraryId, indexSet);
   }
 
-  // Get library statistics
   getCacheStats() {
     return {
       memoryCount: this.cache.size,
@@ -580,6 +579,42 @@ class IconLibraryManager {
       indexedLibraries: this.searchIndex.size,
       totalLibraries: this.libraries.length
     };
+  }
+
+  // Cache status methods for loading optimization
+  hasCachedLibrary(libraryId: string): boolean {
+    const cached = this.cache.get(libraryId);
+    if (cached && !this.isCacheExpired(cached)) {
+      return true;
+    }
+
+    // Check localStorage cache
+    try {
+      const storedCache = localStorage.getItem(CACHE_KEY_PREFIX + libraryId);
+      if (!storedCache) return false;
+      
+      const parsed = JSON.parse(storedCache);
+      const isExpired = Date.now() - parsed.timestamp > CACHE_EXPIRY_MS;
+      return !isExpired && parsed.icons && parsed.icons.length > 0;
+    } catch {
+      return false;
+    }
+  }
+
+  hasPriorityLibraryCache(): boolean {
+    return this.hasCachedLibrary('tabler');
+  }
+
+  getCacheStatus(): { [libraryId: string]: boolean } {
+    const status: { [libraryId: string]: boolean } = {};
+    for (const lib of this.libraries) {
+      status[lib.id] = this.hasCachedLibrary(lib.id);
+    }
+    return status;
+  }
+
+  getPopularLibrariesCacheStatus(): boolean {
+    return this.popularLibraries.every(id => this.hasCachedLibrary(id));
   }
 }
 

@@ -12,6 +12,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAsyncIconLibrary, useIconLibraryMetadata } from "@/hooks/useAsyncIconLibrary";
 import { useSearchWorker } from "@/hooks/useSearchWorker";
 import { useFirstTimeUser } from "@/hooks/useFirstTimeUser";
+import { useVisitedUser } from "@/hooks/useVisitedUser";
 import { showFirstCopyNudge } from "@/components/ui/first-copy-nudge";
 import { Skeleton } from "@/components/ui/skeleton";
 import LoadingWithTagline from "@/components/LoadingWithTagline";
@@ -45,6 +46,9 @@ function IconGridPage() {
 
   // Load Tabler first as priority
   const priorityLibrary = 'tabler';
+
+  // Visited user state for smart loading
+  const { shouldSkipLoading, markLoadingSeen, hasCachedData } = useVisitedUser();
   
   // Async icon loading
   const { 
@@ -75,13 +79,22 @@ function IconGridPage() {
 
   // Control loading animation visibility
   useEffect(() => {
+    // Check if we should skip loading entirely
+    if (shouldSkipLoading && hasCachedData && iconLibraryManager.hasPriorityLibraryCache()) {
+      setShowLoadingAnimation(false);
+      setMinDurationComplete(true);
+      return;
+    }
+
     // Hide loading only when both conditions are met:
     // 1. Minimum duration has passed
     // 2. Tabler icons are loaded (priority library)
     if (minDurationComplete && loaded && icons.length > 0) {
       setShowLoadingAnimation(false);
+      // Mark that user has seen the loading animation
+      markLoadingSeen();
     }
-  }, [minDurationComplete, loaded, icons.length]);
+  }, [minDurationComplete, loaded, icons.length, shouldSkipLoading, hasCachedData, markLoadingSeen]);
 
   // Fallback timeout removed - just keep loading until ready
 
@@ -89,6 +102,13 @@ function IconGridPage() {
   useEffect(() => {
     const loadIcons = async () => {
       try {
+        // If returning user with cache, load immediately without animation
+        if (shouldSkipLoading && iconLibraryManager.hasPriorityLibraryCache()) {
+          await loadLibrary(priorityLibrary);
+          loadAllLibrariesSectioned();
+          return;
+        }
+
         // Load Tabler first for immediate display
         await loadLibrary(priorityLibrary);
         // Load all other libraries in parallel for faster loading
@@ -101,7 +121,7 @@ function IconGridPage() {
     };
     
     loadIcons();
-  }, [loadLibrary, loadAllLibrariesSectioned, priorityLibrary]);
+  }, [loadLibrary, loadAllLibrariesSectioned, priorityLibrary, shouldSkipLoading]);
 
   // Load specific library when selection changes (after initial load)
   useEffect(() => {
