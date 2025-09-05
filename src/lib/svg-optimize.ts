@@ -10,26 +10,31 @@
 function normalizeStyleColors(svgContent: string): string {
   return svgContent
     // Normalize fill in style attributes (preserve fill="none" and fill="transparent")
-    .replace(/style="([^"]*?)fill:\s*(?!none|transparent|inherit)([^;"\s]+)([^"]*?)"/gi, 
+    .replace(/style="([^"]*?)fill:\s*(?!none|transparent|inherit|currentColor)([^;"\s]+)([^"]*?)"/gi, 
       (match, before, color, after) => {
-        // Preserve none and transparent
-        if (color.trim() === 'none' || color.trim() === 'transparent') {
+        // Preserve none, transparent, and currentColor
+        if (color.trim() === 'none' || color.trim() === 'transparent' || color.trim() === 'currentColor') {
           return match;
         }
         return `style="${before}fill: currentColor${after}"`;
       })
     // Normalize stroke in style attributes (preserve stroke="none" and stroke="transparent")  
-    .replace(/style="([^"]*?)stroke:\s*(?!none|transparent|inherit)([^;"\s]+)([^"]*?)"/gi,
+    .replace(/style="([^"]*?)stroke:\s*(?!none|transparent|inherit|currentColor)([^;"\s]+)([^"]*?)"/gi,
       (match, before, color, after) => {
-        // Preserve none and transparent
-        if (color.trim() === 'none' || color.trim() === 'transparent') {
+        // Preserve none, transparent, and currentColor
+        if (color.trim() === 'none' || color.trim() === 'transparent' || color.trim() === 'currentColor') {
           return match;
         }
         return `style="${before}stroke: currentColor${after}"`;
       })
-    // Normalize stop-color in gradients
-    .replace(/style="([^"]*?)stop-color:\s*(?!none|transparent|inherit)([^;"\s]+)([^"]*?)"/gi,
-      `style="$1stop-color: currentColor$3"`);
+    // Normalize stop-color in gradients (preserve currentColor)
+    .replace(/style="([^"]*?)stop-color:\s*(?!none|transparent|inherit|currentColor)([^;"\s]+)([^"]*?)"/gi,
+      `style="$1stop-color: currentColor$3"`)
+    // Handle CSS classes that might have fill/stroke colors
+    .replace(/class="([^"]*?)"/gi, (match, classes) => {
+      // Keep the classes as-is, the global CSS rules will handle color inheritance
+      return match;
+    });
 }
 
 /**
@@ -57,8 +62,27 @@ function ensureConsistentStructure(svgContent: string): string {
   
   // Ensure viewBox is present (extract from original width/height if needed)
   if (!result.includes('viewBox=')) {
-    // Default to 24x24 if no viewBox is found
-    result = result.replace('<svg', '<svg viewBox="0 0 24 24"');
+    // Try to extract viewBox from existing structure or default to 24x24
+    const sizeMatch = result.match(/viewBox="([^"]+)"/);
+    if (sizeMatch) {
+      // viewBox already exists, keep it
+    } else {
+      // Look for common sizes in the SVG structure  
+      const hasLargeCoords = /[d="'][^"']*[1-9]\d{2,}[^"']*["']/i.test(result);
+      if (hasLargeCoords) {
+        // Larger coordinate system detected (like 1024x1024)
+        const coordMatch = result.match(/[d="'][^"']*?(\d{3,4})[^"']*["']/);
+        if (coordMatch) {
+          const size = coordMatch[1];
+          result = result.replace('<svg', `<svg viewBox="0 0 ${size} ${size}"`);
+        } else {
+          result = result.replace('<svg', '<svg viewBox="0 0 1024 1024"');
+        }
+      } else {
+        // Standard 24x24 coordinate system
+        result = result.replace('<svg', '<svg viewBox="0 0 24 24"');
+      }
+    }
   }
   
   // Add preserveAspectRatio for consistent scaling (helps PNG render size)
