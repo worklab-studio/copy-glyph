@@ -98,17 +98,23 @@ function matchesWholeWord(text: string, query: string): boolean {
 }
 
 function collectCandidates(query: string, options: SearchOptions): Set<string> {
-  const { exactMatch } = options;
+  const { exactMatch, libraryId } = options;
   const candidates = new Set<string>();
   const normalizedQuery = query.toLowerCase().trim();
   
   if (!normalizedQuery) return candidates;
   
-  console.log(`[Search Debug] Collecting candidates for "${normalizedQuery}", exactMatch: ${exactMatch}`);
+  console.log(`[Search Debug] Collecting candidates for "${normalizedQuery}", exactMatch: ${exactMatch}, libraryFilter: ${libraryId || 'none'}`);
+  
+  const availableLibraries = Array.from(searchIndex.keys());
+  console.log(`[Search Debug] Available libraries in search index:`, availableLibraries);
 
-  for (const [libraryId, library] of searchIndex.entries()) {
+  for (const [currentLibraryId, library] of searchIndex.entries()) {
     // Skip if filtering by library and this isn't the target library
-    if (options.libraryId && libraryId !== options.libraryId) continue;
+    if (libraryId && currentLibraryId !== libraryId) {
+      console.log(`[Search Debug] Skipping library ${currentLibraryId} (filtering for ${libraryId})`);
+      continue;
+    }
 
     const initialCandidateCount = candidates.size;
 
@@ -317,16 +323,13 @@ function calculateIconScore(
 
   if (totalScore === 0) return null;
 
-  const result = {
+  return {
     icon,
     score: totalScore,
     matchedFields: [...new Set(matchedFields)],
     matchType,
     matchDetail: matchDetail || `${matchType} match`
   };
-
-  console.log(`[Search Debug] Final score for "${icon.name}": ${totalScore} (${result.matchDetail})`);
-  return result;
 }
 
 function searchIcons(query: string, options: SearchOptions = {}): { results: SearchableIcon[]; totalCount: number } {
@@ -345,8 +348,16 @@ function searchIcons(query: string, options: SearchOptions = {}): { results: Sea
     fuzzy: fuzzy && !exactMatch, // Disable fuzzy when exact match is enabled
     enableSynonyms: enableSynonyms && !exactMatch, // Disable synonyms when exact match is enabled
     enablePhonetic: enablePhonetic && !exactMatch, // Disable phonetic when exact match is enabled
-    exactMatch
+    exactMatch,
+    libraryId: options.libraryId
   });
+  
+  // Log available libraries in index
+  const availableLibraries = Array.from(searchIndex.keys());
+  console.log(`[Search Debug] Available libraries in search index:`, availableLibraries);
+  if (options.libraryId) {
+    console.log(`[Search Debug] Filtering to library: "${options.libraryId}", available: ${availableLibraries.includes(options.libraryId)}`);
+  }
   
   const cacheKey = JSON.stringify({ query: normalizedQuery, options });
   
@@ -379,10 +390,14 @@ function searchIcons(query: string, options: SearchOptions = {}): { results: Sea
   const scoredResults: SearchResult[] = [];
   for (const candidateId of candidates) {
     for (const [libraryId, library] of searchIndex.entries()) {
-      if (options.libraryId && libraryId !== options.libraryId) continue;
+      if (options.libraryId && libraryId !== options.libraryId) {
+        continue;
+      }
       
       const icon = library.icons.get(candidateId);
       if (!icon) continue;
+
+      console.log(`[Search Debug] Scoring icon "${icon.name}" from library "${libraryId}"`);
 
       // For exact match mode, pass modified options to disable fuzzy features
       const scoringOptions = exactMatch ? {

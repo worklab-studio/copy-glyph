@@ -73,6 +73,7 @@ function IconGridPage() {
   const { 
     search, 
     indexLibrary, 
+    clearIndex,
     isReady: searchReady, 
     isSearching 
   } = useSearchWorker();
@@ -130,28 +131,59 @@ function IconGridPage() {
     console.log('🏗️ Library selection changed - selectedSet:', selectedSet, 'loaded:', loaded);
     if (loaded && selectedSet !== "all") {
       console.log('🏗️ Loading specific library:', selectedSet);
-      loadLibraryProgressive(selectedSet);
+      // Clear search index before loading new library
+      clearIndex().then(() => {
+        loadLibraryProgressive(selectedSet);
+      }).catch(error => {
+        console.error('Failed to clear search index:', error);
+        loadLibraryProgressive(selectedSet); // Load anyway
+      });
     }
-  }, [selectedSet, loadLibraryProgressive, loaded]);
+  }, [selectedSet, loadLibraryProgressive, loaded, clearIndex]);
 
   // Load all libraries when switching back to "All Icons"
   useEffect(() => {
     console.log('🏗️ All icons selection - selectedSet:', selectedSet, 'loaded:', loaded);
     if (loaded && selectedSet === "all") {
       console.log('🏗️ Loading all libraries sectioned');
-      loadAllLibrariesSectioned();
-    }
-  }, [selectedSet, loadAllLibrariesSectioned, loaded]);
-
-  // Index loaded icons for search - with error handling
-  useEffect(() => {
-    if (loaded && icons.length > 0 && searchReady) {
-      indexLibrary(selectedSet, icons).catch(error => {
-        console.error('Failed to index icons for search:', error);
-        // Search will fall back to client-side search automatically
+      // Clear search index before loading all libraries
+      clearIndex().then(() => {
+        loadAllLibrariesSectioned();
+      }).catch(error => {
+        console.error('Failed to clear search index:', error);
+        loadAllLibrariesSectioned(); // Load anyway
       });
     }
-  }, [loaded, icons, searchReady, selectedSet, indexLibrary]);
+  }, [selectedSet, loadAllLibrariesSectioned, loaded, clearIndex]);
+
+  // Index loaded icons for search - with proper library mapping
+  useEffect(() => {
+    if (loaded && icons.length > 0 && searchReady) {
+      console.log('🔍 Indexing icons for search - selectedSet:', selectedSet, 'icons count:', icons.length);
+      
+      if (selectedSet === "all") {
+        // When "all" is selected, index by sections to maintain library separation
+        if (Array.isArray(sections) && sections.length > 0) {
+          console.log('🔍 Indexing sectioned libraries:', sections.map(s => s.libraryId));
+          Promise.all(
+            sections.map(section => 
+              indexLibrary(section.libraryId, section.icons).catch(error => {
+                console.error(`Failed to index library ${section.libraryId}:`, error);
+              })
+            )
+          ).catch(error => {
+            console.error('Failed to index some libraries for search:', error);
+          });
+        }
+      } else {
+        // Index specific library
+        console.log('🔍 Indexing specific library:', selectedSet);
+        indexLibrary(selectedSet, icons).catch(error => {
+          console.error('Failed to index icons for search:', error);
+        });
+      }
+    }
+  }, [loaded, icons, sections, searchReady, selectedSet, indexLibrary]);
 
   // Get the selected icon object
   const selectedIcon = useMemo(() => {
@@ -177,7 +209,13 @@ function IconGridPage() {
             enableSynonyms: false,
             enablePhonetic: false,
             exactMatch: false,
-            libraryId: selectedSet // Filter by selected library
+            libraryId: selectedSet === "all" ? undefined : selectedSet // Only filter when specific library selected
+          });
+          console.log('🔍 Search result:', { 
+            query: searchQuery, 
+            libraryId: selectedSet === "all" ? 'all' : selectedSet,
+            resultCount: searchResult.results.length,
+            totalCount: searchResult.totalCount 
           });
           // Filter out any invalid results
           const validResults = searchResult.results.filter(icon => icon && icon.svg);
@@ -193,7 +231,13 @@ function IconGridPage() {
             enableSynonyms: false,
             enablePhonetic: false,
             exactMatch: false,
-            libraryId: selectedSet // Filter by selected library
+            libraryId: selectedSet === "all" ? undefined : selectedSet // Only filter when specific library selected
+          });
+          console.log('🔍 Fallback search result:', { 
+            query: searchQuery, 
+            libraryId: selectedSet === "all" ? 'all' : selectedSet,
+            resultCount: fallbackResult.results.length,
+            totalCount: fallbackResult.totalCount 
           });
           setSearchResults(fallbackResult.results);
           setSearchTotalCount(fallbackResult.totalCount);
@@ -209,7 +253,13 @@ function IconGridPage() {
           enableSynonyms: false,
           enablePhonetic: false,
           exactMatch: false,
-          libraryId: selectedSet // Filter by selected library
+          libraryId: selectedSet === "all" ? undefined : selectedSet // Only filter when specific library selected
+        });
+        console.log('🔍 Error fallback search result:', { 
+          query: searchQuery, 
+          libraryId: selectedSet === "all" ? 'all' : selectedSet,
+          resultCount: fallbackResult.results.length,
+          totalCount: fallbackResult.totalCount 
         });
         setSearchResults(fallbackResult.results);
         setSearchTotalCount(fallbackResult.totalCount);
