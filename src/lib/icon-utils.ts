@@ -1,4 +1,6 @@
 import { type IconItem } from "@/types/icon";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 
 /**
  * Determines if an icon supports stroke width customization
@@ -162,7 +164,7 @@ const LIBRARY_COLOR_PATTERNS = {
 
 /**
  * Get comprehensive SVG with applied customizations
- * Handles both string SVGs and React components with proper library-specific color handling
+ * Enhanced with better React component handling and library-specific support
  */
 export function getCustomizedSVG(
   icon: IconItem, 
@@ -173,29 +175,22 @@ export function getCustomizedSVG(
     throw new Error('Icon SVG is undefined');
   }
   
-  const supportsStroke = supportsStrokeWidth(icon);
-  let svgContent = '';
-  
   try {
+    const supportsStroke = supportsStrokeWidth(icon);
+    let svgContent = '';
+    
     if (typeof icon.svg === 'string') {
       svgContent = icon.svg;
+    } else if (React.isValidElement(icon.svg) || typeof icon.svg === 'function') {
+      // Enhanced React component handling
+      svgContent = renderReactIconToSVG(icon, customization, renderSize, supportsStroke);
     } else {
-      // Render React component to SVG string
-      const React = require('react');
-      const { renderToStaticMarkup } = require('react-dom/server');
-      
-      const IconComponent = icon.svg as React.ComponentType<any>;
-      const iconProps: any = {
-        size: renderSize,
-        color: customization.color
-      };
-      
-      if (supportsStroke) {
-        iconProps.strokeWidth = customization.strokeWidth;
-      }
-      
-      const element = React.createElement(IconComponent, iconProps);
-      svgContent = renderToStaticMarkup(element);
+      throw new Error(`Unsupported icon type: ${typeof icon.svg}`);
+    }
+    
+    // Validate that we have valid SVG content
+    if (!svgContent || !svgContent.includes('<svg')) {
+      throw new Error('Invalid SVG content generated');
     }
     
     // Apply comprehensive color customization
@@ -206,12 +201,180 @@ export function getCustomizedSVG(
       customizedSVG = applyStrokeWidthCustomization(customizedSVG, customization.strokeWidth);
     }
     
+    // Validate final SVG
+    if (!validateSVG(customizedSVG)) {
+      throw new Error('Generated SVG failed validation');
+    }
+    
     return customizedSVG;
     
   } catch (error) {
     console.error('Failed to process SVG for icon:', icon.id, error);
-    throw new Error(`Failed to process SVG: ${error.message}`);
+    // Return a fallback SVG instead of throwing to prevent complete failure
+    return createFallbackSVG(icon, customization, renderSize);
   }
+}
+
+/**
+ * Enhanced React component rendering with library-specific handling
+ */
+function renderReactIconToSVG(
+  icon: IconItem,
+  customization: { color: string; strokeWidth: number },
+  renderSize: number,
+  supportsStroke: boolean
+): string {
+  const IconComponent = icon.svg as React.ComponentType<any>;
+  const libraryType = getLibraryType(icon.id);
+  
+  // Library-specific props handling
+  const iconProps: any = getLibrarySpecificProps(
+    libraryType, 
+    customization, 
+    renderSize, 
+    supportsStroke
+  );
+  
+  try {
+    // Attempt to render with library-specific props
+    const element = React.createElement(IconComponent, iconProps);
+    const rendered = renderToStaticMarkup(element);
+    
+    if (rendered && rendered.includes('<svg')) {
+      return rendered;
+    }
+  } catch (error) {
+    console.warn('Failed to render with library-specific props, trying generic:', error);
+  }
+  
+  // Fallback to generic props
+  try {
+    const genericProps = {
+      size: renderSize,
+      width: renderSize,
+      height: renderSize,
+      color: customization.color,
+      strokeWidth: supportsStroke ? customization.strokeWidth : undefined,
+    };
+    
+    const element = React.createElement(IconComponent, genericProps);
+    const rendered = renderToStaticMarkup(element);
+    
+    if (rendered && rendered.includes('<svg')) {
+      return rendered;
+    }
+  } catch (error) {
+    console.warn('Failed to render with generic props:', error);
+  }
+  
+  throw new Error('Failed to render React component to SVG');
+}
+
+/**
+ * Get library-specific props for React component rendering
+ */
+function getLibrarySpecificProps(
+  libraryType: string,
+  customization: { color: string; strokeWidth: number },
+  size: number,
+  supportsStroke: boolean
+): any {
+  const baseProps = {
+    size,
+    width: size,
+    height: size,
+  };
+  
+  switch (libraryType) {
+    case 'lucide':
+      return {
+        ...baseProps,
+        color: customization.color,
+        strokeWidth: supportsStroke ? customization.strokeWidth : 2,
+      };
+    
+    case 'material':
+      return {
+        ...baseProps,
+        style: { color: customization.color },
+      };
+    
+    case 'ant':
+      return {
+        ...baseProps,
+        style: { color: customization.color, fontSize: size },
+      };
+    
+    case 'bootstrap':
+      return {
+        ...baseProps,
+        color: customization.color,
+      };
+    
+    case 'remix':
+      return {
+        ...baseProps,
+        color: customization.color,
+      };
+    
+    case 'iconoir':
+      return {
+        ...baseProps,
+        color: customization.color,
+        strokeWidth: supportsStroke ? customization.strokeWidth : 1.5,
+      };
+    
+    case 'phosphor':
+      return {
+        ...baseProps,
+        color: customization.color,
+        weight: supportsStroke ? 'regular' : undefined,
+      };
+    
+    default:
+      return {
+        ...baseProps,
+        color: customization.color,
+        strokeWidth: supportsStroke ? customization.strokeWidth : undefined,
+      };
+  }
+}
+
+/**
+ * Validate SVG content
+ */
+function validateSVG(svgContent: string): boolean {
+  if (!svgContent || typeof svgContent !== 'string') {
+    return false;
+  }
+  
+  // Check for basic SVG structure
+  if (!svgContent.includes('<svg') || !svgContent.includes('</svg>')) {
+    return false;
+  }
+  
+  // Check for common invalid patterns
+  if (svgContent.includes('undefined') || svgContent.includes('null')) {
+    return false;
+  }
+  
+  return true;
+}
+
+/**
+ * Create a fallback SVG when processing fails
+ */
+function createFallbackSVG(
+  icon: IconItem,
+  customization: { color: string; strokeWidth: number },
+  renderSize: number
+): string {
+  const color = customization.color || 'currentColor';
+  
+  return `<svg width="${renderSize}" height="${renderSize}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="18" height="18" rx="2" stroke="${color}" stroke-width="${customization.strokeWidth || 2}" fill="none"/>
+    <path d="M9 9h6v6h-6z" fill="${color}" opacity="0.5"/>
+  </svg>`;
 }
 
 /**
@@ -285,15 +448,26 @@ function applyStrokeWidthCustomization(svgContent: string, strokeWidth: number):
 }
 
 /**
- * Determine library type from icon ID
+ * Determine library type from icon ID with enhanced support
  */
 function getLibraryType(iconId: string): string {
+  if (iconId.startsWith('lucide-')) return 'lucide';
   if (iconId.startsWith('iconsax-')) return 'iconsax';
   if (iconId.startsWith('atlas-')) return 'atlas';
   if (iconId.startsWith('css-gg-')) return 'css-gg';
   if (iconId.startsWith('material-')) return 'material';
   if (iconId.startsWith('box-')) return 'boxicons';
   if (iconId.startsWith('ant-')) return 'ant';
+  if (iconId.startsWith('bootstrap-')) return 'bootstrap';
+  if (iconId.startsWith('remix-')) return 'remix';
+  if (iconId.startsWith('iconoir-')) return 'iconoir';
+  if (iconId.startsWith('phosphor-')) return 'phosphor';
+  if (iconId.startsWith('feather-')) return 'feather';
+  if (iconId.startsWith('tabler-')) return 'tabler';
+  if (iconId.startsWith('solar-')) return 'solar';
+  if (iconId.startsWith('radix-')) return 'radix';
+  if (iconId.startsWith('octicon-')) return 'octicons';
+  if (iconId.startsWith('fluent-')) return 'fluent';
   
   return 'generic';
 }
