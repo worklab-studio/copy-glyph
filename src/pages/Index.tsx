@@ -164,13 +164,9 @@ function IconGridPage() {
     }
 
     const performSearch = async () => {
-      console.log('🔍 Search triggered - Query:', searchQuery, 'Selected set:', selectedSet);
-      console.log('🔍 Search conditions - searchReady:', searchReady, 'loaded:', loaded, 'icons count:', icons.length);
-      
       try {
         // Try worker search with exact match options
         if (searchReady && loaded) {
-          console.log('🔍 Using worker search');
           const searchResult = await search(searchQuery, {
             maxResults: 10000, // Increase limit to show more results
             fuzzy: false,
@@ -179,14 +175,11 @@ function IconGridPage() {
             exactMatch: false,
             libraryId: selectedSet // Filter by selected library
           });
-          console.log('🔍 Worker search raw result:', searchResult);
           // Filter out any invalid results
           const validResults = searchResult.results.filter(icon => icon && icon.svg);
-          console.log('🔍 Worker search valid results:', validResults.length, 'first 3:', validResults.slice(0, 3));
           setSearchResults(validResults);
           setSearchTotalCount(searchResult.totalCount);
         } else if (loaded) {
-          console.log('🔍 Using fallback search (worker not ready)');
           // Enhanced fallback search when worker isn't ready - exact match mode
           const { fallbackSearch } = require('@/lib/fallback-search');
           const fallbackResult = fallbackSearch(icons, searchQuery, {
@@ -198,14 +191,11 @@ function IconGridPage() {
             exactMatch: false,
             libraryId: selectedSet // Filter by selected library
           });
-          console.log('🔍 Fallback search result:', fallbackResult);
           setSearchResults(fallbackResult.results);
           setSearchTotalCount(fallbackResult.totalCount);
-        } else {
-          console.log('🔍 Search conditions not met - not loaded yet');
         }
       } catch (error) {
-        console.warn('🔍 Worker search failed, using fallback:', error);
+        console.warn('Worker search failed, using fallback:', error);
         // Always fallback to client-side search on any error - exact match mode
         const { fallbackSearch } = require('@/lib/fallback-search');
         const fallbackResult = fallbackSearch(icons, searchQuery, {
@@ -217,7 +207,6 @@ function IconGridPage() {
           exactMatch: false,
           libraryId: selectedSet // Filter by selected library
         });
-        console.log('🔍 Error fallback search result:', fallbackResult);
         setSearchResults(fallbackResult.results);
         setSearchTotalCount(fallbackResult.totalCount);
       }

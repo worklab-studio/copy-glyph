@@ -568,14 +568,16 @@ self.onmessage = function(event: MessageEvent<SearchMessage>) {
         if (query !== undefined) {
           const results = searchIcons(query, options);
           self.postMessage({ 
-            type: 'searchComplete', 
+            type: 'searchResults', 
+            query: query,
             results: results.results,
             totalCount: results.totalCount,
             success: true 
           });
         } else {
           self.postMessage({ 
-            type: 'searchComplete', 
+            type: 'searchResults', 
+            query: query || '',
             results: [], 
             totalCount: 0,
             success: false, 
