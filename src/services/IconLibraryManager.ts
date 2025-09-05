@@ -49,7 +49,7 @@ class IconLibraryManager {
     { id: 'teeny', name: 'Teeny Icons', count: 2000, style: 'outline' },
     { id: 'radix', name: 'Radix Icons', count: 300, style: 'filled' },
     { id: 'animated', name: 'Animated', count: 31, style: 'animated' },
-    { id: 'react-useanimations', name: 'React UseAnimations', count: 38, style: 'animated' },
+    { id: 'react-useanimations', name: 'React UseAnimations', count: 18, style: 'animated' },
   ];
 
   // Preload popular libraries in background
