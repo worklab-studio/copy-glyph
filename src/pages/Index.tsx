@@ -165,13 +165,14 @@ function IconGridPage() {
 
     const performSearch = async () => {
       try {
-        // Try worker search with comprehensive options including library filter
+        // Try worker search with exact match options
         if (searchReady && loaded) {
           const searchResult = await search(searchQuery, {
             maxResults: 10000, // Increase limit to show more results
-            fuzzy: true,
-            enableSynonyms: true,
-            enablePhonetic: true,
+            fuzzy: false,
+            enableSynonyms: false,
+            enablePhonetic: false,
+            exactMatch: true,
             libraryId: selectedSet // Filter by selected library
           });
           // Filter out any invalid results
@@ -179,14 +180,15 @@ function IconGridPage() {
           setSearchResults(validResults);
           setSearchTotalCount(searchResult.totalCount);
         } else if (loaded) {
-          // Enhanced fallback search when worker isn't ready
+          // Enhanced fallback search when worker isn't ready - exact match mode
           const { fallbackSearch } = require('@/lib/fallback-search');
           const fallbackResult = fallbackSearch(icons, searchQuery, {
-            fuzzy: true,
+            fuzzy: false,
             maxResults: 10000, // Increase limit to show more results
             minScore: 0.1,
-            enableSynonyms: true,
-            enablePhonetic: true,
+            enableSynonyms: false,
+            enablePhonetic: false,
+            exactMatch: true,
             libraryId: selectedSet // Filter by selected library
           });
           setSearchResults(fallbackResult.results);
@@ -194,14 +196,15 @@ function IconGridPage() {
         }
       } catch (error) {
         console.warn('Worker search failed, using fallback:', error);
-        // Always fallback to client-side search on any error
+        // Always fallback to client-side search on any error - exact match mode
         const { fallbackSearch } = require('@/lib/fallback-search');
         const fallbackResult = fallbackSearch(icons, searchQuery, {
-          fuzzy: true,
+          fuzzy: false,
           maxResults: 10000, // Increase limit to show more results
           minScore: 0.1,
-          enableSynonyms: true,
-          enablePhonetic: true,
+          enableSynonyms: false,
+          enablePhonetic: false,
+          exactMatch: true,
           libraryId: selectedSet // Filter by selected library
         });
         setSearchResults(fallbackResult.results);

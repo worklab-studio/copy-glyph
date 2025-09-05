@@ -15,6 +15,7 @@ interface FallbackSearchOptions {
   minScore?: number;
   enableSynonyms?: boolean;
   enablePhonetic?: boolean;
+  exactMatch?: boolean;
   libraryId?: string;
 }
 
@@ -52,7 +53,7 @@ function calculateIconScore(
   queryWords: string[],
   options: FallbackSearchOptions = {}
 ): SearchResult | null {
-  const { fuzzy = true, enableSynonyms = false, enablePhonetic = true } = options;
+  const { fuzzy = true, enableSynonyms = false, enablePhonetic = true, exactMatch = false } = options;
   
   let bestScore = 0;
   let matchedFields: string[] = [];
@@ -77,60 +78,105 @@ function calculateIconScore(
     const currentFields: string[] = [];
     
     // Score against name
-    if (iconName.includes(normalizedQuery)) {
+    if (exactMatch) {
+      // Exact matching: check for exact word matches using word boundaries
+      const wordBoundaryRegex = new RegExp(`\\b${normalizedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
       if (iconName === normalizedQuery) {
         queryScore = Math.max(queryScore, FIELD_WEIGHTS.nameExact);
         matchDetails.exactMatch = true;
-      } else if (iconName.startsWith(normalizedQuery)) {
-        queryScore = Math.max(queryScore, FIELD_WEIGHTS.namePrefix);
-      } else {
-        queryScore = Math.max(queryScore, FIELD_WEIGHTS.nameExact * 0.8);
-      }
-      currentFields.push('name');
-    } else if (fuzzy) {
-      const nameScore = fuzzyScore(normalizedQuery, iconName);
-      if (nameScore > 0) {
-        queryScore = Math.max(queryScore, nameScore * FIELD_WEIGHTS.nameFuzzy);
-        matchDetails.fuzzyMatch = true;
         currentFields.push('name');
+      } else if (wordBoundaryRegex.test(iconName)) {
+        queryScore = Math.max(queryScore, FIELD_WEIGHTS.nameExact * 0.9);
+        matchDetails.exactMatch = true;
+        currentFields.push('name');
+      }
+    } else {
+      // Original substring matching logic
+      if (iconName.includes(normalizedQuery)) {
+        if (iconName === normalizedQuery) {
+          queryScore = Math.max(queryScore, FIELD_WEIGHTS.nameExact);
+          matchDetails.exactMatch = true;
+        } else if (iconName.startsWith(normalizedQuery)) {
+          queryScore = Math.max(queryScore, FIELD_WEIGHTS.namePrefix);
+        } else {
+          queryScore = Math.max(queryScore, FIELD_WEIGHTS.nameExact * 0.8);
+        }
+        currentFields.push('name');
+      } else if (fuzzy) {
+        const nameScore = fuzzyScore(normalizedQuery, iconName);
+        if (nameScore > 0) {
+          queryScore = Math.max(queryScore, nameScore * FIELD_WEIGHTS.nameFuzzy);
+          matchDetails.fuzzyMatch = true;
+          currentFields.push('name');
+        }
       }
     }
     
     // Score against tags - FIXED: Now uses properly normalized tags
     for (const tag of iconTags) {
-      if (tag.includes(normalizedQuery)) {
+      if (exactMatch) {
+        // Exact matching: check for exact word matches using word boundaries
+        const wordBoundaryRegex = new RegExp(`\\b${normalizedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
         if (tag === normalizedQuery) {
           queryScore = Math.max(queryScore, FIELD_WEIGHTS.tagExact);
           matchDetails.exactMatch = true;
-        } else {
-          queryScore = Math.max(queryScore, FIELD_WEIGHTS.tagExact * 0.8);
-        }
-        currentFields.push('tag');
-      } else if (fuzzy) {
-        const tagScore = fuzzyScore(normalizedQuery, tag);
-        if (tagScore > 0) {
-          queryScore = Math.max(queryScore, tagScore * FIELD_WEIGHTS.tagFuzzy);
-          matchDetails.fuzzyMatch = true;
           currentFields.push('tag');
+        } else if (wordBoundaryRegex.test(tag)) {
+          queryScore = Math.max(queryScore, FIELD_WEIGHTS.tagExact * 0.9);
+          matchDetails.exactMatch = true;
+          currentFields.push('tag');
+        }
+      } else {
+        // Original substring matching logic
+        if (tag.includes(normalizedQuery)) {
+          if (tag === normalizedQuery) {
+            queryScore = Math.max(queryScore, FIELD_WEIGHTS.tagExact);
+            matchDetails.exactMatch = true;
+          } else {
+            queryScore = Math.max(queryScore, FIELD_WEIGHTS.tagExact * 0.8);
+          }
+          currentFields.push('tag');
+        } else if (fuzzy) {
+          const tagScore = fuzzyScore(normalizedQuery, tag);
+          if (tagScore > 0) {
+            queryScore = Math.max(queryScore, tagScore * FIELD_WEIGHTS.tagFuzzy);
+            matchDetails.fuzzyMatch = true;
+            currentFields.push('tag');
+          }
         }
       }
     }
     
     // Score against category
-    if (iconCategory.includes(normalizedQuery)) {
+    if (exactMatch) {
+      // Exact matching: check for exact word matches using word boundaries
+      const wordBoundaryRegex = new RegExp(`\\b${normalizedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
       if (iconCategory === normalizedQuery) {
         queryScore = Math.max(queryScore, FIELD_WEIGHTS.categoryExact);
         matchDetails.exactMatch = true;
-      } else {
-        queryScore = Math.max(queryScore, FIELD_WEIGHTS.categoryExact * 0.8);
-      }
-      currentFields.push('category');
-    } else if (fuzzy) {
-      const categoryScore = fuzzyScore(normalizedQuery, iconCategory);
-      if (categoryScore > 0) {
-        queryScore = Math.max(queryScore, categoryScore * FIELD_WEIGHTS.categoryFuzzy);
-        matchDetails.fuzzyMatch = true;
         currentFields.push('category');
+      } else if (wordBoundaryRegex.test(iconCategory)) {
+        queryScore = Math.max(queryScore, FIELD_WEIGHTS.categoryExact * 0.9);
+        matchDetails.exactMatch = true;
+        currentFields.push('category');
+      }
+    } else {
+      // Original substring matching logic
+      if (iconCategory.includes(normalizedQuery)) {
+        if (iconCategory === normalizedQuery) {
+          queryScore = Math.max(queryScore, FIELD_WEIGHTS.categoryExact);
+          matchDetails.exactMatch = true;
+        } else {
+          queryScore = Math.max(queryScore, FIELD_WEIGHTS.categoryExact * 0.8);
+        }
+        currentFields.push('category');
+      } else if (fuzzy) {
+        const categoryScore = fuzzyScore(normalizedQuery, iconCategory);
+        if (categoryScore > 0) {
+          queryScore = Math.max(queryScore, categoryScore * FIELD_WEIGHTS.categoryFuzzy);
+          matchDetails.fuzzyMatch = true;
+          currentFields.push('category');
+        }
       }
     }
     
@@ -140,8 +186,8 @@ function calculateIconScore(
       matchDetails.synonymMatch = true;
     }
     
-    // Phonetic matching
-    if (enablePhonetic && queryScore === 0) {
+    // Phonetic matching (disabled in exact match mode)
+    if (enablePhonetic && queryScore === 0 && !exactMatch) {
       const fields = [iconName, ...iconTags, iconCategory];
       for (const field of fields) {
         if (phoneticallyMatch(normalizedQuery, field)) {
@@ -159,8 +205,8 @@ function calculateIconScore(
     }
   }
   
-  // Multi-word query bonus
-  if (queryWords.length > 1) {
+  // Multi-word query bonus (disabled in exact match mode)
+  if (queryWords.length > 1 && !exactMatch) {
     const nameMultiScore = multiWordScore(queryWords, iconName, FIELD_WEIGHTS.nameFuzzy / 10);
     const tagMultiScore = Math.max(...iconTags.map(tag => 
       multiWordScore(queryWords, tag, FIELD_WEIGHTS.tagFuzzy / 10)
@@ -194,6 +240,7 @@ export function fallbackSearch(
     minScore = 20.0,       // Significantly increased for strict filtering
     enableSynonyms = false, // Disabled by default for exact results
     enablePhonetic = false, // Disabled by default - too permissive
+    exactMatch = false,
     libraryId
   } = options;
   
@@ -215,8 +262,8 @@ export function fallbackSearch(
   
   const normalizedQuery = query.toLowerCase().trim();
   
-  // Expand query with synonyms and extract words
-  const expandedQueries = enableSynonyms ? 
+  // Expand query with synonyms and extract words (disabled in exact match mode)
+  const expandedQueries = (enableSynonyms && !exactMatch) ? 
     expandQueryWithSynonyms(normalizedQuery) : 
     [normalizedQuery];
   const queryWords = extractWords(normalizedQuery);
