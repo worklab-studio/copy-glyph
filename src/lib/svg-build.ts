@@ -13,10 +13,12 @@ export function buildCustomizedSvg(
   strokeWidth: number = 2
 ): string {
   try {
+    console.log('buildCustomizedSvg called for:', icon.id, 'color:', color, 'strokeWidth:', strokeWidth);
     let svgContent = '';
     
     // Handle React component icons
     if (typeof icon.svg !== 'string') {
+      console.log('Processing React component icon');
       const IconComponent = icon.svg as React.ComponentType<any>;
       const iconProps: any = {
         size: 24,
@@ -35,17 +37,22 @@ export function buildCustomizedSvg(
       const element = React.createElement(IconComponent, iconProps);
       svgContent = renderToStaticMarkup(element);
     } else {
+      console.log('Processing string SVG icon');
       svgContent = icon.svg;
     }
+
+    console.log('Initial SVG content length:', svgContent.length);
 
     // Ensure SVG has proper namespace and structure
     if (!svgContent.includes('xmlns=')) {
       svgContent = svgContent.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+      console.log('Added xmlns namespace');
     }
 
     // Ensure viewBox is preserved/added
     if (!svgContent.includes('viewBox=') && svgContent.includes('<svg')) {
       svgContent = svgContent.replace('<svg', '<svg viewBox="0 0 24 24"');
+      console.log('Added viewBox');
     }
 
     // Comprehensive color normalization - preserve fill="none" and stroke="none"
@@ -105,6 +112,8 @@ export function buildCustomizedSvg(
       throw new Error('Invalid SVG structure');
     }
 
+    console.log('Final SVG generated successfully, length:', normalizedSVG.length);
+    console.log('Final SVG preview:', normalizedSVG.substring(0, 150) + '...');
     return normalizedSVG;
   } catch (error) {
     console.error('Error building customized SVG:', error);

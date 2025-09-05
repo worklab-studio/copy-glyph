@@ -37,11 +37,13 @@ export function ControlPanel({
     if (!selectedIcon) return;
     
     try {
+      console.log('Starting SVG download for:', selectedIcon.id, selectedIcon.name);
       const customizedSVG = buildCustomizedSvg(
         selectedIcon,
         customization.color,
         customization.strokeWidth
       );
+      console.log('Generated SVG:', customizedSVG.substring(0, 200) + '...');
       
       const blob = new Blob([customizedSVG], { type: 'image/svg+xml' });
       downloadFile(blob, `${selectedIcon.name}.svg`);
@@ -51,8 +53,9 @@ export function ControlPanel({
         duration: 2000
       });
     } catch (error) {
+      console.error('SVG download failed:', error);
       toast({
-        description: "Failed to download SVG",
+        description: `Failed to download SVG: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
         duration: 2000
       });
@@ -63,15 +66,17 @@ export function ControlPanel({
     if (!selectedIcon) return;
     
     try {
+      console.log('Starting PNG download for:', selectedIcon.id, selectedIcon.name);
       const customizedSVG = buildCustomizedSvg(
         selectedIcon,
         customization.color,
         customization.strokeWidth
       );
+      console.log('Generated SVG for PNG:', customizedSVG.substring(0, 200) + '...');
       
       // Validate SVG before canvas rendering
       if (!customizedSVG.includes('xmlns=')) {
-        throw new Error('Invalid SVG structure');
+        throw new Error('Invalid SVG structure - missing xmlns');
       }
       
       const canvas = document.createElement('canvas');
@@ -86,6 +91,7 @@ export function ControlPanel({
       const url = URL.createObjectURL(svgBlob);
       
       img.onload = () => {
+        console.log('SVG image loaded successfully for PNG conversion');
         ctx.clearRect(0, 0, 500, 500);
         ctx.drawImage(img, 0, 0, 500, 500);
         
@@ -102,15 +108,17 @@ export function ControlPanel({
         }, 'image/png');
       };
       
-      img.onerror = () => {
+      img.onerror = (e) => {
+        console.error('Failed to load SVG image for PNG conversion:', e);
         URL.revokeObjectURL(url);
-        throw new Error('Failed to load SVG image');
+        throw new Error('Failed to load SVG image - possibly malformed SVG');
       };
       
       img.src = url;
     } catch (error) {
+      console.error('PNG download failed:', error);
       toast({
-        description: "Failed to download PNG",
+        description: `Failed to download PNG: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
         duration: 2000
       });
