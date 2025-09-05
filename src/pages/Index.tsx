@@ -127,14 +127,18 @@ function IconGridPage() {
 
   // Load specific library when selection changes (after initial load)
   useEffect(() => {
+    console.log('🏗️ Library selection changed - selectedSet:', selectedSet, 'loaded:', loaded);
     if (loaded && selectedSet !== "all") {
+      console.log('🏗️ Loading specific library:', selectedSet);
       loadLibraryProgressive(selectedSet);
     }
   }, [selectedSet, loadLibraryProgressive, loaded]);
 
   // Load all libraries when switching back to "All Icons"
   useEffect(() => {
+    console.log('🏗️ All icons selection - selectedSet:', selectedSet, 'loaded:', loaded);
     if (loaded && selectedSet === "all") {
+      console.log('🏗️ Loading all libraries sectioned');
       loadAllLibrariesSectioned();
     }
   }, [selectedSet, loadAllLibrariesSectioned, loaded]);
@@ -219,11 +223,24 @@ function IconGridPage() {
   const currentIcons = useMemo(() => {
     if (searchQuery.trim()) {
       // Filter search results to only include icons with valid svg data
-      return searchResults.filter(icon => icon.svg !== undefined && icon.svg !== null);
+      const validSearchResults = searchResults.filter(icon => icon.svg !== undefined && icon.svg !== null);
+      console.log('🎯 Search mode - selectedSet:', selectedSet, 'searchResults count:', searchResults.length, 'valid results:', validSearchResults.length);
+      return validSearchResults;
     }
     // Filter out icons that don't have valid svg data
-    return icons.filter(icon => icon.svg !== undefined && icon.svg !== null);
-  }, [searchQuery, searchResults, icons]);
+    const validIcons = icons.filter(icon => icon.svg !== undefined && icon.svg !== null);
+    console.log('🎯 Browse mode - selectedSet:', selectedSet, 'total icons:', icons.length, 'valid icons:', validIcons.length, 'library breakdown:');
+    
+    // Debug: Show library breakdown
+    const libraryBreakdown = validIcons.reduce((acc, icon) => {
+      const library = icon.id.split('-')[0]; // Extract library from icon ID
+      acc[library] = (acc[library] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    console.log('🎯 Library breakdown:', libraryBreakdown);
+    
+    return validIcons;
+  }, [searchQuery, searchResults, icons, selectedSet]);
 
 
   // Get available categories from current icon set
