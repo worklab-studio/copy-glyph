@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback, useState } from 'react';
 import { type IconItem } from '@/types/icon';
 
 interface SearchWorkerHook {
-  search: (query: string, options?: { maxResults?: number; fuzzy?: boolean; enableSynonyms?: boolean; enablePhonetic?: boolean; exactMatch?: boolean; libraryId?: string }) => Promise<{ results: IconItem[]; totalCount: number }>;
+  search: (query: string, options?: { maxResults?: number; fuzzy?: boolean; enableSynonyms?: boolean; enablePhonetic?: boolean; libraryId?: string }) => Promise<{ results: IconItem[]; totalCount: number }>;
   indexLibrary: (libraryId: string, icons: IconItem[]) => Promise<void>;
   clearIndex: (libraryId?: string) => Promise<void>;
   isReady: boolean;
@@ -120,7 +120,7 @@ export function useSearchWorker(): SearchWorkerHook {
   // Search function
   const search = useCallback(async (
     query: string, 
-    options: { maxResults?: number; fuzzy?: boolean; enableSynonyms?: boolean; enablePhonetic?: boolean; exactMatch?: boolean; libraryId?: string } = {}
+    options: { maxResults?: number; fuzzy?: boolean; enableSynonyms?: boolean; enablePhonetic?: boolean; libraryId?: string } = {}
   ): Promise<{ results: IconItem[]; totalCount: number }> => {
     if (!workerRef.current || !isReady || !query.trim()) {
       return { results: [], totalCount: 0 };

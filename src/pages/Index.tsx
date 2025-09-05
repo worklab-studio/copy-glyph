@@ -73,7 +73,6 @@ function IconGridPage() {
   const { 
     search, 
     indexLibrary, 
-    clearIndex,
     isReady: searchReady, 
     isSearching 
   } = useSearchWorker();
@@ -128,62 +127,27 @@ function IconGridPage() {
 
   // Load specific library when selection changes (after initial load)
   useEffect(() => {
-    console.log('🏗️ Library selection changed - selectedSet:', selectedSet, 'loaded:', loaded);
     if (loaded && selectedSet !== "all") {
-      console.log('🏗️ Loading specific library:', selectedSet);
-      // Clear search index before loading new library
-      clearIndex().then(() => {
-        loadLibraryProgressive(selectedSet);
-      }).catch(error => {
-        console.error('Failed to clear search index:', error);
-        loadLibraryProgressive(selectedSet); // Load anyway
-      });
+      loadLibraryProgressive(selectedSet);
     }
-  }, [selectedSet, loadLibraryProgressive, loaded, clearIndex]);
+  }, [selectedSet, loadLibraryProgressive, loaded]);
 
   // Load all libraries when switching back to "All Icons"
   useEffect(() => {
-    console.log('🏗️ All icons selection - selectedSet:', selectedSet, 'loaded:', loaded);
     if (loaded && selectedSet === "all") {
-      console.log('🏗️ Loading all libraries sectioned');
-      // Clear search index before loading all libraries
-      clearIndex().then(() => {
-        loadAllLibrariesSectioned();
-      }).catch(error => {
-        console.error('Failed to clear search index:', error);
-        loadAllLibrariesSectioned(); // Load anyway
-      });
+      loadAllLibrariesSectioned();
     }
-  }, [selectedSet, loadAllLibrariesSectioned, loaded, clearIndex]);
+  }, [selectedSet, loadAllLibrariesSectioned, loaded]);
 
-  // Index loaded icons for search - with proper library mapping
+  // Index loaded icons for search - with error handling
   useEffect(() => {
     if (loaded && icons.length > 0 && searchReady) {
-      console.log('🔍 Indexing icons for search - selectedSet:', selectedSet, 'icons count:', icons.length);
-      
-      if (selectedSet === "all") {
-        // When "all" is selected, index by sections to maintain library separation
-        if (Array.isArray(sections) && sections.length > 0) {
-          console.log('🔍 Indexing sectioned libraries:', sections.map(s => s.libraryId));
-          Promise.all(
-            sections.map(section => 
-              indexLibrary(section.libraryId, section.icons).catch(error => {
-                console.error(`Failed to index library ${section.libraryId}:`, error);
-              })
-            )
-          ).catch(error => {
-            console.error('Failed to index some libraries for search:', error);
-          });
-        }
-      } else {
-        // Index specific library
-        console.log('🔍 Indexing specific library:', selectedSet);
-        indexLibrary(selectedSet, icons).catch(error => {
-          console.error('Failed to index icons for search:', error);
-        });
-      }
+      indexLibrary(selectedSet, icons).catch(error => {
+        console.error('Failed to index icons for search:', error);
+        // Search will fall back to client-side search automatically
+      });
     }
-  }, [loaded, icons, sections, searchReady, selectedSet, indexLibrary]);
+  }, [loaded, icons, searchReady, selectedSet, indexLibrary]);
 
   // Get the selected icon object
   const selectedIcon = useMemo(() => {
@@ -201,65 +165,44 @@ function IconGridPage() {
 
     const performSearch = async () => {
       try {
-        // Try worker search with exact match options
+        // Try worker search with comprehensive options including library filter
         if (searchReady && loaded) {
           const searchResult = await search(searchQuery, {
             maxResults: 10000, // Increase limit to show more results
-            fuzzy: false,
-            enableSynonyms: false,
-            enablePhonetic: false,
-            exactMatch: false,
-            libraryId: selectedSet === "all" ? undefined : selectedSet // Only filter when specific library selected
-          });
-          console.log('🔍 Search result:', { 
-            query: searchQuery, 
-            libraryId: selectedSet === "all" ? 'all' : selectedSet,
-            resultCount: searchResult.results.length,
-            totalCount: searchResult.totalCount 
+            fuzzy: true,
+            enableSynonyms: true,
+            enablePhonetic: true,
+            libraryId: selectedSet // Filter by selected library
           });
           // Filter out any invalid results
           const validResults = searchResult.results.filter(icon => icon && icon.svg);
           setSearchResults(validResults);
           setSearchTotalCount(searchResult.totalCount);
         } else if (loaded) {
-          // Enhanced fallback search when worker isn't ready - exact match mode
+          // Enhanced fallback search when worker isn't ready
           const { fallbackSearch } = require('@/lib/fallback-search');
           const fallbackResult = fallbackSearch(icons, searchQuery, {
-            fuzzy: false,
+            fuzzy: true,
             maxResults: 10000, // Increase limit to show more results
             minScore: 0.1,
-            enableSynonyms: false,
-            enablePhonetic: false,
-            exactMatch: false,
-            libraryId: selectedSet === "all" ? undefined : selectedSet // Only filter when specific library selected
-          });
-          console.log('🔍 Fallback search result:', { 
-            query: searchQuery, 
-            libraryId: selectedSet === "all" ? 'all' : selectedSet,
-            resultCount: fallbackResult.results.length,
-            totalCount: fallbackResult.totalCount 
+            enableSynonyms: true,
+            enablePhonetic: true,
+            libraryId: selectedSet // Filter by selected library
           });
           setSearchResults(fallbackResult.results);
           setSearchTotalCount(fallbackResult.totalCount);
         }
       } catch (error) {
         console.warn('Worker search failed, using fallback:', error);
-        // Always fallback to client-side search on any error - exact match mode
+        // Always fallback to client-side search on any error
         const { fallbackSearch } = require('@/lib/fallback-search');
         const fallbackResult = fallbackSearch(icons, searchQuery, {
-          fuzzy: false,
+          fuzzy: true,
           maxResults: 10000, // Increase limit to show more results
           minScore: 0.1,
-          enableSynonyms: false,
-          enablePhonetic: false,
-          exactMatch: false,
-          libraryId: selectedSet === "all" ? undefined : selectedSet // Only filter when specific library selected
-        });
-        console.log('🔍 Error fallback search result:', { 
-          query: searchQuery, 
-          libraryId: selectedSet === "all" ? 'all' : selectedSet,
-          resultCount: fallbackResult.results.length,
-          totalCount: fallbackResult.totalCount 
+          enableSynonyms: true,
+          enablePhonetic: true,
+          libraryId: selectedSet // Filter by selected library
         });
         setSearchResults(fallbackResult.results);
         setSearchTotalCount(fallbackResult.totalCount);
@@ -273,24 +216,11 @@ function IconGridPage() {
   const currentIcons = useMemo(() => {
     if (searchQuery.trim()) {
       // Filter search results to only include icons with valid svg data
-      const validSearchResults = searchResults.filter(icon => icon.svg !== undefined && icon.svg !== null);
-      console.log('🎯 Search mode - selectedSet:', selectedSet, 'searchResults count:', searchResults.length, 'valid results:', validSearchResults.length);
-      return validSearchResults;
+      return searchResults.filter(icon => icon.svg !== undefined && icon.svg !== null);
     }
     // Filter out icons that don't have valid svg data
-    const validIcons = icons.filter(icon => icon.svg !== undefined && icon.svg !== null);
-    console.log('🎯 Browse mode - selectedSet:', selectedSet, 'total icons:', icons.length, 'valid icons:', validIcons.length, 'library breakdown:');
-    
-    // Debug: Show library breakdown
-    const libraryBreakdown = validIcons.reduce((acc, icon) => {
-      const library = icon.id.split('-')[0]; // Extract library from icon ID
-      acc[library] = (acc[library] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    console.log('🎯 Library breakdown:', libraryBreakdown);
-    
-    return validIcons;
-  }, [searchQuery, searchResults, icons, selectedSet]);
+    return icons.filter(icon => icon.svg !== undefined && icon.svg !== null);
+  }, [searchQuery, searchResults, icons]);
 
 
   // Get available categories from current icon set
