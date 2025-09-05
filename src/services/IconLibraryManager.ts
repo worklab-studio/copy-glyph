@@ -49,6 +49,7 @@ class IconLibraryManager {
     { id: 'teeny', name: 'Teeny Icons', count: 2000, style: 'outline' },
     { id: 'radix', name: 'Radix Icons', count: 300, style: 'filled' },
     { id: 'animated', name: 'Animated', count: 31, style: 'animated' },
+    { id: 'react-useanimations', name: 'React UseAnimations', count: 38, style: 'animated' },
   ];
 
   // Preload popular libraries in background
@@ -164,6 +165,10 @@ class IconLibraryManager {
         case 'animated':
           const animatedModule = await import('@/data/animated-icons');
           return animatedModule.animatedIcons;
+        
+        case 'react-useanimations':
+          const reactUseAnimationsModule = await import('@/data/react-useanimations-icons');
+          return reactUseAnimationsModule.reactUseAnimationsIcons;
         
         default:
           throw new Error(`Unknown library: ${libraryId}`);
