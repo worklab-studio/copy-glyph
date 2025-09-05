@@ -6,6 +6,7 @@ import { toast } from "@/hooks/use-toast";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { supportsStrokeWidth } from "@/lib/icon-utils";
+import { HapticsManager } from "@/lib/haptics";
 
 interface MobileIconActionsProps {
   isOpen: boolean;
@@ -68,6 +69,9 @@ export function MobileIconActions({
   const handleDownloadSVG = async () => {
     if (!selectedIcon) return;
     
+    // Trigger haptic feedback
+    await HapticsManager.medium();
+    
     try {
       const customizedSVG = getCustomizedSVG();
       const blob = new Blob([customizedSVG], { type: 'image/svg+xml' });
@@ -83,6 +87,8 @@ export function MobileIconActions({
         description: `${selectedIcon.name}.svg downloaded successfully!`,
         duration: 2000
       });
+      // Trigger success haptic feedback
+      await HapticsManager.notification('success');
       onClose();
     } catch (error) {
       toast({
@@ -90,11 +96,16 @@ export function MobileIconActions({
         variant: "destructive",
         duration: 2000
       });
+      // Trigger error haptic feedback
+      await HapticsManager.notification('error');
     }
   };
 
   const handleDownloadPNG = async () => {
     if (!selectedIcon) return;
+    
+    // Trigger haptic feedback
+    await HapticsManager.medium();
     
     try {
       const customizedSVG = getCustomizedSVG();
@@ -109,11 +120,11 @@ export function MobileIconActions({
       const svgBlob = new Blob([customizedSVG], { type: 'image/svg+xml;charset=utf-8' });
       const url = URL.createObjectURL(svgBlob);
       
-      img.onload = () => {
+      img.onload = async () => {
         ctx.clearRect(0, 0, 500, 500);
         ctx.drawImage(img, 0, 0, 500, 500);
         
-        canvas.toBlob((blob) => {
+        canvas.toBlob(async (blob) => {
           if (!blob) return;
           
           const downloadUrl = URL.createObjectURL(blob);
@@ -130,6 +141,8 @@ export function MobileIconActions({
             description: `${selectedIcon.name}.png downloaded successfully!`,
             duration: 2000
           });
+          // Trigger success haptic feedback
+          await HapticsManager.notification('success');
           onClose();
         }, 'image/png');
       };
@@ -141,11 +154,16 @@ export function MobileIconActions({
         variant: "destructive",
         duration: 2000
       });
+      // Trigger error haptic feedback
+      await HapticsManager.notification('error');
     }
   };
 
   const handleCopySVG = async () => {
     if (!selectedIcon) return;
+    
+    // Trigger haptic feedback
+    await HapticsManager.light();
     
     try {
       const customizedSVG = getCustomizedSVG();
@@ -154,6 +172,8 @@ export function MobileIconActions({
         description: "SVG copied to clipboard!",
         duration: 2000
       });
+      // Trigger success haptic feedback
+      await HapticsManager.notification('success');
       onClose();
     } catch (error) {
       toast({
@@ -161,11 +181,16 @@ export function MobileIconActions({
         variant: "destructive",
         duration: 2000
       });
+      // Trigger error haptic feedback
+      await HapticsManager.notification('error');
     }
   };
 
   const handleCopyXML = async () => {
     if (!selectedIcon) return;
+    
+    // Trigger haptic feedback
+    await HapticsManager.light();
     
     try {
       const customizedSVG = getCustomizedSVG();
@@ -174,6 +199,8 @@ export function MobileIconActions({
         description: "SVG XML copied to clipboard!",
         duration: 2000
       });
+      // Trigger success haptic feedback
+      await HapticsManager.notification('success');
       onClose();
     } catch (error) {
       toast({
@@ -181,6 +208,8 @@ export function MobileIconActions({
         variant: "destructive",
         duration: 2000
       });
+      // Trigger error haptic feedback
+      await HapticsManager.notification('error');
     }
   };
 

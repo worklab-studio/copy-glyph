@@ -24,6 +24,7 @@ import { MobileHeader } from "@/components/mobile/MobileHeader";
 import { MobileLibraryDrawer } from "@/components/mobile/MobileLibraryDrawer";
 import { MobileCustomizeSheet } from "@/components/mobile/MobileCustomizeSheet";
 import { MobileIconActions } from "@/components/mobile/MobileIconActions";
+import { HapticsManager } from "@/lib/haptics";
 
 function IconGridPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -312,6 +313,8 @@ function IconGridPage() {
   };
 
   const handleMobileSetChange = (setId: string) => {
+    // Trigger selection haptic feedback when changing library
+    HapticsManager.selection();
     setSelectedSet(setId);
     setShowLibraryDrawer(false);
   };

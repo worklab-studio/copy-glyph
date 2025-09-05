@@ -9,6 +9,7 @@ import { useIconCustomization } from "@/contexts/IconCustomizationContext";
 import { useTheme } from "next-themes";
 import { renderToStaticMarkup } from "react-dom/server";
 import { supportsStrokeWidth } from "@/lib/icon-utils";
+import { HapticsManager } from "@/lib/haptics";
 
 console.log('IconCell module loading...', { memo, React });
 
@@ -66,9 +67,12 @@ export function IconCell({
     } as React.CSSProperties;
   }, [customization.color, theme]);
 
-  const handleClick = useCallback((e: React.MouseEvent) => {
+  const handleClick = useCallback(async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Trigger haptic feedback on mobile
+    await HapticsManager.light();
     
     onIconClick?.(icon);
   }, [icon, onIconClick]);
@@ -76,6 +80,9 @@ export function IconCell({
   const handleDoubleClick = useCallback(async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Trigger medium haptic feedback for copy action
+    await HapticsManager.medium();
     
     // Hide tooltip immediately when double-clicking
     setShowTooltip(false);
@@ -159,10 +166,15 @@ export function IconCell({
       setShowCopied(true);
       onCopy?.(icon);
       
+      // Trigger success haptic feedback after successful copy
+      await HapticsManager.notification('success');
+      
       // Auto-hide tooltip after 1.2s
       setTimeout(() => setShowCopied(false), 1200);
     } catch (error) {
       console.error('Copy failed:', error);
+      // Trigger error haptic feedback on copy failure
+      await HapticsManager.notification('error');
     }
   }, [icon, onCopy, customization]);
 
