@@ -88,6 +88,15 @@ function escapeRegex(string: string): string {
 }
 
 // Enhanced candidate collection with exact match support
+// Helper function for word boundary matching
+function matchesWholeWord(text: string, query: string): boolean {
+  // Escape special regex characters in the query
+  const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Create regex with word boundaries - matches whole words only
+  const regex = new RegExp(`\\b${escapedQuery}\\b`, 'i');
+  return regex.test(text);
+}
+
 function collectCandidates(query: string, options: SearchOptions): Set<string> {
   const { exactMatch } = options;
   const candidates = new Set<string>();
@@ -128,25 +137,25 @@ function collectCandidates(query: string, options: SearchOptions): Set<string> {
       }
       
     } else {
-      // NON-EXACT: Use original substring matching
+      // NON-EXACT: Use word boundary matching instead of substring matching
       
-      // Name index with substring matching
+      // Name index with word boundary matching
       for (const [indexedName, iconIds] of library.nameIndex.entries()) {
-        if (indexedName.includes(normalizedQuery)) {
+        if (matchesWholeWord(indexedName, normalizedQuery)) {
           iconIds.forEach(id => candidates.add(id));
         }
       }
       
-      // Tag index with substring matching
+      // Tag index with word boundary matching
       for (const [tag, iconIds] of library.tagIndex.entries()) {
-        if (tag.includes(normalizedQuery)) {
+        if (matchesWholeWord(tag, normalizedQuery)) {
           iconIds.forEach(id => candidates.add(id));
         }
       }
       
-      // Category index with substring matching
+      // Category index with word boundary matching
       for (const [category, iconIds] of library.categoryIndex.entries()) {
-        if (category.includes(normalizedQuery)) {
+        if (matchesWholeWord(category, normalizedQuery)) {
           iconIds.forEach(id => candidates.add(id));
         }
       }
