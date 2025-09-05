@@ -79,22 +79,23 @@ function IconGridPage() {
 
   // Control loading animation visibility
   useEffect(() => {
-    // Check if we should skip loading entirely
-    if (shouldSkipLoading && hasCachedData && iconLibraryManager.hasPriorityLibraryCache()) {
+    // Skip loading entirely for returning users with cache
+    if (shouldSkipLoading) {
+      console.log('Skipping loading animation for returning user with cache');
       setShowLoadingAnimation(false);
       setMinDurationComplete(true);
       return;
     }
 
     // Hide loading only when both conditions are met:
-    // 1. Minimum duration has passed
+    // 1. Minimum duration has passed  
     // 2. Tabler icons are loaded (priority library)
     if (minDurationComplete && loaded && icons.length > 0) {
       setShowLoadingAnimation(false);
       // Mark that user has seen the loading animation
       markLoadingSeen();
     }
-  }, [minDurationComplete, loaded, icons.length, shouldSkipLoading, hasCachedData, markLoadingSeen]);
+  }, [minDurationComplete, loaded, icons.length, shouldSkipLoading, markLoadingSeen]);
 
   // Fallback timeout removed - just keep loading until ready
 
@@ -103,7 +104,8 @@ function IconGridPage() {
     const loadIcons = async () => {
       try {
         // If returning user with cache, load immediately without animation
-        if (shouldSkipLoading && iconLibraryManager.hasPriorityLibraryCache()) {
+        if (shouldSkipLoading) {
+          console.log('Fast loading for returning user');
           await loadLibrary(priorityLibrary);
           loadAllLibrariesSectioned();
           return;

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { iconLibraryManager } from '@/services/IconLibraryManager';
 
 const STORAGE_KEY = 'iconstack_user_visits';
 const CACHE_CHECK_KEY = 'iconstack_cache_status';
@@ -32,13 +33,22 @@ export function useVisitedUser() {
         const isReturning = visitData.visitCount > 0;
         setIsReturningUser(isReturning);
 
-        // Check if we have cached icon data
-        const hasCacheData = checkForCachedIcons();
+        // Check if we have cached icon data using IconLibraryManager
+        const hasCacheData = iconLibraryManager.hasPriorityLibraryCache();
         setHasCachedData(hasCacheData);
 
         // Determine if we should skip loading animation
         const shouldSkip = isReturning && hasCacheData && visitData.hasSeenLoading;
         setShouldSkipLoading(shouldSkip);
+
+        // Debug logging to understand what's happening
+        console.log('Loading Decision:', {
+          isReturning,
+          hasCacheData,
+          hasSeenLoading: visitData.hasSeenLoading,
+          shouldSkip,
+          visitCount: visitData.visitCount
+        });
 
         // Update visit count and last visit
         const updatedVisitData: UserVisitData = {
@@ -72,20 +82,7 @@ export function useVisitedUser() {
     }
   };
 
-  const checkForCachedIcons = (): boolean => {
-    try {
-      // Check if priority library (tabler) is cached and not expired
-      const cachedTabler = localStorage.getItem('icon-library-tabler');
-      if (!cachedTabler) return false;
-
-      const parsed = JSON.parse(cachedTabler);
-      const isExpired = Date.now() - parsed.timestamp > (24 * 60 * 60 * 1000); // 24 hours
-      
-      return !isExpired && parsed.icons && parsed.icons.length > 0;
-    } catch (error) {
-      return false;
-    }
-  };
+  // Removed - now using IconLibraryManager.hasPriorityLibraryCache() directly
 
   const clearVisitData = () => {
     try {
