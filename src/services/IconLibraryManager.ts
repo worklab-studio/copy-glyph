@@ -79,7 +79,7 @@ class IconLibraryManager {
         
         case 'atlas':
           const atlasModule = await import('@/data/atlas-icons');
-          return await atlasModule.getAtlasIcons();
+          return atlasModule.atlasIcons;
         
         case 'lucide':
           const lucideModule = await import('@/data/lucide-icons');
