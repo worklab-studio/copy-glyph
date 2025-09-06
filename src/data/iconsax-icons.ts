@@ -89,37 +89,48 @@ function formatDisplayName(iconName: string): string {
     .trim();
 }
 
-// Enhanced SVG validation with better error logging
 function isValidSvg(svgContent: string): boolean {
   if (!svgContent || typeof svgContent !== 'string') {
     return false;
   }
-  
-  // Basic SVG structure check
-  if (!svgContent.includes('<svg') || !svgContent.includes('</svg>')) {
+
+  const trimmed = svgContent.trim();
+  if (!trimmed.startsWith('<svg') || !trimmed.includes('</svg>')) {
     return false;
   }
-  
-  // Filter out corrupted Mac OS X metadata entries and other obvious corruption
-  if (svgContent.includes('Mac OS X') || 
-      svgContent.includes('__MACOSX') || 
-      svgContent.includes('.DS_Store') ||
-      svgContent.includes('com.apple.quarantine') ||
-      svgContent.includes('ATTR')) {
+
+  // Check for minimum valid SVG length
+  if (trimmed.length < 50) {
     return false;
   }
-  
-  // Minimal length check (but more permissive)
-  if (svgContent.length < 20) {
+
+  // Check for obvious corruption indicators
+  if (trimmed.includes('undefined') || 
+      trimmed.includes('null') || 
+      trimmed.includes('[object Object]') ||
+      trimmed.includes('Mac OS X') ||
+      trimmed.includes('__MACOSX') ||
+      trimmed.includes('ATTR') ||
+      trimmed.includes('com.apple.quarantine') ||
+      trimmed.includes('.DS_Store')) {
     return false;
   }
-  
-  // Check for basic SVG attributes
-  if (!svgContent.includes('xmlns') && !svgContent.includes('viewBox') && !svgContent.includes('width')) {
+
+  // Basic SVG tag validation
+  try {
+    // Check for essential SVG elements
+    const hasPath = trimmed.includes('<path') || trimmed.includes('<g') || trimmed.includes('<circle') || 
+                   trimmed.includes('<rect') || trimmed.includes('<polygon') || trimmed.includes('<polyline') ||
+                   trimmed.includes('<ellipse') || trimmed.includes('<line');
+    
+    if (!hasPath) {
+      return false;
+    }
+
+    return true;
+  } catch {
     return false;
   }
-  
-  return true;
 }
 
 // Check if an SVG can respond to color changes

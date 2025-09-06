@@ -7,7 +7,12 @@ const path = require('path');
 
 // Read the current iconMap.ts
 const iconMapPath = path.join(__dirname, '..', 'iconMap.ts');
+
+// First, let's backup the original file
+const backupPath = path.join(__dirname, '..', 'iconMap.backup.ts');
 const content = fs.readFileSync(iconMapPath, 'utf8');
+fs.writeFileSync(backupPath, content, 'utf8');
+console.log('✅ Created backup at iconMap.backup.ts');
 
 // Extract the iconMap object using regex
 const mapMatch = content.match(/export const iconMap: Record<string, string> = \{([\s\S]*)\};/);

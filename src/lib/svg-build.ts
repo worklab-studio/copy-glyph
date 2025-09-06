@@ -210,6 +210,22 @@ export function buildCustomizedSvg(
     
     // Step 1: Get SVG content from icon (string or React component)
     if (typeof icon.svg === 'string') {
+      // Check for corrupted data first
+      if (icon.svg.includes('Mac OS X') || 
+          icon.svg.includes('__MACOSX') || 
+          icon.svg.includes('ATTR') || 
+          icon.svg.includes('com.apple.quarantine') ||
+          icon.svg.includes('.DS_Store')) {
+        console.error(`Corrupted icon data detected for ${icon.id}:`, icon.svg.substring(0, 100) + '...');
+        throw new Error('Corrupted Mac OS X metadata found in icon data');
+      }
+
+      // Check minimum length for valid SVG
+      if (icon.svg.length < 50) {
+        console.error(`Icon data too short for ${icon.id}:`, icon.svg);
+        throw new Error('Icon data too short to be valid SVG');
+      }
+      
       // Handle string SVGs with enhanced validation and processing
       svgContent = validateSvgStructure(icon.svg);
       
@@ -291,7 +307,6 @@ export function buildCustomizedSvg(
       throw new Error(`Generated SVG is invalid for icon ${icon.id}`);
     }
     
-    console.log(`Successfully built customized SVG for ${icon.id}`);
     return normalizedSvg;
     
   } catch (error) {

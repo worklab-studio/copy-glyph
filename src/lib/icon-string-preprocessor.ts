@@ -91,6 +91,28 @@ export async function preprocessIcon(icon: IconItem): Promise<IconItem> {
   // If it's already a string, validate and normalize it
   if (typeof icon.svg === 'string') {
     try {
+      // Check for corrupted data first (Mac OS X metadata)
+      if (icon.svg.includes('Mac OS X') || 
+          icon.svg.includes('__MACOSX') || 
+          icon.svg.includes('ATTR') || 
+          icon.svg.includes('com.apple.quarantine') ||
+          icon.svg.includes('.DS_Store')) {
+        console.warn(`Corrupted icon data detected for ${icon.id}, using fallback`);
+        return {
+          ...icon,
+          svg: FALLBACK_SVG
+        };
+      }
+
+      // Check minimum length
+      if (icon.svg.length < 50) {
+        console.warn(`Icon data too short for ${icon.id}, using fallback`);
+        return {
+          ...icon,
+          svg: FALLBACK_SVG
+        };
+      }
+      
       // Validate that it's a proper SVG
       if (icon.svg.trim().startsWith('<svg') && icon.svg.trim().endsWith('</svg>')) {
         return {
