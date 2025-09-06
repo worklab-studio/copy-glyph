@@ -155,24 +155,8 @@ function generateTags(iconName: string, category: string): string[] {
   return [...new Set(tags)]; // Remove duplicates
 }
 
-// Helper function to ensure SVG uses currentColor for theming
-function ensureCurrentColor(svg: string): string {
-  // First, replace any existing color attributes
-  let processedSvg = svg
-    .replace(/fill="(?!none)[^"]*"/g, 'fill="currentColor"')
-    .replace(/stroke="(?!none)[^"]*"/g, 'stroke="currentColor"');
-    
-  // For SVGs without explicit fill/stroke attributes, add fill="currentColor" to path elements
-  // This handles Octicons and other SVGs that rely on default fill behavior
-  if (!processedSvg.includes('stroke=') && !processedSvg.includes('fill=')) {
-    // Add fill="currentColor" to all path elements that don't already have fill specified
-    processedSvg = processedSvg.replace(/<path(?![^>]*fill=)([^>]*)>/g, '<path$1 fill="currentColor">');
-    // Also handle other shape elements that might need coloring
-    processedSvg = processedSvg.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*fill=)(?![^>]*stroke=)([^>]*)>/g, '<$1$2 fill="currentColor">');
-  }
-  
-  return processedSvg;
-}
+// REMOVED: ensureCurrentColor function to prevent double-processing
+// Color normalization is now handled by optimizeSvg() in svg-build.ts
 
 // Helper function to normalize icon names (remove size suffixes and clean up)
 function normalizeIconName(iconName: string): string {
@@ -246,12 +230,13 @@ export const octiconsIcons: IconItem[] = Array.from(processedIcons.entries()).ma
   const category = categorizeIcon(normalizedName);
   const tags = generateTags(normalizedName, category);
   const displayName = camelCaseToTitleCase(normalizedName);
-  const themedSvg = ensureCurrentColor(svg);
+  // REMOVED: ensureCurrentColor(svg) to prevent double-processing
+  // Color normalization is now handled by optimizeSvg() in svg-build.ts
 
   return {
     id: `octicons-${normalizedName}`,
     name: displayName,
-    svg: themedSvg,
+    svg: svg, // Use raw SVG, let svg-build.ts handle color normalization
     tags: tags,
     style: 'solid',
     category: category,

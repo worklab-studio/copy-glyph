@@ -36,8 +36,8 @@ function detectIconLibrary(iconId: string): string {
  */
 function getLibrarySpecificProps(library: string, color: string, strokeWidth: number) {
   const baseProps = {
-    'aria-hidden': true,
-    color: 'currentColor'
+    'aria-hidden': true
+    // Removed color: 'currentColor' to prevent conflicts
   };
 
   switch (library) {
@@ -49,18 +49,18 @@ function getLibrarySpecificProps(library: string, color: string, strokeWidth: nu
       };
     
     case 'phosphor':
-      // Phosphor from react-icons uses different props
+      // Phosphor from react-icons uses color prop directly
       return {
-        ...baseProps,
         size: 24,
+        color: color, // Pass actual color, not currentColor
         weight: 'regular' // Phosphor-specific weight prop
       };
     
     case 'boxicons':
-      // Boxicons from react-icons has minimal props
+      // Boxicons from react-icons uses color prop directly
       return {
-        ...baseProps,
-        size: 24
+        size: 24,
+        color: color // Pass actual color, not currentColor
       };
     
     case 'bootstrap':
