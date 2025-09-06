@@ -248,12 +248,15 @@ export function buildCustomizedSvg(
     
     // Step 1: Get SVG content from icon (string or React component)
     if (typeof icon.svg === 'string') {
-      // Check for corrupted data first
+    // Check for corrupted data first (enhanced detection)
       if (icon.svg.includes('Mac OS X') || 
           icon.svg.includes('__MACOSX') || 
           icon.svg.includes('ATTR') || 
           icon.svg.includes('com.apple.quarantine') ||
-          icon.svg.includes('.DS_Store')) {
+          icon.svg.includes('.DS_Store') ||
+          icon.svg.includes('com.apple.') ||
+          icon.svg.includes('quarantine') ||
+          icon.svg.includes('xattr')) {
         console.error(`Corrupted icon data detected for ${icon.id}:`, icon.svg.substring(0, 100) + '...');
         throw new Error('Corrupted Mac OS X metadata found in icon data');
       }
