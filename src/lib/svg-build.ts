@@ -43,8 +43,8 @@ function getLibrarySpecificProps(library: string, color: string, strokeWidth: nu
   switch (library) {
     case 'lucide':
       return {
-        ...baseProps,
         size: 24,
+        color: color,
         strokeWidth: strokeWidth
       };
     
