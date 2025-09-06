@@ -183,11 +183,28 @@ export const iconsaxIcons: IconItem[] = (() => {
       const style = parseIconStyle(iconName);
       const tags = generateTags(iconName, category);
       const displayName = formatDisplayName(iconName);
+      
+      // Fix viewBox dimensions - Iconsax icons should have 24x24 viewBox
+      let fixedSvgContent = svgContent;
+      
+      // Replace incorrect viewBox dimensions
+      if (fixedSvgContent.includes('viewBox="0 0 2000 2000"')) {
+        fixedSvgContent = fixedSvgContent.replace('viewBox="0 0 2000 2000"', 'viewBox="0 0 24 24"');
+      }
+      
+      // Ensure width and height are set to 24
+      if (!fixedSvgContent.includes('width=') || !fixedSvgContent.includes('height=')) {
+        fixedSvgContent = fixedSvgContent.replace('<svg', '<svg width="24" height="24"');
+      } else {
+        // Replace existing width/height with 24
+        fixedSvgContent = fixedSvgContent.replace(/width="[^"]*"/, 'width="24"');
+        fixedSvgContent = fixedSvgContent.replace(/height="[^"]*"/, 'height="24"');
+      }
 
       return {
         id: `iconsax-${iconName}`,
         name: displayName,
-        svg: svgContent,
+        svg: fixedSvgContent,
         tags,
         style,
         category
