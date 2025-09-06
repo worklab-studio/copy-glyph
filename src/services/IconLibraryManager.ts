@@ -83,11 +83,11 @@ class IconLibraryManager {
         
         case 'lucide':
           const lucideModule = await import('@/data/lucide-icons');
-          return lucideModule.lucideIcons;
+          return await lucideModule.getLucideIcons();
         
         case 'feather':
           const featherModule = await import('@/data/feather-icons');
-          return featherModule.featherIcons;
+          return await featherModule.getFeatherIcons();
         
         case 'solar':
           const solarModule = await import('@/data/solar-icons');
@@ -95,7 +95,7 @@ class IconLibraryManager {
         
         case 'phosphor':
           const phosphorModule = await import('@/data/phosphor-icons');
-          return phosphorModule.phosphorIcons;
+          return await phosphorModule.getPhosphorIcons();
         
         case 'tabler':
           const tablerModule = await import('@/data/tabler-icons');
@@ -111,7 +111,7 @@ class IconLibraryManager {
         
         case 'bootstrap':
           const bootstrapModule = await import('@/data/bootstrap-icons');
-          return bootstrapModule.bootstrapIcons;
+          return await bootstrapModule.getBootstrapIcons();
         
         case 'remix':
           const remixModule = await import('@/data/remix-icons');
@@ -119,7 +119,7 @@ class IconLibraryManager {
         
         case 'boxicons':
           const boxiconsModule = await import('@/data/boxicons');
-          return boxiconsModule.boxicons;
+          return await boxiconsModule.getBoxicons();
         
         case 'css-gg':
           const cssGgModule = await import('@/data/css-gg-icons');

@@ -1,6 +1,7 @@
 import * as PhosphorIcons from 'react-icons/pi';
 import { type IconItem } from '@/types/icon';
 import { sortIconsByStyleThenName } from '@/lib/icon-utils';
+import { preprocessIcons } from '@/lib/icon-string-preprocessor';
 
 // Get all Phosphor icons by filtering the exported names  
 const phosphorIconNames = Object.keys(PhosphorIcons).filter(name => name.startsWith('Pi'));
@@ -61,4 +62,15 @@ const rawPhosphorIcons: IconItem[] = phosphorIconNames.map(name => {
   };
 });
 
+// Initialize with React components, will be preprocessed to strings when loaded
+let processedPhosphorIcons: IconItem[] | null = null;
+
+export async function getPhosphorIcons(): Promise<IconItem[]> {
+  if (!processedPhosphorIcons) {
+    processedPhosphorIcons = await preprocessIcons(sortIconsByStyleThenName(rawPhosphorIcons));
+  }
+  return processedPhosphorIcons;
+}
+
+// For backwards compatibility and synchronous access
 export const phosphorIcons: IconItem[] = sortIconsByStyleThenName(rawPhosphorIcons);

@@ -35,6 +35,7 @@ const getCategoryFromName = (name: string): string => {
 };
 
 import { sortIconsByStyleThenName } from '@/lib/icon-utils';
+import { preprocessIcons } from '@/lib/icon-string-preprocessor';
 
 const rawBootstrapIcons: IconItem[] = bootstrapIconNames.map(name => {
   const IconComponent = BootstrapIcons[name as keyof typeof BootstrapIcons];
@@ -86,4 +87,15 @@ const rawBootstrapIcons: IconItem[] = bootstrapIconNames.map(name => {
   };
 });
 
+// Initialize with React components, will be preprocessed to strings when loaded
+let processedBootstrapIcons: IconItem[] | null = null;
+
+export async function getBootstrapIcons(): Promise<IconItem[]> {
+  if (!processedBootstrapIcons) {
+    processedBootstrapIcons = await preprocessIcons(sortIconsByStyleThenName(rawBootstrapIcons));
+  }
+  return processedBootstrapIcons;
+}
+
+// For backwards compatibility and synchronous access
 export const bootstrapIcons: IconItem[] = sortIconsByStyleThenName(rawBootstrapIcons);

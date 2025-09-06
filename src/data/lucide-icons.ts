@@ -1,6 +1,7 @@
 import { icons } from 'lucide-react';
 import { type IconItem } from '@/types/icon';
 import { sortIconsByStyleThenName } from '@/lib/icon-utils';
+import { preprocessIcons } from '@/lib/icon-string-preprocessor';
 
 // Category mapping for Lucide icons
 const getCategoryFromName = (name: string): string => {
@@ -55,4 +56,15 @@ const rawLucideIcons: IconItem[] = Object.entries(icons).map(([name, IconCompone
   };
 });
 
+// Initialize with React components, will be preprocessed to strings when loaded
+let processedLucideIcons: IconItem[] | null = null;
+
+export async function getLucideIcons(): Promise<IconItem[]> {
+  if (!processedLucideIcons) {
+    processedLucideIcons = await preprocessIcons(sortIconsByStyleThenName(rawLucideIcons));
+  }
+  return processedLucideIcons;
+}
+
+// For backwards compatibility and synchronous access
 export const lucideIcons: IconItem[] = sortIconsByStyleThenName(rawLucideIcons);

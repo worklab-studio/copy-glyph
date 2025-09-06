@@ -1,5 +1,7 @@
 import * as FeatherIcons from 'react-icons/fi';
 import { type IconItem } from '@/types/icon';
+import { sortIconsByStyleThenName } from '@/lib/icon-utils';
+import { preprocessIcons } from '@/lib/icon-string-preprocessor';
 
 // Get all Feather icons by filtering the exported names
 const featherIconNames = Object.keys(FeatherIcons).filter(name => name.startsWith('Fi'));
@@ -26,7 +28,7 @@ const getCategoryFromName = (name: string): string => {
   return 'general';
 };
 
-export const featherIcons: IconItem[] = featherIconNames.map(name => {
+const rawFeatherIcons: IconItem[] = featherIconNames.map(name => {
   const IconComponent = FeatherIcons[name as keyof typeof FeatherIcons];
   const displayName = name.slice(2); // Remove 'Fi' prefix
   const category = getCategoryFromName(name);
@@ -58,3 +60,16 @@ export const featherIcons: IconItem[] = featherIconNames.map(name => {
     tags: [...new Set(tags)] // Remove duplicates
   };
 });
+
+// Initialize with React components, will be preprocessed to strings when loaded
+let processedFeatherIcons: IconItem[] | null = null;
+
+export async function getFeatherIcons(): Promise<IconItem[]> {
+  if (!processedFeatherIcons) {
+    processedFeatherIcons = await preprocessIcons(sortIconsByStyleThenName(rawFeatherIcons));
+  }
+  return processedFeatherIcons;
+}
+
+// For backwards compatibility and synchronous access
+export const featherIcons: IconItem[] = sortIconsByStyleThenName(rawFeatherIcons);

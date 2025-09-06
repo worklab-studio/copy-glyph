@@ -228,7 +228,8 @@ export function buildCustomizedSvg(
         throw new Error('Invalid string SVG - missing <svg> tag');
       }
     } else {
-      // Handle React component icons with enhanced library-specific props
+      // Fallback for any remaining React components (shouldn't happen with preprocessing)
+      console.warn(`Icon ${icon.id} still has React component, preprocessing may have failed`);
       const IconComponent = icon.svg as React.ComponentType<any>;
       try {
         svgContent = renderReactComponent(IconComponent, library, color, strokeWidth);

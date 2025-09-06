@@ -1,6 +1,7 @@
 import { type IconItem } from "@/types/icon";
 import * as BiIcons from "react-icons/bi";
 import { sortIconsByStyleThenName } from '@/lib/icon-utils';
+import { preprocessIcons } from '@/lib/icon-string-preprocessor';
 
 // Get all Boxicons dynamically
 const boxiconsEntries = Object.entries(BiIcons).filter(([name]) => 
@@ -71,6 +72,17 @@ const rawBoxicons: IconItem[] = boxiconsEntries.map(([name, Component]) => {
   };
 });
 
+// Initialize with React components, will be preprocessed to strings when loaded
+let processedBoxicons: IconItem[] | null = null;
+
+export async function getBoxicons(): Promise<IconItem[]> {
+  if (!processedBoxicons) {
+    processedBoxicons = await preprocessIcons(sortIconsByStyleThenName(rawBoxicons));
+  }
+  return processedBoxicons;
+}
+
+// For backwards compatibility and synchronous access
 export const boxicons: IconItem[] = sortIconsByStyleThenName(rawBoxicons);
 
 export default boxicons;
