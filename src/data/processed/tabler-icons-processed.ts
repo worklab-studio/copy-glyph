@@ -25,7 +25,31 @@ export async function getProcessedTablerIcons(): Promise<IconItem[]> {
   };
 
   const cleanSvgContent = (svgString: string) => {
-    return svgString.replace(/<!--[\s\S]*?-->/g, '').trim();
+    // Use a more precise regex that only matches complete comment blocks
+    let cleaned = svgString.replace(/<!--[^>]*?-->/g, '');
+    
+    // Handle multi-line comments more carefully
+    cleaned = cleaned.replace(/<!--[\s\S]*?-->/g, (match) => {
+      return match.includes('-->') ? '' : match;
+    });
+    
+    // Validate and fix common SVG structure issues
+    cleaned = validateAndFixSvg(cleaned);
+    
+    return cleaned.trim();
+  };
+
+  const validateAndFixSvg = (svgString: string) => {
+    // Fix broken stroke-width attributes (common issue from comment removal)
+    svgString = svgString.replace(/stroke-\s+stroke-/g, 'stroke-');
+    
+    // Ensure proper attribute formatting
+    svgString = svgString.replace(/(\w+)="\s*(\w+)/g, '$1="$2');
+    
+    // Fix any orphaned attribute fragments
+    svgString = svgString.replace(/\s+\w+\s*=\s*"?\s*$/gm, '');
+    
+    return svgString;
   };
 
   // Process all icons

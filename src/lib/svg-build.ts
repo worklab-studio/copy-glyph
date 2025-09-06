@@ -172,8 +172,8 @@ export function buildCustomizedSvg(
     
     // Step 1: Get SVG content from icon (string or React component)
     if (typeof icon.svg === 'string') {
-      // Handle string SVGs directly
-      svgContent = icon.svg;
+      // Handle string SVGs with validation first (especially important for Tabler icons)
+      svgContent = validateSvgStructure(icon.svg);
       
       // Validate string SVG has basic structure
       if (!svgContent.includes('<svg')) {
@@ -237,10 +237,11 @@ export function buildCustomizedSvg(
     }
     
     // Step 7: Final validation
-    if (!normalizedSvg.includes('<svg') || !normalizedSvg.includes('</svg>')) {
-      throw new Error('Invalid SVG structure after processing');
+    if (!isValidSvg(normalizedSvg)) {
+      throw new Error(`Generated SVG is invalid for icon ${icon.id}`);
     }
     
+    console.log(`Successfully built customized SVG for ${icon.id}`);
     return normalizedSvg;
     
   } catch (error) {
@@ -251,6 +252,55 @@ export function buildCustomizedSvg(
       <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
       <path d="m9 12 2 2 4-4"/>
     </svg>`;
+  }
+}
+
+/**
+ * Validate and fix SVG structure, especially for Tabler icons
+ * that may have been damaged during comment removal
+ */
+function validateSvgStructure(svgString: string): string {
+  // Fix broken stroke-width attributes (common in Tabler icons after comment removal)
+  let fixed = svgString.replace(/stroke-\s+stroke-/g, 'stroke-');
+  
+  // Fix broken attributes that span lines
+  fixed = fixed.replace(/(\w+)="\s*(\w+)/g, '$1="$2');
+  
+  // Remove orphaned attribute fragments
+  fixed = fixed.replace(/\s+\w+\s*=\s*"?\s*$/gm, '');
+  
+  // Ensure proper SVG tag closure
+  if (fixed.includes('<svg') && !fixed.includes('</svg>')) {
+    fixed = fixed.replace(/<svg([^>]*)>/, '<svg$1>') + '</svg>';
+  }
+  
+  return fixed;
+}
+
+/**
+ * Basic SVG validation to catch malformed exports
+ */
+function isValidSvg(svgString: string): boolean {
+  try {
+    // Check for basic SVG structure
+    if (!svgString.includes('<svg') || !svgString.includes('</svg>')) {
+      return false;
+    }
+    
+    // Check for malformed attributes (common in Tabler icons)
+    if (svgString.includes('stroke-\n') || svgString.includes('stroke-  ')) {
+      return false;
+    }
+    
+    // Check for orphaned quotes
+    const quoteCount = (svgString.match(/"/g) || []).length;
+    if (quoteCount % 2 !== 0) {
+      return false;
+    }
+    
+    return true;
+  } catch {
+    return false;
   }
 }
 

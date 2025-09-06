@@ -29,7 +29,34 @@ async function getRuntimeProcessedIcons(): Promise<IconItem[]> {
 
   // Helper function to clean SVG content (remove HTML comments)
   function cleanSvgContent(svgString: string): string {
-    return svgString.replace(/<!--[\s\S]*?-->/g, '').trim();
+    // Use a more precise regex that only matches complete comment blocks
+    // This prevents accidentally removing parts of SVG attributes
+    let cleaned = svgString.replace(/<!--[^>]*?-->/g, '');
+    
+    // Handle multi-line comments more carefully
+    cleaned = cleaned.replace(/<!--[\s\S]*?-->/g, (match) => {
+      // Only remove if it's a complete comment block
+      return match.includes('-->') ? '' : match;
+    });
+    
+    // Validate and fix common SVG structure issues
+    cleaned = validateAndFixSvg(cleaned);
+    
+    return cleaned.trim();
+  }
+
+  // Helper function to validate and fix SVG structure
+  function validateAndFixSvg(svgString: string): string {
+    // Fix broken stroke-width attributes (common issue from comment removal)
+    svgString = svgString.replace(/stroke-\s+stroke-/g, 'stroke-');
+    
+    // Ensure proper attribute formatting
+    svgString = svgString.replace(/(\w+)="\s*(\w+)/g, '$1="$2');
+    
+    // Fix any orphaned attribute fragments
+    svgString = svgString.replace(/\s+\w+\s*=\s*"?\s*$/gm, '');
+    
+    return svgString;
   }
 
   // Process icons at runtime (fallback)
