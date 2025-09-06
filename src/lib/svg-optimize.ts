@@ -94,6 +94,18 @@ function ensureConsistentStructure(svgContent: string): string {
 }
 
 /**
+ * Ensure SVG has minimal paintable attributes for robust canvas rendering
+ */
+function ensurePaintableAttributes(svgContent: string): string {
+  // If SVG has no fill/stroke attributes, add minimal fill to ensure visibility
+  if (!svgContent.includes('fill=') && !svgContent.includes('stroke=')) {
+    // Add fill="currentColor" to the first path or shape element found
+    return svgContent.replace(/<(path|circle|ellipse|rect|polygon|polyline)([^>]*)>/i, '<$1$2 fill="currentColor">');
+  }
+  return svgContent;
+}
+
+/**
  * Main SVG optimization function
  * Normalizes SVG content to use currentColor and ensures consistent structure
  */
@@ -112,6 +124,9 @@ export function optimizeSvg(svgContent: string): string {
   
   // Step 3: Ensure consistent scaling structure
   result = ensureConsistentStructure(result);
+  
+  // Step 4: Ensure paintable attributes for canvas rendering
+  result = ensurePaintableAttributes(result);
   
   return result;
 }

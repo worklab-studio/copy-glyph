@@ -18,7 +18,7 @@ export function supportsStrokeWidth(icon: IconItem): boolean {
   // If no style is defined, check against known filled library prefixes
   if (!icon.style) {
     // Exception: BoxIcons and Ant icons don't have explicit style but are primarily filled
-    if (icon.id.startsWith('box-') || icon.id.startsWith('ant-')) {
+    if (icon.id.startsWith('boxicons-') || icon.id.startsWith('ant-')) {
       return false;
     }
     // Default: icons without style support stroke width (like Line icons, Radix icons)
@@ -66,7 +66,7 @@ export function supportsStrokeWidth(icon: IconItem): boolean {
  */
 export function isFilledIconLibrary(iconId: string): boolean {
   const filledLibraryPrefixes = [
-    'box-', // BoxIcons are primarily filled
+    'boxicons-', // BoxIcons are primarily filled
     'ant-', // Many Ant Design icons are filled
   ];
 

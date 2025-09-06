@@ -92,8 +92,14 @@ export function ControlPanel({
         return;
       }
       
-      canvas.width = 500;
-      canvas.height = 500;
+      // Use devicePixelRatio for high-DPI displays
+      const size = 500;
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = size * ratio;
+      canvas.height = size * ratio;
+      canvas.style.width = size + 'px';
+      canvas.style.height = size + 'px';
+      ctx.scale(ratio, ratio);
       
       const img = document.createElement('img');
       const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
@@ -113,8 +119,8 @@ export function ControlPanel({
           ctx.fillStyle = 'white';
           ctx.fillRect(0, 0, 500, 500);
           
-          // Draw the SVG image
-          ctx.drawImage(img, 0, 0, 500, 500);
+          // Draw the SVG image (use original size since we already scaled the context)
+          ctx.drawImage(img, 0, 0, size, size);
           
           // Convert to PNG blob
           canvas.toBlob((blob) => {

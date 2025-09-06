@@ -1,5 +1,5 @@
 import React from "react";
-import { renderToStaticMarkup } from "react-dom/server";
+import { createRoot } from "react-dom/client";
 import { type IconItem } from "@/types/icon";
 import { optimizeSvg } from "./svg-optimize";
 
@@ -115,15 +115,14 @@ function getLibrarySpecificProps(library: string, color: string, strokeWidth: nu
 }
 
 /**
- * Enhanced component rendering with comprehensive library support
+ * Enhanced component rendering with off-DOM rendering for better client-side reliability
  */
 function renderReactComponent(IconComponent: React.ComponentType<any>, library: string, color: string, strokeWidth: number): string {
   // Try specific props first based on library
   const primaryProps = getLibrarySpecificProps(library, color, strokeWidth);
   
   try {
-    const element = React.createElement(IconComponent, primaryProps);
-    const result = renderToStaticMarkup(element);
+    const result = renderComponentToSvg(IconComponent, primaryProps);
     if (result && result.includes('<svg')) {
       return result;
     }
@@ -156,8 +155,7 @@ function renderReactComponent(IconComponent: React.ComponentType<any>, library: 
 
   for (const props of fallbackPropSets) {
     try {
-      const element = React.createElement(IconComponent, props);
-      const result = renderToStaticMarkup(element);
+      const result = renderComponentToSvg(IconComponent, props);
       if (result && result.includes('<svg')) {
         console.debug(`Fallback succeeded for ${library} with:`, props);
         return result;
@@ -168,6 +166,33 @@ function renderReactComponent(IconComponent: React.ComponentType<any>, library: 
   }
   
   throw new Error(`Failed to render ${library} component with all prop combinations`);
+}
+
+/**
+ * Off-DOM rendering for React components - more reliable than renderToStaticMarkup on client
+ */
+function renderComponentToSvg(IconComponent: React.ComponentType<any>, props: any): string {
+  const container = document.createElement('div');
+  container.style.position = 'absolute';
+  container.style.left = '-9999px';
+  container.style.visibility = 'hidden';
+  document.body.appendChild(container);
+  
+  try {
+    const root = createRoot(container);
+    root.render(React.createElement(IconComponent, props));
+    
+    // Wait for render to complete
+    const svg = container.querySelector('svg');
+    const result = svg ? svg.outerHTML : null;
+    
+    root.unmount();
+    return result || '';
+  } finally {
+    if (container.parentNode) {
+      document.body.removeChild(container);
+    }
+  }
 }
 
 /**
@@ -249,6 +274,7 @@ export function buildCustomizedSvg(
     if (strokeWidth !== 2 && supportsStroke) {
       normalizedSvg = normalizedSvg
         .replace(/stroke-width="[^"]*"/g, `stroke-width="${strokeWidth}"`)
+        .replace(/strokeWidth="[^"]*"/g, `stroke-width="${strokeWidth}"`) // Handle camelCase from React components
         // Add stroke-width if missing but stroke exists
         .replace(/(<[^>]*stroke="[^"]*"[^>]*?)(?![^>]*stroke-width)([^>]*>)/g, 
           `$1 stroke-width="${strokeWidth}"$2`);
