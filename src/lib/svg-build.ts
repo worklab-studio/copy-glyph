@@ -134,10 +134,10 @@ function renderReactComponent(IconComponent: React.ComponentType<any>, library: 
   // Enhanced fallback prop sets with library-specific options
   const fallbackPropSets = [
     // Standard size + color combinations
-    { size: 24, color: 'currentColor', strokeWidth: strokeWidth },
-    { width: 24, height: 24, fill: 'currentColor', stroke: 'currentColor' },
-    { size: 24, color: 'currentColor' },
-    { width: 24, height: 24, color: 'currentColor' },
+    { size: 24, color: color, strokeWidth: strokeWidth },
+    { width: 24, height: 24, fill: color, stroke: color },
+    { size: 24, color: color },
+    { width: 24, height: 24, color: color },
     
     // react-icons specific props (Phosphor, Boxicons)
     { size: 24, weight: 'regular' }, // Phosphor specific

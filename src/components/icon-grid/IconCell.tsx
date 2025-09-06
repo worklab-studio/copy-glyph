@@ -114,7 +114,7 @@ export function IconCell({
     e.stopPropagation();
     
     try {
-      await copyIcon(icon);
+      await copyIcon(icon, customization.color, customization.strokeWidth);
       setShowCopied(true);
       onCopy?.(icon);
       
@@ -123,7 +123,7 @@ export function IconCell({
     } catch (error) {
       console.error('Copy failed:', error);
     }
-  }, [icon, onCopy]);
+  }, [icon, customization.color, customization.strokeWidth, onCopy]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
