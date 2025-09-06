@@ -187,11 +187,14 @@ export const iconsaxIcons: IconItem[] = (() => {
       // Fix viewBox and stroke issues - Iconsax icons should have 24x24 viewBox
       let fixedSvgContent = svgContent;
       
-      // Replace incorrect viewBox dimensions (handle different quote styles)
+      // Fix critical issues: viewBox, dimensions, and stroke attributes
       fixedSvgContent = fixedSvgContent.replace(/viewBox=["']0 0 2000 2000["']/g, 'viewBox="0 0 24 24"');
+      fixedSvgContent = fixedSvgContent.replace(/width=["']2000["']/g, 'width="24"');
+      fixedSvgContent = fixedSvgContent.replace(/height=["']2000["']/g, 'height="24"');
       
-      // Fix malformed stroke attributes (remove broken stroke- attributes)
-      fixedSvgContent = fixedSvgContent.replace(/stroke-\s+/g, 'stroke-width="1.5" ');
+      // Fix malformed stroke attributes (stroke- without proper completion)
+      fixedSvgContent = fixedSvgContent.replace(/stroke-"[^"]*"/g, 'stroke="currentColor"');
+      fixedSvgContent = fixedSvgContent.replace(/stroke-\s+/g, 'stroke="currentColor" ');
       
       // Ensure width and height are set to 24
       if (!fixedSvgContent.includes('width=')) {

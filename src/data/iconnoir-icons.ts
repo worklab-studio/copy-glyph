@@ -1,5 +1,5 @@
 import { IconItem } from '../types/icon';
-import { iconMap } from '../../IconNoir icons';
+import { iconMap } from '../../IconNoir icons.ts';
 import { preprocessIcons } from '../lib/icon-string-preprocessor';
 
 // IconNoir Icons - Complete collection from https://iconoir.com/

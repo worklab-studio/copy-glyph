@@ -1,5 +1,5 @@
 import { IconItem } from '../types/icon';
-import { iconMap } from '../../octicons icons';
+import { iconMap } from '../../octicons icons.ts';
 import { preprocessIcons } from '../lib/icon-string-preprocessor';
 
 // Octicons Icons - Complete collection from GitHub's design system

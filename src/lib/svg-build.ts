@@ -195,8 +195,46 @@ function renderComponentToSvg(IconComponent: React.ComponentType<any>, props: an
   }
 }
 
+// Enhanced SVG validation with corruption detection
+function isValidSvgEnhanced(svgString: string): boolean {
+  if (!svgString || typeof svgString !== 'string') return false;
+  
+  // Basic structure validation
+  if (!svgString.includes('<svg') || !svgString.includes('</svg>')) return false;
+  
+  // Minimum length check
+  if (svgString.length < 50) return false;
+  
+  // Mac OS X corruption check
+  if (svgString.includes('Mac OS X') || 
+      svgString.includes('ATTR') || 
+      svgString.includes('com.apple.quarantine')) return false;
+  
+  return true;
+}
+
+// Auto-correct common SVG issues
+function autoCorrectSvg(svgString: string): string {
+  let corrected = svgString;
+  
+  // Fix viewBox dimensions
+  corrected = corrected.replace(/viewBox="0 0 2000 2000"/g, 'viewBox="0 0 24 24"');
+  
+  // Fix width/height attributes
+  corrected = corrected.replace(/width="2000"/g, 'width="24"');
+  corrected = corrected.replace(/height="2000"/g, 'height="24"');
+  
+  // Fix malformed stroke attributes
+  corrected = corrected.replace(/stroke-"[^"]*"/g, 'stroke="currentColor"');
+  
+  // Normalize stroke colors
+  corrected = corrected.replace(/stroke="#[0-9A-Fa-f]{6}"/g, 'stroke="currentColor"');
+  
+  return corrected;
+}
+
 /**
- * Canonical SVG builder using the normalize-then-colorize approach
+ * Enhanced canonical SVG builder with auto-correction and validation
  * This creates consistent exports across all icon libraries
  */
 export function buildCustomizedSvg(
@@ -226,8 +264,23 @@ export function buildCustomizedSvg(
         throw new Error('Icon data too short to be valid SVG');
       }
       
+      // Enhanced validation and auto-correction
+      let rawSvg = icon.svg;
+      if (!isValidSvgEnhanced(rawSvg)) {
+        console.warn('Invalid SVG detected, attempting auto-correction for icon:', icon.id);
+        rawSvg = autoCorrectSvg(rawSvg);
+        
+        if (!isValidSvgEnhanced(rawSvg)) {
+          console.error('SVG could not be corrected, using fallback for icon:', icon.id);
+          throw new Error('SVG validation failed after auto-correction');
+        }
+      } else {
+        // Apply auto-corrections even for valid SVGs
+        rawSvg = autoCorrectSvg(rawSvg);
+      }
+      
       // Handle string SVGs with enhanced validation and processing
-      svgContent = validateSvgStructure(icon.svg);
+      svgContent = validateSvgStructure(rawSvg);
       
       // Special processing for Atlas icons (complex CSS classes)
       if (library === 'atlas') {
