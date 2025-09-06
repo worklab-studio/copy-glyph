@@ -44,6 +44,8 @@ const rawLucideIcons: IconItem[] = Object.entries(icons).map(([name, IconCompone
     ...(name.includes('Heart') || name.includes('Star') ? ['favorites', 'social'] : []),
     ...(name.includes('Lock') ? ['security', 'privacy'] : []),
     ...(name.includes('Calendar') || name.includes('Clock') ? ['time', 'schedule'] : []),
+    ...(name.includes('Pen') ? ['pen', 'edit', 'write', 'pencil'] : []),
+    ...(name.includes('Pencil') ? ['pen', 'edit', 'write', 'pencil'] : []),
   ];
 
   return {
