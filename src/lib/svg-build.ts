@@ -377,14 +377,16 @@ function processAtlasIconSvg(svgContent: string): string {
  * Process Octicons to prevent double-processing conflicts
  */
 function processOcticonsIconSvg(svgContent: string): string {
-  // Octicons are already processed to use currentColor, so avoid double-processing
-  // Just ensure proper structure and don't interfere with existing currentColor
-  let processed = svgContent;
-  
-  // Only add currentColor if no color attributes exist
-  if (!processed.includes('fill=') && !processed.includes('stroke=')) {
-    processed = processed.replace(/<path/g, '<path fill="currentColor"');
-    processed = processed.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*fill=)(?![^>]*stroke=)/g, '<$1 fill="currentColor"');
+  // Octicons need proper color normalization since they come as raw SVG strings
+  // Replace hardcoded colors with currentColor for theming
+  let processed = svgContent
+    .replace(/fill="(?!none|transparent|inherit|currentColor)[^"]*"/g, 'fill="currentColor"')
+    .replace(/stroke="(?!none|transparent|inherit|currentColor)[^"]*"/g, 'stroke="currentColor"');
+    
+  // For SVGs without explicit fill/stroke attributes, add fill="currentColor" to path elements
+  if (!processed.includes('stroke=') && !processed.includes('fill=')) {
+    processed = processed.replace(/<path(?![^>]*fill=)([^>]*)>/g, '<path$1 fill="currentColor">');
+    processed = processed.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*fill=)(?![^>]*stroke=)([^>]*)>/g, '<$1$2 fill="currentColor">');
   }
   
   return processed;
