@@ -19,6 +19,7 @@ function renderComponentToSvg(Component: React.ComponentType<any>, props: any): 
     container.style.position = 'absolute';
     container.style.left = '-9999px';
     container.style.top = '-9999px';
+    container.style.visibility = 'hidden';
     document.body.appendChild(container);
 
     try {
@@ -27,7 +28,7 @@ function renderComponentToSvg(Component: React.ComponentType<any>, props: any): 
       // Render the component
       root.render(React.createElement(Component, props));
       
-      // Wait for next tick to ensure rendering is complete
+      // Wait longer for Lucide icons to render properly
       setTimeout(() => {
         try {
           const svgElement = container.querySelector('svg');
@@ -37,9 +38,17 @@ function renderComponentToSvg(Component: React.ComponentType<any>, props: any): 
             svgElement.removeAttribute('class');
             svgElement.removeAttribute('className');
             
+            // Ensure proper size attributes
+            if (!svgElement.getAttribute('viewBox') && !svgElement.getAttribute('width')) {
+              svgElement.setAttribute('viewBox', '0 0 24 24');
+              svgElement.setAttribute('width', '24');
+              svgElement.setAttribute('height', '24');
+            }
+            
             const svgString = svgElement.outerHTML;
             resolve(svgString);
           } else {
+            console.warn('No SVG element found in rendered component');
             resolve(FALLBACK_SVG);
           }
         } catch (error) {
@@ -47,13 +56,21 @@ function renderComponentToSvg(Component: React.ComponentType<any>, props: any): 
           resolve(FALLBACK_SVG);
         } finally {
           // Clean up
-          root.unmount();
-          document.body.removeChild(container);
+          try {
+            root.unmount();
+            document.body.removeChild(container);
+          } catch (cleanupError) {
+            console.warn('Error during cleanup:', cleanupError);
+          }
         }
-      }, 10);
+      }, 50); // Increased timeout for better reliability
     } catch (error) {
       console.warn('Error rendering component:', error);
-      document.body.removeChild(container);
+      try {
+        document.body.removeChild(container);
+      } catch (cleanupError) {
+        console.warn('Error removing container:', cleanupError);
+      }
       resolve(FALLBACK_SVG);
     }
   });
@@ -70,7 +87,11 @@ function getLibraryProps(iconId: string): any {
   };
 
   if (iconId.startsWith('lucide-')) {
-    return { ...baseProps, strokeWidth: 2 };
+    return { 
+      size: 24, 
+      color: 'currentColor', 
+      strokeWidth: 2 
+    };
   }
   
   if (iconId.startsWith('phosphor-') || iconId.startsWith('feather-') || iconId.startsWith('boxicons-')) {
