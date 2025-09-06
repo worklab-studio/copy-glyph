@@ -49,7 +49,15 @@ function getLibrarySpecificProps(library: string, color: string, strokeWidth: nu
       };
     
     case 'phosphor':
+      // Phosphor from react-icons uses different props
+      return {
+        ...baseProps,
+        size: 24,
+        weight: 'regular' // Phosphor-specific weight prop
+      };
+    
     case 'boxicons':
+      // Boxicons from react-icons has minimal props
       return {
         ...baseProps,
         size: 24
@@ -123,13 +131,18 @@ function renderReactComponent(IconComponent: React.ComponentType<any>, library: 
     console.debug(`Primary props failed for ${library}:`, error);
   }
   
-  // Comprehensive fallback prop sets
+  // Enhanced fallback prop sets with library-specific options
   const fallbackPropSets = [
     // Standard size + color combinations
     { size: 24, color: 'currentColor', strokeWidth: strokeWidth },
     { width: 24, height: 24, fill: 'currentColor', stroke: 'currentColor' },
     { size: 24, color: 'currentColor' },
     { width: 24, height: 24, color: 'currentColor' },
+    
+    // react-icons specific props (Phosphor, Boxicons)
+    { size: 24, weight: 'regular' }, // Phosphor specific
+    { size: 24, type: 'regular' }, // Boxicons variants
+    { size: 24, variant: 'outline' }, // Generic variant prop
     
     // Library-specific known working combinations
     { size: 24, fill: 'currentColor' }, // Bootstrap, Remix
@@ -172,15 +185,25 @@ export function buildCustomizedSvg(
     
     // Step 1: Get SVG content from icon (string or React component)
     if (typeof icon.svg === 'string') {
-      // Handle string SVGs with validation first (especially important for Tabler icons)
+      // Handle string SVGs with enhanced validation and processing
       svgContent = validateSvgStructure(icon.svg);
+      
+      // Special processing for Atlas icons (complex CSS classes)
+      if (library === 'atlas') {
+        svgContent = processAtlasIconSvg(svgContent);
+      }
+      
+      // Special processing for Octicons (prevent double-processing)
+      if (library === 'octicons') {
+        svgContent = processOcticonsIconSvg(svgContent);
+      }
       
       // Validate string SVG has basic structure
       if (!svgContent.includes('<svg')) {
         throw new Error('Invalid string SVG - missing <svg> tag');
       }
     } else {
-      // Handle React component icons with library-specific props
+      // Handle React component icons with enhanced library-specific props
       const IconComponent = icon.svg as React.ComponentType<any>;
       try {
         svgContent = renderReactComponent(IconComponent, library, color, strokeWidth);
@@ -278,7 +301,7 @@ function validateSvgStructure(svgString: string): string {
 }
 
 /**
- * Basic SVG validation to catch malformed exports
+ * Enhanced SVG validation to catch malformed exports
  */
 function isValidSvg(svgString: string): boolean {
   try {
@@ -287,8 +310,8 @@ function isValidSvg(svgString: string): boolean {
       return false;
     }
     
-    // Check for malformed attributes (common in Tabler icons)
-    if (svgString.includes('stroke-\n') || svgString.includes('stroke-  ')) {
+    // Check for malformed attributes (common in processed icons)
+    if (svgString.includes('stroke-\n') || svgString.includes('stroke-  ') || svgString.includes('fill-\n')) {
       return false;
     }
     
@@ -298,10 +321,73 @@ function isValidSvg(svgString: string): boolean {
       return false;
     }
     
+    // Check for broken CSS (Atlas icons)
+    if (svgString.includes('<style>') && !svgString.includes('</style>')) {
+      return false;
+    }
+    
+    // Check for unclosed tags
+    const openTags = (svgString.match(/<[^\/][^>]*>/g) || []).length;
+    const closeTags = (svgString.match(/<\/[^>]*>/g) || []).length;
+    const selfCloseTags = (svgString.match(/<[^>]*\/>/g) || []).length;
+    
+    // Basic tag balance check
+    if (openTags - selfCloseTags !== closeTags) {
+      console.warn('Potential tag imbalance detected');
+    }
+    
     return true;
   } catch {
     return false;
   }
+}
+
+/**
+ * Process Atlas icons with complex CSS styling
+ */
+function processAtlasIconSvg(svgContent: string): string {
+  // Atlas icons often have complex CSS classes that need color replacement
+  let processed = svgContent;
+  
+  // Handle CSS styles within <style> tags
+  processed = processed.replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, (match, cssContent) => {
+    // Replace specific color values in CSS with currentColor
+    const updatedCss = cssContent
+      .replace(/fill:\s*#[a-fA-F0-9]{3,6}/g, 'fill: currentColor')
+      .replace(/stroke:\s*#[a-fA-F0-9]{3,6}/g, 'stroke: currentColor')
+      .replace(/color:\s*#[a-fA-F0-9]{3,6}/g, 'color: currentColor');
+    
+    return `<style>${updatedCss}</style>`;
+  });
+  
+  // Handle direct CSS properties in elements
+  processed = processed.replace(/style="([^"]*)"/gi, (match, styleContent) => {
+    const updatedStyle = styleContent
+      .replace(/fill:\s*#[a-fA-F0-9]{3,6}/g, 'fill: currentColor')
+      .replace(/stroke:\s*#[a-fA-F0-9]{3,6}/g, 'stroke: currentColor')
+      .replace(/color:\s*#[a-fA-F0-9]{3,6}/g, 'color: currentColor');
+    
+    return `style="${updatedStyle}"`;
+  });
+  
+  return processed;
+}
+
+/**
+ * Process Octicons to prevent double-processing conflicts
+ */
+function processOcticonsIconSvg(svgContent: string): string {
+  // Octicons are already processed to use currentColor, so avoid double-processing
+  // Just ensure proper structure and don't interfere with existing currentColor
+  let processed = svgContent;
+  
+  // Only add currentColor if no color attributes exist
+  if (!processed.includes('fill=') && !processed.includes('stroke=')) {
+    processed = processed.replace(/<path/g, '<path fill="currentColor"');
+    processed = processed.replace(/<(circle|ellipse|rect|polygon|polyline)(?![^>]*fill=)(?![^>]*stroke=)/g, '<$1 fill="currentColor"');
+  }
+  
+  return processed;
 }
 
 /**
