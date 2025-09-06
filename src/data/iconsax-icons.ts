@@ -59,15 +59,19 @@ function generateTags(iconName: string, category: string): string[] {
   // Add category as tag
   tags.push(category.toLowerCase().replace(/\s+/g, '-'));
   
-  // Add common synonyms
-  if (iconName.includes('archive')) tags.push('folder', 'storage', 'organize');
-  if (iconName.includes('arrow')) tags.push('direction', 'navigation', 'pointer');
-  if (iconName.includes('user')) tags.push('profile', 'account', 'person');
-  if (iconName.includes('home')) tags.push('house', 'main', 'start');
-  if (iconName.includes('heart')) tags.push('love', 'like', 'favorite');
-  if (iconName.includes('star')) tags.push('rating', 'favorite', 'bookmark');
-  if (iconName.includes('message')) tags.push('chat', 'communication', 'talk');
-  if (iconName.includes('setting')) tags.push('config', 'gear', 'options');
+  // Add common synonyms based on icon name
+  const lowerName = iconName.toLowerCase();
+  if (lowerName.includes('archive')) tags.push('folder', 'storage', 'organize');
+  if (lowerName.includes('arrow')) tags.push('direction', 'navigation', 'pointer');
+  if (lowerName.includes('user')) tags.push('profile', 'account', 'person');
+  if (lowerName.includes('home')) tags.push('house', 'main', 'start');
+  if (lowerName.includes('heart')) tags.push('love', 'like', 'favorite');
+  if (lowerName.includes('star')) tags.push('rating', 'favorite', 'bookmark');
+  if (lowerName.includes('message')) tags.push('chat', 'communication', 'talk');
+  if (lowerName.includes('setting')) tags.push('config', 'gear', 'options');
+  if (lowerName.includes('calendar')) tags.push('date', 'schedule', 'time');
+  if (lowerName.includes('camera')) tags.push('photo', 'picture', 'media');
+  if (lowerName.includes('lock')) tags.push('security', 'protect', 'private');
   
   return [...new Set(tags)]; // Remove duplicates
 }
@@ -85,22 +89,35 @@ function formatDisplayName(iconName: string): string {
     .trim();
 }
 
-// Filter out invalid SVG entries (mainly corrupted Mac OS X metadata)
+// Enhanced SVG validation with better error logging
 function isValidSvg(svgContent: string): boolean {
-  if (!svgContent || typeof svgContent !== 'string') return false;
+  if (!svgContent || typeof svgContent !== 'string') {
+    return false;
+  }
   
   // Basic SVG structure check
-  if (!svgContent.includes('<svg') || !svgContent.includes('</svg>')) return false;
+  if (!svgContent.includes('<svg') || !svgContent.includes('</svg>')) {
+    return false;
+  }
   
   // Filter out corrupted Mac OS X metadata entries and other obvious corruption
   if (svgContent.includes('Mac OS X') || 
       svgContent.includes('__MACOSX') || 
       svgContent.includes('.DS_Store') ||
       svgContent.includes('com.apple.quarantine') ||
-      svgContent.includes('ATTR')) return false;
+      svgContent.includes('ATTR')) {
+    return false;
+  }
   
   // Minimal length check (but more permissive)
-  if (svgContent.length < 20) return false;
+  if (svgContent.length < 20) {
+    return false;
+  }
+  
+  // Check for basic SVG attributes
+  if (!svgContent.includes('xmlns') && !svgContent.includes('viewBox') && !svgContent.includes('width')) {
+    return false;
+  }
   
   return true;
 }
@@ -130,24 +147,51 @@ function canChangeColor(svgContent: string): boolean {
   return hasColorableContent && !hasComplexStructures;
 }
 
-// Transform the iconMap into IconItem array
-export const iconsaxIcons: IconItem[] = Object.entries(iconMap)
-  .filter(([_, svgContent]) => isValidSvg(svgContent) && canChangeColor(svgContent))
-  .map(([iconName, svgContent]: [string, string]) => {
-    const category = parseIconCategory(iconName);
-    const style = parseIconStyle(iconName);
-    const tags = generateTags(iconName, category);
-    const displayName = formatDisplayName(iconName);
+// Transform the iconMap into IconItem array with enhanced processing
+export const iconsaxIcons: IconItem[] = (() => {
+  const allEntries = Object.entries(iconMap);
+  console.log(`Processing ${allEntries.length} total entries from iconMap`);
+  
+  let validSvgCount = 0;
+  let colorableCount = 0;
+  let finalCount = 0;
+  
+  const processedIcons = allEntries
+    .filter(([iconName, svgContent]) => {
+      const valid = isValidSvg(svgContent);
+      if (valid) validSvgCount++;
+      return valid;
+    })
+    .filter(([iconName, svgContent]) => {
+      const colorable = canChangeColor(svgContent);
+      if (colorable) colorableCount++;
+      return colorable;
+    })
+    .map(([iconName, svgContent]: [string, string]) => {
+      const category = parseIconCategory(iconName);
+      const style = parseIconStyle(iconName);
+      const tags = generateTags(iconName, category);
+      const displayName = formatDisplayName(iconName);
 
-    return {
-      id: `iconsax-${iconName}`,
-      name: displayName,
-      svg: svgContent,
-      tags,
-      style,
-      category
-    };
-  })
-  .filter(icon => icon.name.length > 1); // Filter out any malformed entries
-
-console.log(`Loaded ${iconsaxIcons.length} Iconsax icons`);
+      return {
+        id: `iconsax-${iconName}`,
+        name: displayName,
+        svg: svgContent,
+        tags,
+        style,
+        category
+      };
+    })
+    .filter(icon => {
+      const valid = icon.name.length > 1;
+      if (valid) finalCount++;
+      return valid;
+    });
+  
+  console.log(`Iconsax processing results:`);
+  console.log(`- Valid SVGs: ${validSvgCount}/${allEntries.length}`);
+  console.log(`- Colorable SVGs: ${colorableCount}/${validSvgCount}`);
+  console.log(`- Final icons: ${finalCount}`);
+  
+  return processedIcons;
+})();
