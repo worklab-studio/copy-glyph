@@ -88,9 +88,29 @@ function getLibraryProps(iconId: string): any {
  * Preprocess a single icon to convert React component to SVG string
  */
 export async function preprocessIcon(icon: IconItem): Promise<IconItem> {
-  // If it's already a string, return as-is
+  // If it's already a string, validate and normalize it
   if (typeof icon.svg === 'string') {
-    return icon;
+    try {
+      // Validate that it's a proper SVG
+      if (icon.svg.trim().startsWith('<svg') && icon.svg.trim().endsWith('</svg>')) {
+        return {
+          ...icon,
+          svg: icon.svg // Keep the original string SVG
+        };
+      } else {
+        console.warn(`Invalid SVG string for icon ${icon.id}`);
+        return {
+          ...icon,
+          svg: FALLBACK_SVG
+        };
+      }
+    } catch (error) {
+      console.warn(`Error validating SVG string for icon ${icon.id}:`, error);
+      return {
+        ...icon,
+        svg: FALLBACK_SVG
+      };
+    }
   }
 
   try {

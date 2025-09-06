@@ -1,5 +1,6 @@
 import { IconItem } from '../types/icon';
 import { iconMap } from '../../octicons icons';
+import { preprocessIcons } from '../lib/icon-string-preprocessor';
 
 // Octicons Icons - Complete collection from GitHub's design system
 // All 661 professional icons imported and processed
@@ -226,7 +227,7 @@ Object.entries(iconMap).forEach(([iconName, svg]) => {
 });
 
 // Convert processed icons to IconItem array
-export const octiconsIcons: IconItem[] = Array.from(processedIcons.entries()).map(([normalizedName, { iconName, svg }]) => {
+const octiconsIconsRaw: IconItem[] = Array.from(processedIcons.entries()).map(([normalizedName, { iconName, svg }]) => {
   const category = categorizeIcon(normalizedName);
   const tags = generateTags(normalizedName, category);
   const displayName = camelCaseToTitleCase(normalizedName);
@@ -242,3 +243,24 @@ export const octiconsIcons: IconItem[] = Array.from(processedIcons.entries()).ma
     category: category,
   };
 });
+
+// Cache for processed icons
+let processedIconsCache: IconItem[] | null = null;
+
+// Async function to get preprocessed icons
+export async function getOcticonsIcons(): Promise<IconItem[]> {
+  if (processedIconsCache) {
+    return processedIconsCache;
+  }
+  
+  try {
+    processedIconsCache = await preprocessIcons(octiconsIconsRaw);
+    return processedIconsCache;
+  } catch (error) {
+    console.warn('Failed to preprocess Octicons icons:', error);
+    return octiconsIconsRaw; // Fallback to raw icons
+  }
+}
+
+// Synchronous export for backward compatibility
+export const octiconsIcons: IconItem[] = octiconsIconsRaw;

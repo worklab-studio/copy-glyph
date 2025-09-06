@@ -1,11 +1,12 @@
 import { type IconItem } from "@/types/icon";
 import { iconMap } from "../../atlas";
+import { preprocessIcons } from '../lib/icon-string-preprocessor';
 
 // Complete Atlas Icons Collection
 // Auto-imported from atlas.ts - Contains thousands of professionally designed icons
 
 // Convert iconMap to IconItem format with proper theming
-export const atlasIcons: IconItem[] = Object.entries(iconMap).map(([key, svg]) => {
+const atlasIconsRaw: IconItem[] = Object.entries(iconMap).map(([key, svg]) => {
   // Ensure svg is a string and convert ALL hardcoded colors to currentColor for proper theming
   const svgString = String(svg);
   const themedSvg = svgString
@@ -64,3 +65,24 @@ export const atlasIcons: IconItem[] = Object.entries(iconMap).map(([key, svg]) =
     category
   };
 });
+
+// Cache for processed icons
+let processedIconsCache: IconItem[] | null = null;
+
+// Async function to get preprocessed icons
+export async function getAtlasIcons(): Promise<IconItem[]> {
+  if (processedIconsCache) {
+    return processedIconsCache;
+  }
+  
+  try {
+    processedIconsCache = await preprocessIcons(atlasIconsRaw);
+    return processedIconsCache;
+  } catch (error) {
+    console.warn('Failed to preprocess Atlas icons:', error);
+    return atlasIconsRaw; // Fallback to raw icons
+  }
+}
+
+// Synchronous export for backward compatibility
+export const atlasIcons: IconItem[] = atlasIconsRaw;

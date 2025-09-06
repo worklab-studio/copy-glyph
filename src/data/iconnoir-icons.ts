@@ -1,5 +1,6 @@
 import { IconItem } from '../types/icon';
 import { iconMap } from '../../IconNoir icons';
+import { preprocessIcons } from '../lib/icon-string-preprocessor';
 
 // IconNoir Icons - Complete collection from https://iconoir.com/
 // All 1,671 professional icons imported and processed
@@ -227,7 +228,7 @@ function generateTags(iconName: string, category: string): string[] {
 }
 
 // Processed IconNoir icons with proper categorization and tagging
-export const iconnoirIcons: IconItem[] = Object.entries(iconMap).map(([iconName, svg]) => {
+const iconnoirIconsRaw: IconItem[] = Object.entries(iconMap).map(([iconName, svg]) => {
   const category = categorizeIcon(iconName);
   const tags = generateTags(iconName, category);
   const displayName = camelCaseToTitleCase(iconName);
@@ -241,3 +242,24 @@ export const iconnoirIcons: IconItem[] = Object.entries(iconMap).map(([iconName,
     category: category,
   };
 });
+
+// Cache for processed icons
+let processedIconsCache: IconItem[] | null = null;
+
+// Async function to get preprocessed icons
+export async function getIconnoirIcons(): Promise<IconItem[]> {
+  if (processedIconsCache) {
+    return processedIconsCache;
+  }
+  
+  try {
+    processedIconsCache = await preprocessIcons(iconnoirIconsRaw);
+    return processedIconsCache;
+  } catch (error) {
+    console.warn('Failed to preprocess Iconoir icons:', error);
+    return iconnoirIconsRaw; // Fallback to raw icons
+  }
+}
+
+// Synchronous export for backward compatibility
+export const iconnoirIcons: IconItem[] = iconnoirIconsRaw;

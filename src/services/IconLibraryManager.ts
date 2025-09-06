@@ -79,7 +79,7 @@ class IconLibraryManager {
         
         case 'atlas':
           const atlasModule = await import('@/data/atlas-icons');
-          return atlasModule.atlasIcons;
+          return await atlasModule.getAtlasIcons();
         
         case 'lucide':
           const lucideModule = await import('@/data/lucide-icons');
@@ -151,11 +151,11 @@ class IconLibraryManager {
         
         case 'iconnoir':
           const iconnoirModule = await import('@/data/iconnoir-icons');
-          return iconnoirModule.iconnoirIcons;
+          return await iconnoirModule.getIconnoirIcons();
         
         case 'octicons':
           const octiconsModule = await import('@/data/octicons-icons');
-          return octiconsModule.octiconsIcons;
+          return await octiconsModule.getOcticonsIcons();
         
         case 'radix':
           const radixModule = await import('@/data/radix-icons');
