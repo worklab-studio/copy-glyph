@@ -155,6 +155,11 @@ export function IconCell({
       // For SVG strings, we need to modify the stroke-width attribute and colors
       let modifiedSvg = icon.svg;
       
+      // Fix malformed stroke attributes first (from corrupted data)
+      modifiedSvg = modifiedSvg
+        .replace(/stroke-\s+/g, 'stroke-width="1.5" ')
+        .replace(/viewBox=["']0 0 2000 2000["']/g, 'viewBox="0 0 24 24"');
+      
       // Comprehensive color replacement for all icon libraries
       modifiedSvg = modifiedSvg
         // Replace all instances of #292D32 (main Iconsax color) with currentColor

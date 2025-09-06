@@ -184,21 +184,22 @@ export const iconsaxIcons: IconItem[] = (() => {
       const tags = generateTags(iconName, category);
       const displayName = formatDisplayName(iconName);
       
-      // Fix viewBox dimensions - Iconsax icons should have 24x24 viewBox
+      // Fix viewBox and stroke issues - Iconsax icons should have 24x24 viewBox
       let fixedSvgContent = svgContent;
       
-      // Replace incorrect viewBox dimensions
-      if (fixedSvgContent.includes('viewBox="0 0 2000 2000"')) {
-        fixedSvgContent = fixedSvgContent.replace('viewBox="0 0 2000 2000"', 'viewBox="0 0 24 24"');
-      }
+      // Replace incorrect viewBox dimensions (handle different quote styles)
+      fixedSvgContent = fixedSvgContent.replace(/viewBox=["']0 0 2000 2000["']/g, 'viewBox="0 0 24 24"');
+      
+      // Fix malformed stroke attributes (remove broken stroke- attributes)
+      fixedSvgContent = fixedSvgContent.replace(/stroke-\s+/g, 'stroke-width="1.5" ');
       
       // Ensure width and height are set to 24
-      if (!fixedSvgContent.includes('width=') || !fixedSvgContent.includes('height=')) {
+      if (!fixedSvgContent.includes('width=')) {
         fixedSvgContent = fixedSvgContent.replace('<svg', '<svg width="24" height="24"');
       } else {
         // Replace existing width/height with 24
-        fixedSvgContent = fixedSvgContent.replace(/width="[^"]*"/, 'width="24"');
-        fixedSvgContent = fixedSvgContent.replace(/height="[^"]*"/, 'height="24"');
+        fixedSvgContent = fixedSvgContent.replace(/width=["'][^"']*["']/g, 'width="24"');
+        fixedSvgContent = fixedSvgContent.replace(/height=["'][^"']*["']/g, 'height="24"');
       }
 
       return {
