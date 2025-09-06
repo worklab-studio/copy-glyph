@@ -9,6 +9,10 @@ export const atlasIcons: IconItem[] = Object.entries(iconMap).map(([key, svg]) =
   // Ensure svg is a string and convert ALL hardcoded colors to currentColor for proper theming
   const svgString = String(svg);
   const themedSvg = svgString
+    // First fix malformed self-closing tags with misplaced attributes
+    .replace(/\/\s+fill="[^"]*">/g, '/>')
+    .replace(/\/\s+stroke="[^"]*">/g, '/>')
+    .replace(/\/\s+[a-zA-Z-]+="[^"]*">/g, '/>')
     // Replace all hex colors in fill attributes (3 and 6 digit)
     .replace(/fill="#[0-9A-Fa-f]{6}"/g, 'fill="currentColor"')
     .replace(/fill="#[0-9A-Fa-f]{3}"/g, 'fill="currentColor"')
